@@ -27,39 +27,33 @@ const Navbar = () => {
             type='text'
             placeholder='Search...'
           />
-          <Button className='rounded-full'>
-            <Search size={20} color='white' />
-          </Button>
+          <div className='bg-primary rounded-full p-2'>
+            <Search size={25} color='white' />
+          </div>
         </div>
 
         <div className='flex items-center lg:gap-x-3'>
           <Button variant='ghost' className='hidden md:inline-block'>
             Nginep your property
           </Button>
-          <Button
-            variant='ghost'
+
+          <Search
+            size={35}
             className='md:hidden px-2'
-            type='button'
             onClick={() => setIsSearch(!isSearch)}
-          >
-            <Search size={20} />
-          </Button>
+          />
+
           <DropdownMenu onOpenChange={() => setIsSearch(false)}>
             <DropdownMenuTrigger>
-              <Button
-                variant='outline'
-                className='hidden md:flex h-[55px] gap-x-3 border-secondary'
-                type='button'
-              >
+              <div className='hidden md:flex items-center px-4 h-[55px] gap-x-3 border rounded-full border-secondary'>
                 <Menu size={25} />
                 <Avatar>
                   <AvatarImage src='https://res.cloudinary.com/dhbg53ncx/image/upload/v1724048239/y2v5dowacq3zuvraaeem.png' />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-              </Button>
-              <Button variant='ghost' className='md:hidden px-2'>
-                <Menu size={20} />
-              </Button>
+              </div>
+
+              <Menu size={40} className='md:hidden px-2' />
             </DropdownMenuTrigger>
             <DropdownMenuContent className='border-secondary'>
               <DropdownMenuItem

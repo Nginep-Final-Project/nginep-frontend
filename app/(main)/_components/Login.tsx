@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogHeader,
-  DialogTrigger,
   DialogContent,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -62,7 +61,7 @@ const Login: React.FC<{
               register={register}
               errors={errors}
             />
-            <Button variant='link' className='p-0'>
+            <Button variant='link' className='p-0' type='button'>
               Forgot Password?
             </Button>
             <Button
@@ -75,9 +74,9 @@ const Login: React.FC<{
         </div>
 
         <div className='flex items-center justify-between'>
-          <div className='border-t border-secondary h-0 w-1/2' />
+          <div className='border border-secondary h-0 w-1/2' />
           <div className='mx-3 text-secondary'>or</div>
-          <div className='border-t border-secondary  h-0 w-1/2' />
+          <div className='border border-secondary  h-0 w-1/2' />
         </div>
         <Button
           variant='outline'
