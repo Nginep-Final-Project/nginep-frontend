@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   UseFormRegister,
   FieldValues,
   FieldErrors,
   Path,
 } from 'react-hook-form'
+import { Eye, EyeOff } from 'lucide-react'
 
 interface InputProps<TFieldValues extends FieldValues> {
   name: Path<TFieldValues>
@@ -31,6 +32,8 @@ const Input = <TFieldValues extends FieldValues>({
   errors,
   options,
 }: InputProps<TFieldValues>) => {
+  const [showPassword, setShowPassword] = useState(false)
+
   const renderInput = () => {
     switch (type) {
       case 'select':
@@ -60,6 +63,21 @@ const Input = <TFieldValues extends FieldValues>({
             {...register(name, { required: true })}
             className='mt-1 block w-full rounded-md border border-secondary focus:outline-none p-2'
           />
+        )
+      case 'password':
+        return (
+          <div className='p-2 mt-1 rounded-md border border-secondary flex items-center'>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              {...register(name, { required: true })}
+              className=' focus:outline-none w-full'
+            />
+            {showPassword ? (
+              <EyeOff onClick={() => setShowPassword(false)} />
+            ) : (
+              <Eye onClick={() => setShowPassword(true)} />
+            )}
+          </div>
         )
       default:
         return (
