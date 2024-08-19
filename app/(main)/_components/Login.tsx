@@ -11,7 +11,8 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import ForgotPassword from './ForgotPassword'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -23,17 +24,23 @@ type FormData = z.infer<typeof loginSchema>
 const Login: React.FC<{
   isLogin: boolean
   setIsLogin: Dispatch<SetStateAction<boolean>>
-}> = ({ isLogin, setIsLogin }) => {
+  isForgotPassword: () => void
+}> = ({ isLogin, setIsLogin, isForgotPassword }) => {
+  // const [isForgotPassword, setIsForgotPassword] = useState(false)
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(loginSchema),
   })
 
   const onSubmit = (data: FormData) => {
     console.log(data)
+    reset()
+    setIsLogin(false)
   }
 
   return (
@@ -61,9 +68,15 @@ const Login: React.FC<{
               register={register}
               errors={errors}
             />
-            <Button variant='link' className='p-0' type='button'>
+            <Button
+              variant='link'
+              className='p-0'
+              type='button'
+              onClick={isForgotPassword}
+            >
               Forgot Password?
             </Button>
+
             <Button
               type='submit'
               className='bg-primary w-full text-white text-xl px-4 py-2 rounded'

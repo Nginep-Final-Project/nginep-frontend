@@ -10,10 +10,12 @@ import { Menu, Search } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useState } from 'react'
 import Login from '@/app/(main)/_components/Login'
+import ForgotPassword from '@/app/(main)/_components/ForgotPassword'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
+  const [isForgotPassword, setIsForgotPassword] = useState(false)
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
@@ -72,7 +74,18 @@ const Navbar = () => {
           </DropdownMenu>
         </div>
       </div>
-      <Login isLogin={isLogin} setIsLogin={setIsLogin} />
+      <Login
+        isLogin={isLogin}
+        setIsLogin={setIsLogin}
+        isForgotPassword={() => {
+          setIsLogin(false)
+          setIsForgotPassword(!isForgotPassword)
+        }}
+      />
+      <ForgotPassword
+        isForgotPassword={isForgotPassword}
+        setIsForgotPassword={setIsForgotPassword}
+      />
       {isSearch ? (
         <div className='lg:hidden items-center p-1 lg:p-3 border border-secondary rounded-full lg:w-80 lg:h-14'>
           <input
