@@ -87,14 +87,12 @@ const Navbar = () => {
         setIsForgotPassword={setIsForgotPassword}
       />
       {isSearch ? (
-        <div className='lg:hidden items-center p-1 lg:p-3 border border-secondary rounded-full lg:w-80 lg:h-14'>
-          <input
-            // onChange={(e) => debounced(e.target.value)}
-            className='px-4 py-[6px] text-sm w-full focus:outline-none'
-            type='text'
-            placeholder='Search...'
-          />
-        </div>
+        <input
+          // onChange={(e) => debounced(e.target.value)}
+          className='px-4 py-[6px] text-sm w-full rounded-full border border-secondary focus:outline-none'
+          type='text'
+          placeholder='Search...'
+        />
       ) : null}
     </div>
   )
