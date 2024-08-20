@@ -125,7 +125,7 @@ const SignupStepTwo: React.FC<{
             </div>
 
             <p className='text-xs mb-4'>
-              By selecting Agree and continue, I agree to Nginep’s Terms of
+              By selecting Agree and continue, I agree to Nginep&apos;s Terms of
               Service, Payments Terms of Service, and Nondiscrimination Policy
               and acknowledge the Privacy Policy.
             </p>

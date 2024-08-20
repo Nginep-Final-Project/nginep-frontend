@@ -46,7 +46,7 @@ const ForgotPassword: React.FC<{
 
         <div className='border-t border-secondary py-4'>
           <p className='mb-4'>
-            Enter the email address associated with your account, and we’ll
+            Enter the email address associated with your account, and we&apos;ll
             email you a link to reset your password.
           </p>
           <form onSubmit={handleSubmit(onSubmit)}>

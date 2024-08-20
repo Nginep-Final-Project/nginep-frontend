@@ -13,6 +13,7 @@ import Login from '@/app/(main)/_components/Login'
 import ForgotPassword from '@/app/(main)/_components/ForgotPassword'
 import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
 import SignupStepTwo from '@/app/(main)/_components/SignupStepTwo'
+import EmailVerification from '@/app/(main)/_components/EmailVerification'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -104,6 +105,10 @@ const Navbar = () => {
           setIsSignupStepTwo(false)
           setIsEmailVerification(!isEmailVerification)
         }}
+      />
+      <EmailVerification
+        isEmailVerification={isEmailVerification}
+        setIsEmailVerification={setIsEmailVerification}
       />
       <ForgotPassword
         isForgotPassword={isForgotPassword}
