@@ -5,43 +5,44 @@ import {
   DialogHeader,
   DialogContent,
   DialogTitle,
+  DialogClose,
 } from '@/components/ui/dialog'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
+import SignupStepTwo from './SignupStepTwo'
 
-const loginSchema = z.object({
+const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-type FormData = z.infer<typeof loginSchema>
+type FormData = z.infer<typeof signUpSchema>
 
-const Login: React.FC<{
-  isLogin: boolean
-  setIsLogin: Dispatch<SetStateAction<boolean>>
-  isForgotPassword: () => void
-}> = ({ isLogin, setIsLogin, isForgotPassword }) => {
+const SignupStepOne: React.FC<{
+  isSignup: boolean
+  setIsSignup: Dispatch<SetStateAction<boolean>>
+  setRegister: () => void
+}> = ({ isSignup, setIsSignup, setRegister }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm<FormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(signUpSchema),
   })
 
   const onSubmit = (data: FormData) => {
     console.log(data)
     reset()
-    setIsLogin(false)
+    setRegister()
   }
 
   return (
-    <Dialog open={isLogin} onOpenChange={setIsLogin}>
+    <Dialog open={isSignup} onOpenChange={setIsSignup}>
       <DialogContent className='sm:max-w-[425px] bg-white'>
         <DialogHeader>
           <DialogTitle className='text-xl text-center'>
@@ -58,27 +59,12 @@ const Login: React.FC<{
               register={register}
               errors={errors}
             />
-            <Input
-              name='password'
-              label='Password'
-              type='password'
-              register={register}
-              errors={errors}
-            />
-            <Button
-              variant='link'
-              className='p-0'
-              type='button'
-              onClick={isForgotPassword}
-            >
-              Forgot Password?
-            </Button>
 
             <Button
               type='submit'
               className='bg-primary w-full text-white text-xl px-4 py-2 rounded'
             >
-              Log in
+              Continue
             </Button>
           </form>
         </div>
@@ -100,4 +86,4 @@ const Login: React.FC<{
     </Dialog>
   )
 }
-export default Login
+export default SignupStepOne

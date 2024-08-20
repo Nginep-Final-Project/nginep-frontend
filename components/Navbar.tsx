@@ -11,11 +11,16 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useState } from 'react'
 import Login from '@/app/(main)/_components/Login'
 import ForgotPassword from '@/app/(main)/_components/ForgotPassword'
+import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
+import SignupStepTwo from '@/app/(main)/_components/SignupStepTwo'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
   const [isForgotPassword, setIsForgotPassword] = useState(false)
+  const [isSignup, setIsSignup] = useState(false)
+  const [isSignupStepTwo, setIsSignupStepTwo] = useState(false)
+  const [isEmailVerification, setIsEmailVerification] = useState(false)
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
@@ -64,7 +69,9 @@ const Navbar = () => {
               >
                 Log in
               </DropdownMenuItem>
-              <DropdownMenuItem>Sign up</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setIsSignup(!isSignup)}>
+                Sign up
+              </DropdownMenuItem>
               <DropdownMenuItem className='font-semibold'>
                 Trips
               </DropdownMenuItem>
@@ -80,6 +87,22 @@ const Navbar = () => {
         isForgotPassword={() => {
           setIsLogin(false)
           setIsForgotPassword(!isForgotPassword)
+        }}
+      />
+      <SignupStepOne
+        isSignup={isSignup}
+        setIsSignup={setIsSignup}
+        setRegister={() => {
+          setIsSignup(false)
+          setIsSignupStepTwo(!isSignupStepTwo)
+        }}
+      />
+      <SignupStepTwo
+        isSignupStepTwo={isSignupStepTwo}
+        setIsSignupStepTwo={setIsSignupStepTwo}
+        setEmailVerification={() => {
+          setIsSignupStepTwo(false)
+          setIsEmailVerification(!isEmailVerification)
         }}
       />
       <ForgotPassword

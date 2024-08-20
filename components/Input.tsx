@@ -19,6 +19,7 @@ interface InputProps<TFieldValues extends FieldValues> {
     | 'checkbox'
     | 'select'
     | 'textarea'
+    | 'date'
   register: UseFormRegister<TFieldValues>
   errors: FieldErrors<TFieldValues>
   options?: { value: string; label: string }[]
@@ -92,7 +93,7 @@ const Input = <TFieldValues extends FieldValues>({
 
   return (
     <div className='mb-4'>
-      <label htmlFor={name} className='block text-sm font-medium text-gray-700'>
+      <label htmlFor={name} className='block text-sm font-medium'>
         {label}
       </label>
       {renderInput()}
