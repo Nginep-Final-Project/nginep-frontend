@@ -1,7 +1,9 @@
+import React from "react";
 import { CreditCard, Wallet } from "lucide-react";
-import WarningModal from "../../_components/Modal/WarningModal";
+import WarningModal from "../../../_components/Modal/WarningModal";
 import useWarningModal from "@/hooks/useWarningModal";
-import ValidatedNavigation from "../../_components/Navigation/ValidatedNavigation";
+import ValidatedNavigation from "../../../_components/Navigation/ValidatedNavigation";
+import PaymentInformation from "./PaymentInformation";
 
 const paymentMethods = [
   { id: "manual_payment", name: "Manual Transfer", icon: Wallet },
@@ -13,11 +15,15 @@ interface PaymentMethodsProps {
   onMethodSelect: (methodId: string) => void;
 }
 
-export default function PaymentMethods({
+const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   selectedMethod,
   onMethodSelect,
-}: PaymentMethodsProps) {
+}) => {
   const { showWarning, closeWarning } = useWarningModal();
+
+  const handleMethodSelect = (methodId: string) => {
+    onMethodSelect(methodId);
+  };
 
   return (
     <div className="w-full lg:w-2/3">
@@ -32,13 +38,15 @@ export default function PaymentMethods({
                   ? "border-pink-500 bg-pink-50"
                   : "border-gray-200 hover:border-pink-300"
               }`}
-              onClick={() => onMethodSelect(method.id)}
+              onClick={() => handleMethodSelect(method.id)}
             >
               <method.icon className="w-6 h-6 mr-4" />
               <span className="text-lg">{method.name}</span>
             </div>
           ))}
         </div>
+
+        <PaymentInformation selectedMethod={selectedMethod} />
 
         <ValidatedNavigation
           to="/payment-process"
@@ -63,4 +71,6 @@ export default function PaymentMethods({
       />
     </div>
   );
-}
+};
+
+export default PaymentMethods;

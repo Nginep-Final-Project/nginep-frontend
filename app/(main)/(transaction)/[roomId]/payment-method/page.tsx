@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
 import useBookingData from "@/hooks/useBookingData";
 import TransactionLayout from "../_components/TransactionLayout/TransactionLayout";
-import PaymentMethods from "./_components/PaymentMethods";
+import PaymentMethods from "./_components/PaymentMethods/PaymentMethods";
 
 const PaymentMethod = () => {
   const params = useParams();
