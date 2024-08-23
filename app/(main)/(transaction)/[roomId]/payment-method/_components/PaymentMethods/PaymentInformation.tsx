@@ -16,11 +16,17 @@ const PaymentInformation: React.FC<PaymentInformationProps> = ({
           Manual Transfer Information
         </h3>
         <ul className="list-disc pl-5 space-y-2">
-          <li>Transfer to the following bank account: XXXX-XXXX-XXXX-XXXX</li>
-          <li>You will have 1 hour to complete the payment</li>
+          <li>
+            You will be requested to manually transfer to a bank account on the
+            next page
+          </li>
           <li>
             You will be requested to upload the proof of payment on the next
             page
+          </li>
+          <li>
+            You will have 1 hour to complete the payment and upload the proof of
+            payment
           </li>
           <li>
             Please ensure the transfer amount matches the total on your booking

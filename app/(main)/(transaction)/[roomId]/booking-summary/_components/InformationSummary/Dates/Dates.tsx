@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Calendar from "@/public/icons/calendar.svg";
 import DateRangePicker from "./DateRangePicker/DateRangePicker";
+import Button from "../../../../_components/Button/Button";
 
 type DatesProps = {
   checkIn: string;
@@ -80,13 +81,9 @@ const Dates: React.FC<DatesProps> = ({ checkIn, checkOut, onChange }) => {
         </div>
       </div>
 
-      <button
-        type="button"
-        className="mt-6 w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors"
-        onClick={() => setShowCalendar(true)}
-      >
+      <Button type="button" onClick={() => setShowCalendar(true)}>
         {checkIn && checkOut ? "Edit Dates" : "Select Dates"}
-      </button>
+      </Button>
 
       <DateRangePicker
         isOpen={showCalendar}

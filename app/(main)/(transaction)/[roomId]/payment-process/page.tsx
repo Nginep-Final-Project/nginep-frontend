@@ -1,17 +1,23 @@
 "use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 import TransactionLayout from "../_components/TransactionLayout/TransactionLayout";
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
+import useBookingData from "@/hooks/useBookingData";
+import ManualPayment from "./_components/ManualPayment/ManualPayment";
 
 const PaymentProcess = () => {
   const params = useParams();
   const roomId = params.roomId as string;
+  const { bookingData } = useBookingData(roomId);
 
   return (
     <TransactionLayout title="Process Your Payment">
-      <div>hehe</div>
+      {bookingData.paymentMethod === "manual_payment" ? (
+        <ManualPayment roomId={roomId} basePrice={100} />
+      ) : (
+        <div>Automatic Payment Process (To be implemented)</div>
+      )}
       <PriceSummary
         roomId={roomId}
         propertyName="Beachfront Villa"

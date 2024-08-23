@@ -6,6 +6,7 @@ import useBookingData from "@/hooks/useBookingData";
 import WarningModal from "../../../_components/Modal/WarningModal";
 import useWarningModal from "@/hooks/useWarningModal";
 import ValidatedNavigation from "../../../_components/Navigation/ValidatedNavigation";
+import Button from "../../../_components/Button/Button";
 
 const InformationSummary = () => {
   const pathname = usePathname();
@@ -55,9 +56,7 @@ const InformationSummary = () => {
             requiredFields={["checkIn", "checkOut"]}
             useRoomId={true}
           >
-            <button className="mt-6 w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors">
-              Choose Payment Method
-            </button>
+            <Button>Choose Payment Method</Button>
           </ValidatedNavigation>
         </div>
       </div>

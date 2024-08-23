@@ -4,6 +4,7 @@ import WarningModal from "../../../_components/Modal/WarningModal";
 import useWarningModal from "@/hooks/useWarningModal";
 import ValidatedNavigation from "../../../_components/Navigation/ValidatedNavigation";
 import PaymentInformation from "./PaymentInformation";
+import Button from "../../../_components/Button/Button";
 
 const paymentMethods = [
   { id: "manual_payment", name: "Manual Transfer", icon: Wallet },
@@ -58,9 +59,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
           ]}
           useRoomId={true}
         >
-          <button className="mt-6 w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors">
-            Proceed to Payment
-          </button>
+          <Button>Proceed to Payment</Button>
         </ValidatedNavigation>
       </div>
       <WarningModal
