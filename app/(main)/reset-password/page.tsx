@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useSearchParams } from 'next/navigation'
 
 const resetPasswordSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -13,6 +14,9 @@ const resetPasswordSchema = z.object({
 type FormData = z.infer<typeof resetPasswordSchema>
 
 const ResetPassword = () => {
+  const email = useSearchParams().get('email')
+  console.log('email', email)
+
   const {
     register,
     handleSubmit,
