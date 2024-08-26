@@ -1,6 +1,9 @@
-'use client'
-import Image from 'next/image'
+import { auth } from '@/auth'
 
-export default function Home() {
-  return <div></div>
+const Home = async () => {
+  const session = await auth()
+  console.log('session >>>>', session)
+
+  return <div>Home</div>
 }
+export default Home

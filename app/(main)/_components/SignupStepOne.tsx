@@ -14,6 +14,7 @@ import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import SignupStepTwo from './SignupStepTwo'
+import { googleSignUp } from '@/app/actions'
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -78,6 +79,9 @@ const SignupStepOne: React.FC<{
           variant='outline'
           className='text-xl flex justify-start'
           type='button'
+          onClick={async () => {
+            googleSignUp()
+          }}
         >
           <Image src={GoogleIcon} alt='Google-Icon' />
           <div className='w-full'>Continue with Google</div>

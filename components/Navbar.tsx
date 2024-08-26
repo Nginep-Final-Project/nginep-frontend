@@ -14,6 +14,7 @@ import ForgotPassword from '@/app/(main)/_components/ForgotPassword'
 import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
 import SignupStepTwo from '@/app/(main)/_components/SignupStepTwo'
 import EmailVerification from '@/app/(main)/_components/EmailVerification'
+import { logout } from '@/app/actions'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -77,7 +78,13 @@ const Navbar = () => {
                 Trips
               </DropdownMenuItem>
               <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Log out</DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={async () => {
+                  logout()
+                }}
+              >
+                Log out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
