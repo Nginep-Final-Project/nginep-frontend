@@ -91,8 +91,8 @@ const ItemManagement = <T extends ZodSchema>({
 
   return (
     <div className='flex flex-col items-center py-4 md:py-32'>
-      <div className='w-1/2'>
-        <h2 className='font-semibold text-2xl mb-4 text-center'>
+      <div className='md:w-1/2'>
+        <h2 className='font-semibold md:text-2xl mb-4 text-center'>
           {itemName} Management
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -107,7 +107,7 @@ const ItemManagement = <T extends ZodSchema>({
           <div className='flex justify-end space-x-4 w-full'>
             <Button
               variant='cancel'
-              className='p-3 rounded-2xl font-semibold text-xl'
+              className='p-3 rounded-2xl font-semibold md:text-xl'
               type='button'
               onClick={() => {
                 reset()
@@ -120,36 +120,46 @@ const ItemManagement = <T extends ZodSchema>({
 
             <Button
               type='submit'
-              className='text-white p-3 rounded-2xl font-semibold text-xl'
+              className='text-white p-3 rounded-2xl font-semibold md:text-xl'
             >
               {isEditing ? 'Update' : 'Save'}
             </Button>
           </div>
         </form>
       </div>
-      <div className='w-1/2 mt-8'>
-        <h2 className='font-semibold text-2xl mb-4 text-center'>
+      <div className='md:w-1/2 mt-8'>
+        <h2 className='font-semibold md:text-2xl mb-4 text-center'>
           {itemName} List
         </h2>
-        <div className='flex flex-wrap gap-3'>
-          {items.map((e) => {
-            return (
-              <Button
-                key={e.id}
-                variant='outline'
-                className='flex gap-3'
-                type='button'
-              >
-                {e.name}
-                <Image
-                  src={Delete}
-                  alt='delete'
-                  onClick={() => handleDelete(e.id)}
-                />
-                <Image src={Edit} alt='edit' onClick={() => handleEdit(e.id)} />
-              </Button>
-            )
-          })}
+        <div className='flex flex-wrap gap-3 px-4 md:px-0'>
+          {items.length === 0 ? (
+            <p className='text-sm text-center w-full'>
+              No {itemName}? No Problem! (But Maybe Add One?)
+            </p>
+          ) : (
+            items.map((e) => {
+              return (
+                <Button
+                  key={e.id}
+                  variant='outline'
+                  className='flex gap-3'
+                  type='button'
+                >
+                  {e.name}
+                  <Image
+                    src={Delete}
+                    alt='delete'
+                    onClick={() => handleDelete(e.id)}
+                  />
+                  <Image
+                    src={Edit}
+                    alt='edit'
+                    onClick={() => handleEdit(e.id)}
+                  />
+                </Button>
+              )
+            })
+          )}
         </div>
       </div>
     </div>
