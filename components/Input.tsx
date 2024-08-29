@@ -17,7 +17,6 @@ interface InputProps<TFieldValues extends FieldValues> {
     | 'password'
     | 'file'
     | 'checkbox'
-    | 'select'
     | 'textarea'
     | 'date'
   register: UseFormRegister<TFieldValues>
@@ -37,19 +36,6 @@ const Input = <TFieldValues extends FieldValues>({
 
   const renderInput = () => {
     switch (type) {
-      case 'select':
-        return (
-          <select
-            {...register(name, { required: true })}
-            className='mt-1 block w-full rounded-md border border-secondary focus:outline-none p-2'
-          >
-            {options?.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        )
       case 'checkbox':
         return (
           <input
