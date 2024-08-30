@@ -22,10 +22,10 @@ const roomSchema = z.object({
   name: z.string().min(1, 'Room name is required'),
   description: z.string().min(1, 'Room description is required'),
   guests: z
-    .string()
+    .number()
     .min(1, 'At least 1 guest is required')
     .max(10, 'Maximum 10 guests allowed'),
-  price: z.string().min(0, 'Price must be a positive number'),
+  price: z.number().min(0, 'Price must be a positive number'),
 })
 
 const schema = z
@@ -44,7 +44,7 @@ const schema = z
         })
       )
       .min(1, 'Select at least one facility'),
-    propertyPrice: z.string(),
+    propertyPrice: z.number(),
     guestPlaceType: z.string({
       required_error: 'Property type is required',
     }),
@@ -89,9 +89,7 @@ type FormData = z.infer<typeof schema>
 
 const PropertyManagement = () => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
-  const [editingRoom, setEditingRoom] = useState<RoomFormValues | undefined>(
-    undefined
-  )
+  const [editingRoom, setEditingRoom] = useState<RoomFormValues | null>(null)
 
   const {
     register,
@@ -112,10 +110,12 @@ const PropertyManagement = () => {
 
   const handleSaveRoom = (room: RoomFormValues) => {
     const currentRooms = watch('rooms') || []
-    if (room.id) {
+    if (editingRoom) {
       setValue(
         'rooms',
-        currentRooms.map((r) => (r.id === room.id ? room : r))
+        currentRooms.map((r) =>
+          r.id === editingRoom.id ? { ...room, id: editingRoom.id } : r
+        )
       )
     } else {
       setValue('rooms', [
@@ -123,7 +123,7 @@ const PropertyManagement = () => {
         { ...room, id: Date.now().toString() },
       ])
     }
-    setEditingRoom(undefined)
+    setEditingRoom(null)
     setIsRoomDialogOpen(false)
   }
 
@@ -230,7 +230,7 @@ const PropertyManagement = () => {
             <Input
               name='propertyDescription'
               label='Property price'
-              type='text'
+              type='number'
               register={register}
               errors={errors}
             />
