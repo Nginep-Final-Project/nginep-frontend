@@ -8,23 +8,12 @@ import { z } from 'zod'
 import RenderField from './_components/RenderField'
 import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
-
-const propertyCategories = [
-  { value: 'apartment', label: 'Apartment' },
-  { value: 'house', label: 'House' },
-  { value: 'villa', label: 'Villa' },
-]
-
-const propertyFacilities = [
-  { value: 'parking lot', label: 'Parking lot' },
-  { value: 'bathtub', label: 'Bathtub' },
-  { value: 'pool', label: 'Pool' },
-]
-
-const guestPlaceTypes = [
-  { value: 'entire_place', label: 'An entire place' },
-  { value: 'private_room', label: 'A room' },
-]
+import {
+  guestPlaceTypes,
+  propertyCategories,
+  propertyFacilities,
+} from '@/utils/dummy'
+import InputImages from './_components/InputImages'
 
 const schema = z.object({
   propertyName: z.string().min(1, 'Property name is required'),
@@ -44,6 +33,9 @@ const schema = z.object({
   guestPlaceType: z.string({
     required_error: 'Property type is required',
   }),
+  propertyImages: z
+    .array(z.instanceof(File))
+    .min(1, 'At least one image is required'),
   propertyAddress: z.string().min(1, 'Property address is required'),
   propertyCity: z.string().min(1, 'Property city is required'),
   propertyProvince: z.string().min(1, 'Property province is required'),
@@ -118,24 +110,6 @@ const PropertyManagement = () => {
             register={register}
             errors={errors}
           />
-
-          <Controller
-            name='guestPlaceType'
-            control={control}
-            render={({ field }) => (
-              <RenderField
-                label='What type of place will guests have?'
-                render={
-                  <Select
-                    options={guestPlaceTypes}
-                    placeholder='Select type of place'
-                    onSelect={field.onChange}
-                  />
-                }
-                error={errors.guestPlaceType?.message}
-              />
-            )}
-          />
           <Controller
             name='propertyFacilities'
             control={control}
@@ -154,6 +128,49 @@ const PropertyManagement = () => {
               />
             )}
           />
+          <Controller
+            name='propertyImages'
+            control={control}
+            render={({ field }) => (
+              <RenderField
+                label='Property Image'
+                render={
+                  <InputImages
+                    onImagesChange={(files) => field.onChange(files)}
+                  />
+                }
+                error={errors.propertyImages?.message}
+              />
+            )}
+          />
+          <Controller
+            name='guestPlaceType'
+            control={control}
+            render={({ field }) => (
+              <RenderField
+                label='What type of place will guests have?'
+                render={
+                  <Select
+                    options={guestPlaceTypes}
+                    placeholder='Select type of place'
+                    onSelect={field.onChange}
+                  />
+                }
+                error={errors.guestPlaceType?.message}
+              />
+            )}
+          />
+          {watch('guestPlaceType') === 'entire_place' ? (
+            <Input
+              name='propertyDescription'
+              label='Property price'
+              type='text'
+              register={register}
+              errors={errors}
+            />
+          ) : (
+            <div></div>
+          )}
           <Input
             name='propertyAddress'
             label='Property Address'
