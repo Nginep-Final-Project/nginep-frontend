@@ -14,49 +14,85 @@ import {
   propertyFacilities,
 } from '@/utils/dummy'
 import InputImages from './_components/InputImages'
+import { useState } from 'react'
+import RoomDialog, { RoomFormValues } from './_components/RoomDialog'
 
-const schema = z.object({
-  propertyName: z.string().min(1, 'Property name is required'),
-  propertyCategory: z.string({
-    required_error: 'Property category is required',
-  }),
-  propertyDescription: z
+const roomSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, 'Room name is required'),
+  description: z.string().min(1, 'Room description is required'),
+  guests: z
     .string()
-    .min(10, 'Description must be at least 10 characters'),
-  propertyFacilities: z
-    .array(
-      z.string({
-        required_error: 'Property category is required',
-      })
-    )
-    .min(1, 'Select at least one facility'),
-  guestPlaceType: z.string({
-    required_error: 'Property type is required',
-  }),
-  propertyImages: z
-    .array(z.instanceof(File))
-    .min(1, 'At least one image is required'),
-  propertyAddress: z.string().min(1, 'Property address is required'),
-  propertyCity: z.string().min(1, 'Property city is required'),
-  propertyProvince: z.string().min(1, 'Property province is required'),
-  propertyPostalCode: z.string().min(1, 'Property postal code is required'),
-  notAvailabilityDates: z
-    .object({
-      from: z.date().nullable(),
-      to: z.date().nullable(),
-    })
-    .nullable(),
-  peakSeasonDates: z
-    .object({
-      from: z.date().nullable(),
-      to: z.date().nullable(),
-    })
-    .nullable(),
+    .min(1, 'At least 1 guest is required')
+    .max(10, 'Maximum 10 guests allowed'),
+  price: z.string().min(0, 'Price must be a positive number'),
 })
+
+const schema = z
+  .object({
+    propertyName: z.string().min(1, 'Property name is required'),
+    propertyCategory: z.string({
+      required_error: 'Property category is required',
+    }),
+    propertyDescription: z
+      .string()
+      .min(10, 'Description must be at least 10 characters'),
+    propertyFacilities: z
+      .array(
+        z.string({
+          required_error: 'Property category is required',
+        })
+      )
+      .min(1, 'Select at least one facility'),
+    propertyPrice: z.string(),
+    guestPlaceType: z.string({
+      required_error: 'Property type is required',
+    }),
+    propertyImages: z
+      .array(z.instanceof(File))
+      .min(1, 'At least one image is required'),
+    propertyAddress: z.string().min(1, 'Property address is required'),
+    propertyCity: z.string().min(1, 'Property city is required'),
+    propertyProvince: z.string().min(1, 'Property province is required'),
+    propertyPostalCode: z.string().min(1, 'Property postal code is required'),
+    notAvailabilityDates: z
+      .object({
+        from: z.date().nullable(),
+        to: z.date().nullable(),
+      })
+      .nullable(),
+    peakSeasonDates: z
+      .object({
+        from: z.date().nullable(),
+        to: z.date().nullable(),
+      })
+      .nullable(),
+    rooms: z.array(roomSchema).optional(),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.guestPlaceType === 'private_room' &&
+        (!data.rooms || data.rooms.length === 0)
+      ) {
+        return false
+      }
+      return true
+    },
+    {
+      message: 'At least one room is required for private room type',
+      path: ['rooms'],
+    }
+  )
 
 type FormData = z.infer<typeof schema>
 
 const PropertyManagement = () => {
+  const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
+  const [editingRoom, setEditingRoom] = useState<RoomFormValues | undefined>(
+    undefined
+  )
+
   const {
     register,
     handleSubmit,
@@ -72,6 +108,36 @@ const PropertyManagement = () => {
   const onSubmit = (data: FormData) => {
     console.log(data)
     reset()
+  }
+
+  const handleSaveRoom = (room: RoomFormValues) => {
+    const currentRooms = watch('rooms') || []
+    if (room.id) {
+      setValue(
+        'rooms',
+        currentRooms.map((r) => (r.id === room.id ? room : r))
+      )
+    } else {
+      setValue('rooms', [
+        ...currentRooms,
+        { ...room, id: Date.now().toString() },
+      ])
+    }
+    setEditingRoom(undefined)
+    setIsRoomDialogOpen(false)
+  }
+
+  const handleEditRoom = (room: RoomFormValues) => {
+    setEditingRoom(room)
+    setIsRoomDialogOpen(true)
+  }
+
+  const handleDeleteRoom = (id: string) => {
+    const currentRooms = watch('rooms') || []
+    setValue(
+      'rooms',
+      currentRooms.filter((room) => room.id !== id)
+    )
   }
 
   return (
@@ -160,7 +226,7 @@ const PropertyManagement = () => {
               />
             )}
           />
-          {watch('guestPlaceType') === 'entire_place' ? (
+          {watch('guestPlaceType') === 'entire_place' && (
             <Input
               name='propertyDescription'
               label='Property price'
@@ -168,8 +234,60 @@ const PropertyManagement = () => {
               register={register}
               errors={errors}
             />
-          ) : (
-            <div></div>
+          )}
+          {watch('guestPlaceType') === 'private_room' && (
+            <div>
+              <div className='flex gap-x-4 items-center'>
+                <h3 className='block text-sm font-medium mt-4'>
+                  Property room
+                </h3>
+                <Button type='button' onClick={() => setIsRoomDialogOpen(true)}>
+                  Add Room
+                </Button>
+              </div>
+
+              {errors.rooms && (
+                <p className='text-red-500 mt-1'>{errors.rooms.message}</p>
+              )}
+              <div className='mt-4 space-y-4'>
+                {watch('rooms')?.map((room) => (
+                  <div
+                    key={room.id}
+                    className='grid grid-cols-4 border rounded'
+                  >
+                    <div className='border-r p-4'>
+                      <h4 className='font-medium'>{room.name}</h4>
+                      <p className='text-sm'>{room.description}</p>
+                    </div>
+                    <div className='border-r p-4'>
+                      <h4 className='font-medium'>Guests</h4>
+                      <p className='text-sm'>{room.guests}</p>
+                    </div>
+
+                    <div className='border-r p-4'>
+                      <h4 className='font-medium'>Price</h4>
+                      <p className='text-sm'>Rp{room.price} /night</p>
+                    </div>
+                    <div className='flex flex-col items-start px-4'>
+                      <Button
+                        variant='link'
+                        onClick={() => handleEditRoom(room)}
+                        className='font-semibold p-0'
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant='link'
+                        onClick={() => handleDeleteRoom(room.id!)}
+                        className='font-semibold text-primary p-0'
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
           <Input
             name='propertyAddress'
@@ -247,6 +365,12 @@ const PropertyManagement = () => {
           </div>
         </form>
       </div>
+      <RoomDialog
+        open={isRoomDialogOpen}
+        onOpenChange={setIsRoomDialogOpen}
+        onSave={handleSaveRoom}
+        initialRoom={editingRoom}
+      />
     </div>
   )
 }
