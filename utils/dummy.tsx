@@ -14,3 +14,8 @@ export const guestPlaceTypes = [
   { value: 'entire_place', label: 'An entire place' },
   { value: 'private_room', label: 'A room' },
 ]
+
+export const incrementType = [
+  { value: 'percentage', label: '%: add price by percentage' },
+  { value: 'amount', label: 'Amount: add price by adding amount' },
+]

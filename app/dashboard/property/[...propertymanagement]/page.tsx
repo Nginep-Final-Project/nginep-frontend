@@ -10,12 +10,16 @@ import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
 import {
   guestPlaceTypes,
+  incrementType,
   propertyCategories,
   propertyFacilities,
 } from '@/utils/dummy'
 import InputImages from './_components/InputImages'
 import { useState } from 'react'
 import RoomDialog, { RoomFormValues } from './_components/RoomDialog'
+import PeakSeasonRate, {
+  PeakSeasonRateFormValues,
+} from './_components/PeakSeasonRate'
 
 const roomSchema = z.object({
   id: z.string().optional(),
@@ -26,6 +30,13 @@ const roomSchema = z.object({
     .min(1, 'At least 1 guest is required')
     .max(10, 'Maximum 10 guests allowed'),
   price: z.number().min(0, 'Price must be a positive number'),
+})
+
+const PeakSeasonRateSchema = z.object({
+  incrementType: z.string({
+    required_error: 'Increment type is required',
+  }),
+  amount: z.number().min(0, 'Price must be a positive number'),
 })
 
 const schema = z
@@ -60,14 +71,20 @@ const schema = z
         from: z.date().nullable(),
         to: z.date().nullable(),
       })
-      .nullable(),
+      .optional(),
     peakSeasonDates: z
       .object({
         from: z.date().nullable(),
         to: z.date().nullable(),
       })
-      .nullable(),
+      .optional(),
     rooms: z.array(roomSchema).optional(),
+    peakSeasonRate: z
+      .object({
+        incrementType: z.string(),
+        amount: z.number().min(0, 'Price must be a positive number'),
+      })
+      .nullable(),
   })
   .refine(
     (data) => {
@@ -75,6 +92,9 @@ const schema = z
         data.guestPlaceType === 'private_room' &&
         (!data.rooms || data.rooms.length === 0)
       ) {
+        return false
+      }
+      if (data.peakSeasonDates !== null) {
         return false
       }
       return true
@@ -90,6 +110,7 @@ type FormData = z.infer<typeof schema>
 const PropertyManagement = () => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
   const [editingRoom, setEditingRoom] = useState<RoomFormValues | null>(null)
+  const [isPeakSeasonPriceOpen, setIsPeakSeasonPriceOpen] = useState(false)
 
   const {
     register,
@@ -138,6 +159,13 @@ const PropertyManagement = () => {
       'rooms',
       currentRooms.filter((room) => room.id !== id)
     )
+  }
+
+  const handleSavePeakSeasonRate = (
+    peakSeasonRate: PeakSeasonRateFormValues
+  ) => {
+    setValue('peakSeasonRate', peakSeasonRate)
+    setIsPeakSeasonPriceOpen(false)
   }
 
   return (
@@ -238,9 +266,7 @@ const PropertyManagement = () => {
           {watch('guestPlaceType') === 'private_room' && (
             <div>
               <div className='flex gap-x-4 items-center'>
-                <h3 className='block text-sm font-medium mt-4'>
-                  Property room
-                </h3>
+                <h3 className='text-sm font-medium'>Property room</h3>
                 <Button type='button' onClick={() => setIsRoomDialogOpen(true)}>
                   Add Room
                 </Button>
@@ -249,7 +275,7 @@ const PropertyManagement = () => {
               {errors.rooms && (
                 <p className='text-red-500 mt-1'>{errors.rooms.message}</p>
               )}
-              <div className='mt-4 space-y-4'>
+              <div className='mt-1 mb-4 space-y-4'>
                 {watch('rooms')?.map((room) => (
                   <div
                     key={room.id}
@@ -351,6 +377,21 @@ const PropertyManagement = () => {
               />
             )}
           />
+          <div className='flex gap-x-4 items-center'>
+            <Button
+              type='button'
+              onClick={() => setIsPeakSeasonPriceOpen(true)}
+            >
+              Set Peak Season Price
+            </Button>
+            <h3>
+              Property and room price increase {watch('peakSeasonRate')?.amount}{' '}
+              {watch('peakSeasonRate')?.incrementType === 'percentage'
+                ? '%'
+                : ''}
+            </h3>
+          </div>
+
           <div className='mt-6 flex justify-end space-x-4'>
             <Button
               variant='cancel'
@@ -365,6 +406,11 @@ const PropertyManagement = () => {
           </div>
         </form>
       </div>
+      <PeakSeasonRate
+        open={isPeakSeasonPriceOpen}
+        onOpenChange={setIsPeakSeasonPriceOpen}
+        onSave={handleSavePeakSeasonRate}
+      />
       <RoomDialog
         open={isRoomDialogOpen}
         onOpenChange={setIsRoomDialogOpen}

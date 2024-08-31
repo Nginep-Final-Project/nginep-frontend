@@ -17,55 +17,34 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
+import Select from '@/components/Select'
+import { incrementType } from '@/utils/dummy'
 
-const roomSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, 'Room name is required'),
-  description: z.string().min(1, 'Room description is required'),
-  guests: z
-    .number()
-    .min(1, 'At least 1 guest is required')
-    .max(10, 'Maximum 10 guests allowed'),
-  price: z.number().min(0, 'Price must be a positive number'),
+const PeakSeasonRateSchema = z.object({
+  incrementType: z.string({
+    required_error: 'Increment type is required',
+  }),
+  amount: z.number().min(0, 'Price must be a positive number'),
 })
 
-export type RoomFormValues = z.infer<typeof roomSchema>
+export type PeakSeasonRateFormValues = z.infer<typeof PeakSeasonRateSchema>
 
-interface RoomDialogProps {
+interface PeakSeasonRateProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSave: (room: RoomFormValues) => void
-  initialRoom: RoomFormValues | null
+  onSave: (room: PeakSeasonRateFormValues) => void
 }
 
-const RoomDialog: React.FC<RoomDialogProps> = ({
+const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
   open,
   onOpenChange,
   onSave,
-  initialRoom,
 }) => {
-  const form = useForm<RoomFormValues>({
-    resolver: zodResolver(roomSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      guests: 1,
-    },
+  const form = useForm<PeakSeasonRateFormValues>({
+    resolver: zodResolver(PeakSeasonRateSchema),
   })
 
-  useEffect(() => {
-    if (initialRoom) {
-      form.reset(initialRoom)
-    } else {
-      form.reset({
-        name: '',
-        description: '',
-        guests: 1,
-      })
-    }
-  }, [initialRoom, form])
-
-  const onSubmit = (data: RoomFormValues) => {
+  const onSubmit = (data: PeakSeasonRateFormValues) => {
     onSave(data)
     form.reset()
   }
@@ -74,47 +53,28 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[425px] bg-white'>
         <DialogHeader>
-          <DialogTitle>{initialRoom ? 'Edit Room' : 'Add Room'}</DialogTitle>
+          <DialogTitle>Peak Season Rate</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name='name'
+              name='incrementType'
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder='Room name' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='description'
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder='Room description' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='guests'
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
+                    {/* <Input
                       type='number'
-                      placeholder='Number of guests'
+                      placeholder='Peak season rate'
                       {...field}
                       onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10) || 0)
+                        field.onChange(parseFloat(e.target.value) || 0)
                       }
+                    /> */}
+                    <Select
+                      options={incrementType}
+                      placeholder='Select increment type'
+                      onSelect={field.onChange}
                     />
                   </FormControl>
                   <FormMessage />
@@ -123,13 +83,13 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
             />
             <FormField
               control={form.control}
-              name='price'
+              name='amount'
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
                       type='number'
-                      placeholder='Room price'
+                      placeholder='Total amount for increment'
                       {...field}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value) || 0)
@@ -156,5 +116,4 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
     </Dialog>
   )
 }
-
-export default RoomDialog
+export default PeakSeasonRate
