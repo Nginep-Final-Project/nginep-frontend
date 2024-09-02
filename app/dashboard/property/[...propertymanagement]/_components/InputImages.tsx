@@ -86,6 +86,7 @@ const InputImages: React.FC<InputImagesProps> = ({ onImagesChange }) => {
                 alt=''
                 width={160}
                 height={240}
+                style={{ width: 'auto', height: 'auto' }}
                 className='h-60 w-full object-cover'
               />
               <div className='absolute top-0 right-0 p-2 hidden group-hover:flex space-x-2'>

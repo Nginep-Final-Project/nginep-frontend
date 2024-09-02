@@ -63,14 +63,6 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    {/* <Input
-                      type='number'
-                      placeholder='Peak season rate'
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value) || 0)
-                      }
-                    /> */}
                     <Select
                       options={incrementType}
                       placeholder='Select increment type'

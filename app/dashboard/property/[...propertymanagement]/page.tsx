@@ -20,6 +20,7 @@ import RoomDialog, { RoomFormValues } from './_components/RoomDialog'
 import PeakSeasonRate, {
   PeakSeasonRateFormValues,
 } from './_components/PeakSeasonRate'
+import AddressInput from './_components/AddressInput'
 
 const roomSchema = z.object({
   id: z.string().optional(),
@@ -30,13 +31,6 @@ const roomSchema = z.object({
     .min(1, 'At least 1 guest is required')
     .max(10, 'Maximum 10 guests allowed'),
   price: z.number().min(0, 'Price must be a positive number'),
-})
-
-const PeakSeasonRateSchema = z.object({
-  incrementType: z.string({
-    required_error: 'Increment type is required',
-  }),
-  amount: z.number().min(0, 'Price must be a positive number'),
 })
 
 const schema = z
@@ -55,7 +49,10 @@ const schema = z
         })
       )
       .min(1, 'Select at least one facility'),
-    propertyPrice: z.number(),
+    propertyPrice: z
+      .string()
+      .min(1, 'Property price is required')
+      .regex(/^[0-9]+$/, 'Only numbers are allowed'),
     guestPlaceType: z.string({
       required_error: 'Property type is required',
     }),
@@ -66,16 +63,18 @@ const schema = z
     propertyCity: z.string().min(1, 'Property city is required'),
     propertyProvince: z.string().min(1, 'Property province is required'),
     propertyPostalCode: z.string().min(1, 'Property postal code is required'),
+    propertyLatitude: z.string(),
+    propertyLongitude: z.string(),
     notAvailabilityDates: z
       .object({
-        from: z.date().nullable(),
-        to: z.date().nullable(),
+        from: z.date().optional(),
+        to: z.date().optional(),
       })
       .optional(),
     peakSeasonDates: z
       .object({
-        from: z.date().nullable(),
-        to: z.date().nullable(),
+        from: z.date().optional(),
+        to: z.date().optional(),
       })
       .optional(),
     rooms: z.array(roomSchema).optional(),
@@ -84,7 +83,7 @@ const schema = z
         incrementType: z.string(),
         amount: z.number().min(0, 'Price must be a positive number'),
       })
-      .nullable(),
+      .optional(),
   })
   .refine(
     (data) => {
@@ -94,14 +93,19 @@ const schema = z
       ) {
         return false
       }
-      if (data.peakSeasonDates !== null) {
-        return false
-      }
+      // Check if peakSeasonDates is filled, and enforce peakSeasonRate to be required
+      // if (
+      //   (data.peakSeasonDates?.from || data.peakSeasonDates?.to) &&
+      //   !data.peakSeasonRate
+      // ) {
+      //   return false
+      // }
       return true
     },
     {
-      message: 'At least one room is required for private room type',
-      path: ['rooms'],
+      message:
+        'At least one room is required for private room type, and peak season rate is required when peak season dates are filled.',
+      path: ['rooms', 'peakSeasonRate'],
     }
   )
 
@@ -166,6 +170,17 @@ const PropertyManagement = () => {
   ) => {
     setValue('peakSeasonRate', peakSeasonRate)
     setIsPeakSeasonPriceOpen(false)
+  }
+
+  const handleAddressChange = (
+    addressData: FormData & { latitude: string; longitude: string }
+  ) => {
+    setValue('propertyAddress', addressData.propertyAddress)
+    setValue('propertyCity', addressData.propertyCity)
+    setValue('propertyProvince', addressData.propertyProvince)
+    setValue('propertyPostalCode', addressData.propertyPostalCode)
+    setValue('propertyLatitude', addressData.latitude)
+    setValue('propertyLongitude', addressData.longitude)
   }
 
   return (
@@ -256,9 +271,9 @@ const PropertyManagement = () => {
           />
           {watch('guestPlaceType') === 'entire_place' && (
             <Input
-              name='propertyDescription'
+              name='propertyPrice'
               label='Property price'
-              type='number'
+              type='text'
               register={register}
               errors={errors}
             />
@@ -315,34 +330,7 @@ const PropertyManagement = () => {
               </div>
             </div>
           )}
-          <Input
-            name='propertyAddress'
-            label='Property Address'
-            type='text'
-            register={register}
-            errors={errors}
-          />
-          <Input
-            name='propertyCity'
-            label='Property City'
-            type='text'
-            register={register}
-            errors={errors}
-          />
-          <Input
-            name='propertyProvince'
-            label='Property Province'
-            type='text'
-            register={register}
-            errors={errors}
-          />
-          <Input
-            name='propertyPostalCode'
-            label='Property postal code'
-            type='text'
-            register={register}
-            errors={errors}
-          />
+          <AddressInput onAddressChange={handleAddressChange} />
           <Controller
             name='notAvailabilityDates'
             control={control}
