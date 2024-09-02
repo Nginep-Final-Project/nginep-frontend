@@ -50,6 +50,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
       name: '',
       description: '',
       guests: 1,
+      price: 0,
     },
   })
 
@@ -131,6 +132,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                       type='number'
                       placeholder='Room price'
                       {...field}
+                      value={field.value || 0}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value) || 0)
                       }

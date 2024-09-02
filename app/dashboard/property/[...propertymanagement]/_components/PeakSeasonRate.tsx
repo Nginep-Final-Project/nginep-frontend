@@ -42,6 +42,10 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
 }) => {
   const form = useForm<PeakSeasonRateFormValues>({
     resolver: zodResolver(PeakSeasonRateSchema),
+    defaultValues: {
+      incrementType: '',
+      amount: 0,
+    },
   })
 
   const onSubmit = (data: PeakSeasonRateFormValues) => {
@@ -83,6 +87,7 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
                       type='number'
                       placeholder='Total amount for increment'
                       {...field}
+                      value={field.value || 0}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value) || 0)
                       }

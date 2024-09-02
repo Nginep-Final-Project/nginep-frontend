@@ -15,13 +15,21 @@ import {
   propertyFacilities,
 } from '@/utils/dummy'
 import InputImages from './_components/InputImages'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import RoomDialog, { RoomFormValues } from './_components/RoomDialog'
 import PeakSeasonRate, {
   PeakSeasonRateFormValues,
 } from './_components/PeakSeasonRate'
 import AddressInput from './_components/AddressInput'
+import AddressSuggestion from './_components/AddressSuggestion'
+import dynamic from 'next/dynamic'
+import { LatLngExpression } from 'leaflet'
+import { useDebounce } from 'use-debounce'
+import { toast } from '@/components/ui/use-toast'
 
+const MapWithNoSSR = dynamic(() => import('@/components/MapLeaflet'), {
+  ssr: false,
+})
 const roomSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, 'Room name is required'),
@@ -33,81 +41,73 @@ const roomSchema = z.object({
   price: z.number().min(0, 'Price must be a positive number'),
 })
 
-const schema = z
-  .object({
-    propertyName: z.string().min(1, 'Property name is required'),
-    propertyCategory: z.string({
-      required_error: 'Property category is required',
-    }),
-    propertyDescription: z
-      .string()
-      .min(10, 'Description must be at least 10 characters'),
-    propertyFacilities: z
-      .array(
-        z.string({
-          required_error: 'Property category is required',
-        })
-      )
-      .min(1, 'Select at least one facility'),
-    propertyPrice: z
-      .string()
-      .min(1, 'Property price is required')
-      .regex(/^[0-9]+$/, 'Only numbers are allowed'),
-    guestPlaceType: z.string({
-      required_error: 'Property type is required',
-    }),
-    propertyImages: z
-      .array(z.instanceof(File))
-      .min(1, 'At least one image is required'),
-    propertyAddress: z.string().min(1, 'Property address is required'),
-    propertyCity: z.string().min(1, 'Property city is required'),
-    propertyProvince: z.string().min(1, 'Property province is required'),
-    propertyPostalCode: z.string().min(1, 'Property postal code is required'),
-    propertyLatitude: z.string(),
-    propertyLongitude: z.string(),
-    notAvailabilityDates: z
-      .object({
-        from: z.date().optional(),
-        to: z.date().optional(),
+const schema = z.object({
+  propertyName: z.string().min(1, 'Property name is required'),
+  propertyCategory: z.string({
+    required_error: 'Property category is required',
+  }),
+  propertyDescription: z
+    .string()
+    .min(10, 'Description must be at least 10 characters'),
+  propertyFacilities: z
+    .array(
+      z.string({
+        required_error: 'Property category is required',
       })
-      .optional(),
-    peakSeasonDates: z
-      .object({
-        from: z.date().optional(),
-        to: z.date().optional(),
-      })
-      .optional(),
-    rooms: z.array(roomSchema).optional(),
-    peakSeasonRate: z
-      .object({
-        incrementType: z.string(),
-        amount: z.number().min(0, 'Price must be a positive number'),
-      })
-      .optional(),
-  })
-  .refine(
-    (data) => {
-      if (
-        data.guestPlaceType === 'private_room' &&
-        (!data.rooms || data.rooms.length === 0)
-      ) {
-        return false
-      }
-      // Check if peakSeasonDates is filled, and enforce peakSeasonRate to be required
-      // if (
-      //   (data.peakSeasonDates?.from || data.peakSeasonDates?.to) &&
-      //   !data.peakSeasonRate
-      // ) {
-      //   return false
-      // }
-      return true
-    },
-    {
-      message:
-        'At least one room is required for private room type, and peak season rate is required when peak season dates are filled.',
-      path: ['rooms', 'peakSeasonRate'],
-    }
-  )
+    )
+    .min(1, 'Select at least one facility'),
+  propertyPrice: z
+    .string()
+    .min(1, 'Property price is required')
+    .regex(/^[0-9]+$/, 'Only numbers are allowed'),
+  guestPlaceType: z.string({
+    required_error: 'Property type is required',
+  }),
+  propertyImages: z
+    .array(z.instanceof(File))
+    .min(1, 'At least one image is required'),
+  propertyAddress: z.string().min(1, 'Property address is required'),
+  propertyCity: z.string().min(1, 'Property city is required'),
+  propertyProvince: z.string().min(1, 'Property province is required'),
+  propertyPostalCode: z.string().min(1, 'Property postal code is required'),
+  propertyLatitude: z.string(),
+  propertyLongitude: z.string(),
+  notAvailabilityDates: z
+    .object({
+      from: z.date().optional(),
+      to: z.date().optional(),
+    })
+    .optional(),
+  peakSeasonDates: z
+    .object({
+      from: z.date().optional(),
+      to: z.date().optional(),
+    })
+    .optional(),
+  rooms: z.array(roomSchema).optional(),
+  peakSeasonRate: z
+    .object({
+      incrementType: z.string(),
+      amount: z.number().min(0, 'Price must be a positive number'),
+    })
+    .optional(),
+})
+// .refine(
+//   (data) => {
+//     if (
+//       data.guestPlaceType === 'private_room' &&
+//       (!data.rooms || data.rooms.length === 0)
+//     ) {
+//       return false
+//     }
+//     return true
+//   },
+//   {
+//     message:
+//       'At least one room is required for private room type, and peak season rate is required when peak season dates are filled.',
+//     path: ['rooms'],
+//   }
+// )
 
 type FormData = z.infer<typeof schema>
 
@@ -115,7 +115,11 @@ const PropertyManagement = () => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
   const [editingRoom, setEditingRoom] = useState<RoomFormValues | null>(null)
   const [isPeakSeasonPriceOpen, setIsPeakSeasonPriceOpen] = useState(false)
-
+  const [position, setPosition] = useState<LatLngExpression>([51.505, -0.09])
+  const [addressSuggestions, setAddressSuggestions] = useState<
+    AddressSuggestion[]
+  >([])
+  const [loading, setLoading] = useState(false)
   const {
     register,
     handleSubmit,
@@ -127,10 +131,12 @@ const PropertyManagement = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+  const addressWatch = watch('propertyAddress')
+  const [debouncedAddress] = useDebounce(addressWatch, 1000)
 
   const onSubmit = (data: FormData) => {
     console.log(data)
-    reset()
+    // reset()
   }
 
   const handleSaveRoom = (room: RoomFormValues) => {
@@ -172,17 +178,34 @@ const PropertyManagement = () => {
     setIsPeakSeasonPriceOpen(false)
   }
 
-  const handleAddressChange = (
-    addressData: FormData & { latitude: string; longitude: string }
-  ) => {
-    setValue('propertyAddress', addressData.propertyAddress)
-    setValue('propertyCity', addressData.propertyCity)
-    setValue('propertyProvince', addressData.propertyProvince)
-    setValue('propertyPostalCode', addressData.propertyPostalCode)
-    setValue('propertyLatitude', addressData.latitude)
-    setValue('propertyLongitude', addressData.longitude)
+  const fetchAddressSuggestions = async (query: string | undefined) => {
+    setLoading(true)
+    if (query && query.length > 3) {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}`
+      )
+      const data: AddressSuggestion[] = await response.json()
+      setAddressSuggestions(data)
+    }
+    setLoading(false)
   }
 
+  const handleSuggestionClick = (suggestion: AddressSuggestion) => {
+    const { lat, lon, display_name } = suggestion
+    setValue('propertyAddress', display_name)
+    const newPosition: LatLngExpression = [parseFloat(lat), parseFloat(lon)]
+    setPosition(newPosition)
+    setAddressSuggestions([])
+
+    setValue('propertyLatitude', lat)
+    setValue('propertyLongitude', lon)
+  }
+
+  useEffect(() => {
+    fetchAddressSuggestions(debouncedAddress)
+  }, [debouncedAddress])
   return (
     <div>
       <div>
@@ -330,7 +353,58 @@ const PropertyManagement = () => {
               </div>
             </div>
           )}
-          <AddressInput onAddressChange={handleAddressChange} />
+
+          <Input
+            name='propertyCity'
+            label='Property City'
+            type='text'
+            register={register}
+            errors={errors}
+          />
+          <Input
+            name='propertyProvince'
+            label='Property Province'
+            type='text'
+            register={register}
+            errors={errors}
+          />
+          <Input
+            name='propertyPostalCode'
+            label='Property Postal Code'
+            type='text'
+            register={register}
+            errors={errors}
+          />
+          <Input
+            name='propertyAddress'
+            label='Property Address'
+            type='text'
+            register={register}
+            errors={errors}
+          />
+          {loading ? (
+            <div>loading...</div>
+          ) : (
+            addressSuggestions.length > 0 && (
+              <AddressSuggestion
+                suggestions={addressSuggestions}
+                onSelect={handleSuggestionClick}
+              />
+            )
+          )}
+
+          <div className='mb-4 -z-50'>
+            <label className='text-sm font-medium mb-2'>
+              Pin property location
+            </label>
+            <div className='h-96 w-1/2'>
+              <MapWithNoSSR
+                position={position}
+                onLocationChange={setPosition}
+              />
+            </div>
+          </div>
+
           <Controller
             name='notAvailabilityDates'
             control={control}
@@ -365,20 +439,24 @@ const PropertyManagement = () => {
               />
             )}
           />
-          <div className='flex gap-x-4 items-center'>
-            <Button
-              type='button'
-              onClick={() => setIsPeakSeasonPriceOpen(true)}
-            >
-              Set Peak Season Price
-            </Button>
-            <h3>
-              Property and room price increase {watch('peakSeasonRate')?.amount}{' '}
-              {watch('peakSeasonRate')?.incrementType === 'percentage'
-                ? '%'
-                : ''}
-            </h3>
-          </div>
+          {watch('peakSeasonDates') && (
+            <div className='flex gap-x-4 items-center'>
+              <Button
+                type='button'
+                onClick={() => setIsPeakSeasonPriceOpen(true)}
+              >
+                Set Peak Season Price
+              </Button>
+              <h3>
+                Property and room price increase{' '}
+                {watch('peakSeasonRate')?.amount}{' '}
+                {watch('peakSeasonRate')?.incrementType === 'percentage'
+                  ? '%'
+                  : ''}
+              </h3>
+              {errors.peakSeasonRate?.message}
+            </div>
+          )}
 
           <div className='mt-6 flex justify-end space-x-4'>
             <Button
