@@ -17,7 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_HOSTNAME_API}${process.env.NEXT_PUBLIC_PREFIX_API}/auth/login`,
+            `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/auth/login`,
             {
               method: 'POST',
               headers: {
@@ -71,10 +71,49 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized: async ({ auth }) => {
       return !!auth
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.role = user.role
         token.accessToken = user.token
+      }
+      if (account) {
+        if (account.provider === 'google') {
+          // For Google sign-in, we need to make a request to our backend
+
+          try {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/auth/google-login`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  idToken: account.id_token,
+                }),
+              }
+            )
+
+            if (!response.ok) {
+              throw new Error('Google authentication failed')
+            }
+            const data = await response.json()
+            token.accessToken = data.data.token
+            token.role = data.data.user.role
+            token.id = data.data.user.id.toString()
+
+            // Set the cookie
+            const cookieStore = cookies()
+            cookieStore.set('sid', data.data.token, {
+              maxAge: 24 * 60 * 60,
+            })
+          } catch (error) {
+            console.error('Google authentication error:', error)
+          }
+        } else if (account.provider === 'credentials') {
+          // For credentials sign-in, we already have the token
+          token.accessToken = user.token
+        }
       }
       return token
     },
