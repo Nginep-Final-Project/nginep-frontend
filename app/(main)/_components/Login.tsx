@@ -11,7 +11,8 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
+import { emailSignIn } from '@/app/actions'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -34,8 +35,9 @@ const Login: React.FC<{
     resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    emailSignIn(data)
     reset()
     setIsLogin(false)
   }

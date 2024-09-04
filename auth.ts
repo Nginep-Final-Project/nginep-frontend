@@ -44,7 +44,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: data.data.user.email,
             role: data.data.user.role,
             profilePicture: data.data.user.profilePicture,
-            name: data.data.user.name,
+            name: data.data.user.fullName,
             phoneNumber: data.data.user.phoneNumber,
             token: data.data.token,
           }
@@ -75,11 +75,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.role = user.role
         token.accessToken = user.token
+        token.name = user.name!
+        token.picture = user.image
       }
       if (account) {
         if (account.provider === 'google') {
-          // For Google sign-in, we need to make a request to our backend
-
           try {
             const response = await fetch(
               `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/auth/google-login`,
@@ -102,7 +102,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.role = data.data.user.role
             token.id = data.data.user.id.toString()
 
-            // Set the cookie
             const cookieStore = cookies()
             cookieStore.set('sid', data.data.token, {
               maxAge: 24 * 60 * 60,
@@ -111,7 +110,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             console.error('Google authentication error:', error)
           }
         } else if (account.provider === 'credentials') {
-          // For credentials sign-in, we already have the token
           token.accessToken = user.token
         }
       }
@@ -121,6 +119,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user && token.role) {
         session.user.role = token.role
         session.user.accessToken = token.accessToken
+        session.user.name = token.name!
+        session.user.image = token.picture!
       }
       return session
     },
