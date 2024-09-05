@@ -10,12 +10,11 @@ export async function googleSignUp() {
 
 export async function emailSignIn(data: { email: string; password: string }) {
   console.log('email sign in')
-  await signIn('credentials', data)
+  await signIn('credentials', data, { redirectTo: '/' })
 }
 
 export async function logout() {
   try {
-    await signOut()
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/auth/logout`,
       {
@@ -26,12 +25,12 @@ export async function logout() {
         credentials: 'include',
       }
     )
-    console.log(response)
+    console.log(response.body)
     if (!response.ok) {
       throw new Error('Logout failed')
     }
     const data = await response.json()
-    await signOut()
+    await signOut({ redirect: false })
     toast({
       title: data.message,
     })

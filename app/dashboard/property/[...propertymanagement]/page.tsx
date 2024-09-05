@@ -28,6 +28,7 @@ import { useDebounce } from 'use-debounce'
 import { toast } from '@/components/ui/use-toast'
 
 const MapWithNoSSR = dynamic(() => import('@/components/MapLeaflet'), {
+  loading: () => <p>Loading...</p>,
   ssr: false,
 })
 const roomSchema = z.object({

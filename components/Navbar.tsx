@@ -15,6 +15,7 @@ import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
 import SignupStepTwo from '@/app/(main)/_components/SignupStepTwo'
 import EmailVerification from '@/app/(main)/_components/EmailVerification'
 import { logout } from '@/app/actions'
+import { useSession } from 'next-auth/react'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -23,6 +24,9 @@ const Navbar = () => {
   const [isSignup, setIsSignup] = useState(false)
   const [isSignupStepTwo, setIsSignupStepTwo] = useState(false)
   const [isEmailVerification, setIsEmailVerification] = useState(false)
+
+  const session = useSession()
+  console.log(session.data?.user.accessToken)
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
@@ -64,27 +68,36 @@ const Navbar = () => {
 
               <Menu size={40} className='md:hidden px-2' />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='border-secondary'>
-              <DropdownMenuItem
-                onSelect={() => setIsLogin(!isLogin)}
-                className='font-semibold'
-              >
-                Log in
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setIsSignup(!isSignup)}>
-                Sign up
-              </DropdownMenuItem>
-              <DropdownMenuItem className='font-semibold'>
-                Trips
-              </DropdownMenuItem>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={async () => {
-                  logout()
-                }}
-              >
-                Log out
-              </DropdownMenuItem>
+            <DropdownMenuContent className='border-secondary bg-white'>
+              {!session.data?.user.accessToken && (
+                <>
+                  <DropdownMenuItem
+                    onSelect={() => setIsLogin(!isLogin)}
+                    className='font-semibold'
+                  >
+                    Log in
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setIsSignup(!isSignup)}>
+                    Sign up
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              {session.data?.user.accessToken && (
+                <>
+                  <DropdownMenuItem className='font-semibold'>
+                    Trips
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={async () => {
+                      logout()
+                    }}
+                  >
+                    Log out
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

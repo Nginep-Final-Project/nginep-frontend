@@ -1,9 +1,7 @@
 import { auth } from '@/auth'
 import Hero from './_components/Hero'
 
-const Home = async () => {
-  const session = await auth()
-  console.log(session?.user.name)
+const Home = () => {
   return (
     <div>
       <Hero />
