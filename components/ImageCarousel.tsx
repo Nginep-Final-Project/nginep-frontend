@@ -8,10 +8,12 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from './ui/carousel'
+import Image from 'next/image'
 
-const ImageCarousel: React.FC<{ showNavigation?: boolean }> = ({
-  showNavigation,
-}) => {
+const ImageCarousel: React.FC<{
+  showNavigation?: boolean
+  imageSrc: string[]
+}> = ({ showNavigation, imageSrc = [] }) => {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
@@ -33,11 +35,16 @@ const ImageCarousel: React.FC<{ showNavigation?: boolean }> = ({
     <div className='w-full md:w-3/4 relative'>
       <Carousel setApi={setApi}>
         <CarouselContent>
-          {Array.from({ length: 5 }).map((_, index) => (
+          {imageSrc.map((_, index) => (
             <CarouselItem key={index}>
-              <div className='p-1 h-40 md:h-60 w-full border border-white text-white rounded-md'>
-                {index + 1}
-              </div>
+              <Image
+                src={imageSrc[index]}
+                alt={imageSrc[index]}
+                width={315}
+                height={320}
+                style={{ width: 'auto', height: 'auto' }}
+                className='object-cover'
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -49,13 +56,13 @@ const ImageCarousel: React.FC<{ showNavigation?: boolean }> = ({
         )}
       </Carousel>
       <div className='absolute flex items-center gap-x-1 bottom-2 left-1/2 -translate-x-1/2 text-center text-sm text-muted-foreground'>
-        {Array.from({ length: count }).map((_, index) => {
+        {imageSrc.map((_, index) => {
           return (
             <div
               key={index}
               className={`rounded-full ${
                 current - 1 === index
-                  ? 'bg-white h-2 w-2 '
+                  ? 'bg-grey-text h-2 w-2 '
                   : 'bg-secondary h-1 w-1'
               }`}
             />

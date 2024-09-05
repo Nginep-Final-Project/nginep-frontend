@@ -1,4 +1,5 @@
 import ImageCarousel from '@/components/ImageCarousel'
+import { propertyList } from '@/utils/dummy'
 
 const Hero = () => {
   return (
@@ -12,7 +13,10 @@ const Hero = () => {
         </p>
       </div>
       <div className='md:w-1/2 flex justify-center'>
-        <ImageCarousel showNavigation={true} />
+        <ImageCarousel
+          showNavigation={true}
+          imageSrc={propertyList[0].imageSrc}
+        />
       </div>
     </div>
   )
