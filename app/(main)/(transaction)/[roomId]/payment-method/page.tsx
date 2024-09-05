@@ -5,21 +5,30 @@ import { useParams } from "next/navigation";
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
 import useBookingData from "@/hooks/useBookingData";
 import TransactionLayout from "../_components/TransactionLayout/TransactionLayout";
-import PaymentMethods from "./_components/PaymentMethods/PaymentMethods";
+import PaymentOptions from "./_components/PaymentOptions/PaymentOptions";
 
 const PaymentMethod = () => {
   const params = useParams();
   const roomId = params.roomId as string;
   const { bookingData, updateBookingData } = useBookingData(roomId);
 
-  const handleMethodSelect = (methodId: string) => {
+  const handleMethodSelect = (
+    methodId: string,
+    specificPaymentMethod?: string
+  ) => {
     updateBookingData("paymentMethod", methodId);
+    if (specificPaymentMethod !== undefined) {
+      updateBookingData("specificPaymentMethod", specificPaymentMethod);
+    } else {
+      updateBookingData("specificPaymentMethod", "");
+    }
   };
 
   return (
     <TransactionLayout title="Select Payment Method">
-      <PaymentMethods
+      <PaymentOptions
         selectedMethod={bookingData.paymentMethod}
+        selectedSpecificMethod={bookingData.specificPaymentMethod}
         onMethodSelect={handleMethodSelect}
       />
       <PriceSummary

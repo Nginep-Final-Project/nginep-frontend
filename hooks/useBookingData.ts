@@ -9,6 +9,8 @@ const useBookingData = (roomId?: string) => {
     checkOut: localStorage.getItem(`checkOut_${roomId}`) || "",
     message: localStorage.getItem(`messageToHost_${roomId}`) || "",
     paymentMethod: localStorage.getItem(`paymentMethod_${roomId}`) || "",
+    specificPaymentMethod:
+      localStorage.getItem(`specificPaymentMethod_${roomId}`) || "",
   }));
 
   const updateBookingData = useCallback(
@@ -34,6 +36,8 @@ const useBookingData = (roomId?: string) => {
         checkOut: localStorage.getItem(`checkOut_${roomId}`) || "",
         message: localStorage.getItem(`messageToHost_${roomId}`) || "",
         paymentMethod: localStorage.getItem(`paymentMethod_${roomId}`) || "",
+        specificPaymentMethod:
+          localStorage.getItem(`specificPaymentMethod_${roomId}`) || "",
       });
     };
 

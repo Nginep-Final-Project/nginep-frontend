@@ -1,4 +1,5 @@
 import React from "react";
+import { automaticPaymentOptions } from "@/data/paymentOptions";
 
 interface PaymentInformationProps {
   selectedMethod: string | undefined;
@@ -35,17 +36,9 @@ const PaymentInformation: React.FC<PaymentInformationProps> = ({
       </div>
     );
   } else if (selectedMethod === "automatic_payment") {
-    const paymentOptions = [
-      "Virtual Account",
-      "Credit/Debit Card",
-      "QRIS",
-      "GoPay",
-      "ShopeePay",
-      "Indomaret",
-      "Alfa Group",
-      "Akulaku PayLater",
-      "Kredivo",
-    ];
+    const paymentOptions = automaticPaymentOptions.flatMap((category) =>
+      category.methods.map((method) => method.name)
+    );
 
     return (
       <div className="mt-4 p-4 border border-gray-200 rounded-lg">
@@ -53,18 +46,8 @@ const PaymentInformation: React.FC<PaymentInformationProps> = ({
           Automatic Payment Information
         </h3>
         <p className="mb-2">
-          You will be redirected to our secure payment gateway to complete your
-          payment.
+          Choose your automatic payment option, and on the next page you will be requested to perform the payment accordingly.
         </p>
-        <p className="mb-2">The following payment options are available:</p>
-        <ul className="grid grid-cols-2 gap-2">
-          {paymentOptions.map((option, index) => (
-            <li key={index} className="flex items-center">
-              <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
-              {option}
-            </li>
-          ))}
-        </ul>
       </div>
     );
   }

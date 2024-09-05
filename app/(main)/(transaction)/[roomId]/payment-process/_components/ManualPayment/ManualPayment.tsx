@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Upload, AlertCircle } from "lucide-react";
 import useBookingData from "@/hooks/useBookingData";
 
-const PAYMENT_TIMEOUT = 3600000; // 1 hour in milliseconds
-
 const ManualTransferPayment: React.FC<{
   roomId: string;
   basePrice: number;
@@ -19,8 +17,6 @@ const ManualTransferPayment: React.FC<{
     const seconds = totalSeconds % 60;
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
-
-  //Setup the time remaining from the backend and countdown here with useeffect
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];

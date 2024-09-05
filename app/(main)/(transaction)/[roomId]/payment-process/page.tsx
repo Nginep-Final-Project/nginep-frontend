@@ -5,6 +5,7 @@ import TransactionLayout from "../_components/TransactionLayout/TransactionLayou
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
 import useBookingData from "@/hooks/useBookingData";
 import ManualPayment from "./_components/ManualPayment/ManualPayment";
+import AutomaticPayment from "./_components/AutomaticPayment/AutomaticPayment";
 
 const PaymentProcess = () => {
   const params = useParams();
@@ -16,7 +17,7 @@ const PaymentProcess = () => {
       {bookingData.paymentMethod === "manual_payment" ? (
         <ManualPayment roomId={roomId} basePrice={100} />
       ) : (
-        <div>Automatic Payment Process (To be implemented)</div>
+        <AutomaticPayment roomId={roomId} basePrice={100} />
       )}
       <PriceSummary
         roomId={roomId}

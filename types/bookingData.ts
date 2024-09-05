@@ -4,4 +4,5 @@ export interface BookingData {
   checkOut: string;
   message: string;
   paymentMethod: string;
+  specificPaymentMethod?: string;
 }

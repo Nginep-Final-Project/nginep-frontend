@@ -63,25 +63,33 @@ const Dates: React.FC<DatesProps> = ({ checkIn, checkOut, onChange }) => {
       <div className="flex justify-between items-center border rounded-lg p-4 mb-4">
         <div className="flex-1 border-r pr-4">
           <p className="text-sm text-gray-500 mb-1">Check-in</p>
-          <p className="text-lg font-semibold lg:hidden">
-            {formatDate(checkIn)}
-          </p>
-          <p className="text-lg font-semibold hidden lg:block">
-            {formatLongDate(checkIn)}
-          </p>
+          <div onClick={() => setShowCalendar(true)} className="cursor-pointer">
+            <p className="text-lg font-semibold lg:hidden">
+              {formatDate(checkIn)}
+            </p>
+            <p className="text-lg font-semibold hidden lg:block">
+              {formatLongDate(checkIn)}
+            </p>
+          </div>
         </div>
         <div className="flex-1 pl-4">
           <p className="text-sm text-gray-500 mb-1">Check-out</p>
-          <p className="text-lg font-semibold lg:hidden">
-            {formatDate(checkOut)}
-          </p>
-          <p className="text-lg font-semibold hidden lg:block">
-            {formatLongDate(checkOut)}
-          </p>
+          <div onClick={() => setShowCalendar(true)} className="cursor-pointer">
+            <p className="text-lg font-semibold lg:hidden">
+              {formatDate(checkOut)}
+            </p>
+            <p className="text-lg font-semibold hidden lg:block">
+              {formatLongDate(checkOut)}
+            </p>
+          </div>
         </div>
       </div>
 
-      <Button type="button" onClick={() => setShowCalendar(true)}>
+      <Button
+        type="button"
+        onClick={() => setShowCalendar(true)}
+        className="max-w-[200px] mx-auto flex justify-center items-center"
+      >
         {checkIn && checkOut ? "Edit Dates" : "Select Dates"}
       </Button>
 
