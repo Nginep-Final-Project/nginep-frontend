@@ -28,9 +28,9 @@ const DatePicker: React.FC<CalenderProps> = ({
     if (!range) return placeholder
     if (range.from) {
       if (range.to) {
-        return `${format(range.from, 'PPP')} - ${format(range.to, 'PPP')}`
+        return `${format(range.from, 'P')} - ${format(range.to, 'P')}`
       }
-      return `${format(range.from, 'PPP')} - ...`
+      return `${format(range.from, 'P')} - ...`
     }
     return placeholder
   }
@@ -42,11 +42,11 @@ const DatePicker: React.FC<CalenderProps> = ({
           variant={'outline'}
           className={cn(
             'w-full pl-3 text-left font-normal',
-            !value && 'text-muted-foreground',
+            !value && 'text-primary-text',
             className
           )}
         >
-          {formatDateRange(value)}
+          <div className='w-3/4 line-clamp-2'>{formatDateRange(value)}</div>
           <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
         </Button>
       </PopoverTrigger>

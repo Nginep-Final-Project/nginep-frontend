@@ -36,7 +36,10 @@ const ImageCarousel: React.FC<{
       <Carousel setApi={setApi}>
         <CarouselContent>
           {imageSrc.map((_, index) => (
-            <CarouselItem key={index}>
+            <CarouselItem
+              key={index}
+              className='items-center justify-center flex'
+            >
               <Image
                 src={imageSrc[index]}
                 alt={imageSrc[index]}

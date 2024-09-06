@@ -118,11 +118,11 @@ const Select: React.FC<SelectProps> = ({
             className
           )}
         >
-          <div className='flex flex-wrap'>{getDisplayValue()}</div>
+          <div className='flex w-3/4 line-clamp-1'>{getDisplayValue()}</div>
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-screen max-w-[var(--radix-popover-trigger-width)] p-0'>
+      <PopoverContent className='w-screen max-w-[var(--radix-popover-trigger-width)] p-0 border-secondary'>
         <Command className='bg-white w-full'>
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
