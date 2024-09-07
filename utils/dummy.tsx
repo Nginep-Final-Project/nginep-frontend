@@ -72,6 +72,11 @@ export const guestPlaceTypes = [
   { value: 'private_room', label: 'A room' },
 ]
 
+export const gender = [
+  { value: 'female', label: 'Female' },
+  { value: 'male', label: 'Male' },
+]
+
 export const incrementType = [
   { value: 'percentage', label: '%: add price by percentage' },
   { value: 'amount', label: 'Amount: add price by adding amount' },
