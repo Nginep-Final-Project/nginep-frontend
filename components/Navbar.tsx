@@ -26,7 +26,7 @@ const Navbar = () => {
   const [isEmailVerification, setIsEmailVerification] = useState(false)
 
   const session = useSession()
-  console.log(session.data?.user.accessToken)
+  console.log(session.data?.user.role)
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
