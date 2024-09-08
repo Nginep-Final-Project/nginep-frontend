@@ -1,16 +1,9 @@
 'use client'
 import RenderField from '@/app/dashboard/property/[...propertymanagement]/_components/RenderField'
-import ControllerField from '@/components/ControllerField'
 import Input from '@/components/Input'
 import Select from '@/components/Select'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { gender } from '@/utils/dummy'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
@@ -39,6 +32,10 @@ const PersonalData = () => {
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(PersonalDataSchema),
+    defaultValues: {
+      name: 'yosef',
+      gender: 'male',
+    },
   })
 
   const onSubmit = (data: FormData) => {
@@ -46,17 +43,12 @@ const PersonalData = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Personal Data</CardTitle>
+    <Card className='border-secondary'>
+      <CardHeader className='border-b border-secondary p-4'>
+        <CardTitle className='text-base md:text-xl'>Personal Data</CardTitle>
       </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={handleSubmit((data) => {
-            console.log('Form is being submitted') // Check this first
-            onSubmit(data)
-          })}
-        >
+      <CardContent className='py-4'>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className='grid w-full items-center gap-4'>
             <Input
               name='name'
