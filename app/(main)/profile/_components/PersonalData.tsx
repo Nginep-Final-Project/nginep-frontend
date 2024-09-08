@@ -35,6 +35,8 @@ const PersonalData = () => {
     defaultValues: {
       name: 'yosef',
       gender: 'male',
+      dateOfBirth: '',
+      phone: '',
     },
   })
 

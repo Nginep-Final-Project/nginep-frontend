@@ -1,3 +1,4 @@
+import AboutYourself from './_components/AboutYourself'
 import ChangePassword from './_components/ChangePassword'
 import Email from './_components/Email'
 import PersonalData from './_components/PersonalData'
@@ -11,6 +12,7 @@ const Profile = () => {
         <PersonalData />
         <Email initialEmail='yosef@example.com' isVerified={true} />
         <ChangePassword />
+        <AboutYourself initialValue={''} />
       </div>
     </div>
   )
