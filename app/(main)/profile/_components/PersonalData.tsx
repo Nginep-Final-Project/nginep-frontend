@@ -49,7 +49,7 @@ const PersonalData = () => {
       </CardHeader>
       <CardContent className='py-4'>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className='grid w-full items-center gap-4'>
+          <div className='grid w-full items-center'>
             <Input
               name='name'
               label='Full name'

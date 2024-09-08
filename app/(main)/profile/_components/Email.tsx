@@ -55,7 +55,7 @@ const Email: React.FC<EmailProps> = ({ initialEmail, isVerified }) => {
         </CardHeader>
         <CardContent className='py-4'>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className='grid w-full gap-4'>
+            <div className='grid w-full'>
               {!isVerified ? (
                 <Button
                   variant='link'
