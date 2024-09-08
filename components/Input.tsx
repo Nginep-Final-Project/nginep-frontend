@@ -19,6 +19,7 @@ interface InputProps<TFieldValues extends FieldValues> {
     | 'checkbox'
     | 'textarea'
     | 'date'
+    | 'time'
   register: UseFormRegister<TFieldValues>
   errors: FieldErrors<TFieldValues>
   options?: { value: string; label: string }[]

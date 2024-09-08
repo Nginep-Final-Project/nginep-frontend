@@ -3,6 +3,7 @@ import BankAccount from './_components/BankAccount'
 import ChangePassword from './_components/ChangePassword'
 import Email from './_components/Email'
 import PersonalData from './_components/PersonalData'
+import PropertyRules from './_components/PropertyRules'
 
 const Profile = () => {
   return (
@@ -15,6 +16,11 @@ const Profile = () => {
         <ChangePassword />
         <AboutYourself initialValue={''} />
         <BankAccount initBankName={''} initAccNumber={''} initHolderName={''} />
+        <PropertyRules
+          initCheckin={''}
+          initCheckout={''}
+          initCancelPolicy={''}
+        />
       </div>
     </div>
   )
