@@ -41,7 +41,7 @@ const Bookings: React.FC = () => {
           title="Cancelled"
           bookings={getCancelledBookings(bookings)}
         />
-        <div className="absolute bottom-10 left-0 right-0 h-[2px] bg-primary"></div>
+        <div className="absolute bottom-10 left-0 right-0 mx-10 h-[2px] bg-primary"></div>
       </div>
     </div>
   );
