@@ -90,7 +90,7 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
   }
 
   return (
-    <div className='flex flex-col items-center space-y-4 p-4 bg-white rounded-lg border-secondary shadow'>
+    <div className='flex flex-col items-center space-y-4 p-4 bg-white rounded-lg border-secondary  shadow'>
       <div className='relative'>
         <Image
           src={avatar}
