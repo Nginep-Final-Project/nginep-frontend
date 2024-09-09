@@ -3,28 +3,51 @@ import { CreditCard, Wallet } from "lucide-react";
 import WarningModal from "../../../_components/Modal/WarningModal";
 import useWarningModal from "@/hooks/useWarningModal";
 import ValidatedNavigation from "../../../_components/Navigation/ValidatedNavigation";
-import PaymentInformation from "./PaymentInformation";
 import Button from "../../../_components/Button/Button";
+import AutomaticPaymentOptions from "../AutomaticPaymentOptions/AutomaticPaymentOptions";
+import { BookingData } from "@/types/bookingData";
+import PaymentInformation from "../PaymentInformation.tsx/PaymentInformation";
 
 const paymentMethods = [
   { id: "manual_payment", name: "Manual Transfer", icon: Wallet },
   { id: "automatic_payment", name: "Automatic Payment", icon: CreditCard },
 ];
 
-interface PaymentMethodsProps {
+interface PaymentOptionsProps {
   selectedMethod: string | undefined;
-  onMethodSelect: (methodId: string) => void;
+  selectedSpecificMethod: string | undefined;
+  onMethodSelect: (methodId: string, specificPaymentMethod?: string) => void;
 }
 
-const PaymentMethods: React.FC<PaymentMethodsProps> = ({
+const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   selectedMethod,
+  selectedSpecificMethod,
   onMethodSelect,
 }) => {
   const { showWarning, closeWarning } = useWarningModal();
 
   const handleMethodSelect = (methodId: string) => {
-    onMethodSelect(methodId);
+    if (methodId === "automatic_payment") {
+      onMethodSelect(methodId, selectedSpecificMethod);
+    } else {
+      onMethodSelect(methodId);
+    }
   };
+
+  const handleAutomaticMethodSelect = (specificMethod: string) => {
+    onMethodSelect("automatic_payment", specificMethod);
+  };
+
+  const requiredFields: (keyof BookingData)[] = [
+    "guestCount",
+    "checkIn",
+    "checkOut",
+    "paymentMethod",
+  ];
+
+  if (selectedMethod === "automatic_payment") {
+    requiredFields.push("specificPaymentMethod" as keyof BookingData);
+  }
 
   return (
     <div className="w-full lg:w-2/3">
@@ -49,14 +72,16 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
 
         <PaymentInformation selectedMethod={selectedMethod} />
 
+        {selectedMethod === "automatic_payment" && (
+          <AutomaticPaymentOptions
+            selectedPayment={selectedSpecificMethod}
+            onPaymentSelect={handleAutomaticMethodSelect}
+          />
+        )}
+
         <ValidatedNavigation
           to="/payment-process"
-          requiredFields={[
-            "guestCount",
-            "checkIn",
-            "checkOut",
-            "paymentMethod",
-          ]}
+          requiredFields={requiredFields}
           useRoomId={true}
         >
           <Button>Proceed to Payment</Button>
@@ -72,4 +97,4 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   );
 };
 
-export default PaymentMethods;
+export default PaymentOptions;

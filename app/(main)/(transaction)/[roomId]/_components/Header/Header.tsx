@@ -40,24 +40,27 @@ const Header: React.FC = () => {
 
   return (
     <header className="shadow-md">
-      <div className="container p-2 sm:py-4 sm:px-6 flex items-center gap-10">
-        <Link href="/">
+      <div className="container flex items-center p-2 sm:py-4 sm:px-6">
+        <Link href="/" className="flex-shrink-0 mr-10">
           <div className="flex items-center">
             <Image src={NginepLogo} alt="Logo" width={100} height={100} />
           </div>
         </Link>
-        <nav>
-          <ul className="flex text-center gap-6 md:gap-10 lg:gap-16">
+        <nav className="flex-grow overflow-x-auto custom-tiny-scrollbar">
+          <ul className="flex whitespace-nowrap">
             {activeNavItems.map((item, index) => (
-              <li key={index}>
+              <li
+                key={index}
+                className="flex-shrink-0 mr-6 md:mr-10 lg:mr-16 last:mr-0"
+              >
                 <ValidatedNavigation
                   to={item.href}
                   requiredFields={item.requiredFields}
                   useRoomId={true}
                 >
                   <div
-                    className={`flex justify hover:text-gray-950 transition duration-300 ease-in-out
-                        text-xs sm:text-sm md:text-base ${
+                    className={`text-base hover:text-gray-950 transition duration-300 ease-in-out
+                        ${
                           item.isActive
                             ? "font-bold text-gray-700"
                             : "text-gray-400"
