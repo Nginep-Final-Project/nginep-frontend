@@ -17,8 +17,10 @@ const Bookings: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Your Bookings</h1>
+      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">
+          Your Bookings
+        </h1>
         <BookingSection
           title="Tomorrow"
           bookings={getTomorrowBookings(bookings)}
@@ -39,6 +41,7 @@ const Bookings: React.FC = () => {
           title="Cancelled"
           bookings={getCancelledBookings(bookings)}
         />
+        <div className="absolute bottom-10 left-0 right-0 h-[2px] bg-primary"></div>
       </div>
     </div>
   );
