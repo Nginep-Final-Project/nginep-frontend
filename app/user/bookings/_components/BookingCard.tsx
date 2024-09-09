@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { UserBookingList as BookingCardProps } from "@/types/userBookingList";
+import Link from "next/link";
 
 const BookingCard: React.FC<BookingCardProps> = ({
   propertyName,
@@ -16,6 +17,11 @@ const BookingCard: React.FC<BookingCardProps> = ({
   const formatDate = (date: Date) => format(date, "MMM d");
   const formatYear = (date: Date) => format(date, "yyyy");
 
+  const handleCancelBooking = () => {
+    // Implement cancellation logic here
+    console.log("Cancelling booking");
+  };
+
   return (
     <div className="flex flex-col sm:flex-row bg-white rounded-lg shadow-xl border">
       <div className="w-full sm:w-1/2 p-4">
@@ -29,15 +35,26 @@ const BookingCard: React.FC<BookingCardProps> = ({
         <p className="text-sm text-gray-500 mb-1">Hosted by {hostName}</p>
       </div>
       <div className="relative w-full sm:w-1/2 h-48 sm:h-auto">
-        <Image
-          src={imageUrl}
-          alt={propertyName}
-          layout="fill"
-          objectFit="cover"
-        />
+        <Link href={`/property/roomId}`}>
+          <Image
+            src={imageUrl}
+            alt={propertyName}
+            layout="fill"
+            objectFit="cover"
+          />
+        </Link>
+
         <div className="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-white bg-opacity-80">
           {status}
         </div>
+        {status === "Awaiting Payment" && (
+          <div
+            onClick={handleCancelBooking}
+            className="absolute bottom-3 right-3 px-2 py-1 text-xs font-semibold rounded-full text-white bg-primary cursor-pointer"
+          >
+            Cancel Booking
+          </div>
+        )}
       </div>
     </div>
   );

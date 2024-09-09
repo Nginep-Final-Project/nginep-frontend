@@ -1,9 +1,8 @@
-// app/user/bookings/page.tsx
 "use client";
 
 import React from "react";
 import BookingSection from "./_components/BookingSection";
-import useBookings from "@/hooks/useBookingSection";
+import useBookingSection from "@/hooks/useBookingSection";
 import SkeletonSection from "./_components/SkeletonSection";
 
 const Bookings: React.FC = () => {
@@ -15,7 +14,7 @@ const Bookings: React.FC = () => {
     getAwaitingConfirmationBookings,
     getAwaitingPaymentBookings,
     getCancelledBookings,
-  } = useBookings();
+  } = useBookingSection();
 
   const renderContent = () => {
     if (isLoading) {

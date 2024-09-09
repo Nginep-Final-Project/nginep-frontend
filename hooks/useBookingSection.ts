@@ -1,9 +1,8 @@
-// app/user/bookings/hooks/useBookings.ts
 import { useState, useEffect } from "react";
 import { isTomorrow, isFuture, isPast } from "date-fns";
 import { UserBookingList } from "@/types/userBookingList";
 
-const useBookings = () => {
+const useBookingSection = () => {
   const [bookings, setBookings] = useState<UserBookingList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -147,4 +146,4 @@ const useBookings = () => {
   };
 };
 
-export default useBookings;
+export default useBookingSection;
