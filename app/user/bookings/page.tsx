@@ -4,10 +4,12 @@
 import React from "react";
 import BookingSection from "./_components/BookingSection";
 import useBookings from "@/hooks/useBookingSection";
+import SkeletonSection from "./_components/SkeletonSection";
 
 const Bookings: React.FC = () => {
   const {
     bookings,
+    isLoading,
     getTomorrowBookings,
     getUpcomingBookings,
     getAwaitingConfirmationBookings,
@@ -15,12 +17,17 @@ const Bookings: React.FC = () => {
     getCancelledBookings,
   } = useBookings();
 
-  return (
-    <div className="min-h-screen">
-      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">
-          Your Bookings
-        </h1>
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <>
+          <SkeletonSection />
+        </>
+      );
+    }
+
+    return (
+      <>
         <BookingSection
           title="Tomorrow"
           bookings={getTomorrowBookings(bookings)}
@@ -41,6 +48,17 @@ const Bookings: React.FC = () => {
           title="Cancelled"
           bookings={getCancelledBookings(bookings)}
         />
+      </>
+    );
+  };
+
+  return (
+    <div className="min-h-screen">
+      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">
+          Your Bookings
+        </h1>
+        {renderContent()}
         <div className="absolute bottom-10 left-0 right-0 mx-10 h-[2px] bg-primary"></div>
       </div>
     </div>
