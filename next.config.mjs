@@ -14,8 +14,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'dummyimage.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'static.wikia.nocookie.net',
+      },
     ],
   },
-}
+};
 
 export default nextConfig

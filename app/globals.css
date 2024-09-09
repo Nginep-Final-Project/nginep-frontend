@@ -7,3 +7,38 @@
     @apply text-primary-text;
   }
 }
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-tiny-scrollbar {
+    position: relative;
+}
+  
+.custom-tiny-scrollbar::-webkit-scrollbar {
+    -webkit-appearance: none;
+    height: 2px;
+}
+  
+.custom-tiny-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+  
+.custom-tiny-scrollbar::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: transparent;
+    z-index: 10;
+    pointer-events: none;
+}
