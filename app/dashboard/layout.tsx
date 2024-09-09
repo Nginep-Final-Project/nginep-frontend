@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import DashboardSidebar from "./_components/DashboardSidebar/DashboardSidebar";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Nginep - Dashboard",
@@ -9,10 +11,10 @@ export const metadata: Metadata = {
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   return (
-    <DashboardSidebar>
-      <section>
-        {children}
-      </section>
-    </DashboardSidebar>
+    <div>
+      <Navbar />
+      <DashboardSidebar>{children}</DashboardSidebar>
+      <Footer />
+    </div>
   );
 }
