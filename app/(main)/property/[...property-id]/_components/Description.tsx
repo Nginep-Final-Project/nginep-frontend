@@ -1,11 +1,11 @@
 const Description: React.FC<{ description: string }> = ({ description }) => {
   return (
-    <div className='w-full py-8 px-4 lg:px-32'>
-      <h2 className='text-2xl font-bold pb-4 border-b border-secondary'>
+    <div className='w-full h-full p-4 lg:px-32 overflow-hidden'>
+      <h2 className='text-xl sm:text-2xl font-bold pb-4 border-b border-secondary'>
         About this place
       </h2>
-      <div className='w-full break-words overflow-hidden border-b border-grey-text py-4'>
-        {description}
+      <div className='py-4 md:py-14 overflow-y-auto border-b border-secondary'>
+        <p className='whitespace-pre-wrap break-words'>{description}</p>
       </div>
     </div>
   )

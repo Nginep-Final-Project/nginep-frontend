@@ -82,6 +82,114 @@ export const incrementType = [
   { value: 'amount', label: 'Amount: add price by adding amount' },
 ]
 
+export const reviewData = {
+  rating: 4.83,
+  totalReviews: 1800,
+  categories: [
+    { name: 'Cleanliness', score: 4.8 },
+    { name: 'Accuracy', score: 4.8 },
+    { name: 'Communication', score: 4.9 },
+    { name: 'Location', score: 4.8 },
+    { name: 'Check-in', score: 4.9 },
+    { name: 'Value', score: 4.7 },
+  ],
+  reviews: [
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+  ],
+}
+
+export const tenantData = {
+  name: 'Mr Irfan',
+  pictureProfile: 'https://dummyimage.com/300x200/000/fff',
+  joinDate: 'September 2020',
+  rating: 4.83,
+  reviewCount: 1800,
+  isSuperhost: true,
+  isIdentityVerified: true,
+  languages: [
+    '中文',
+    'English',
+    'Bradt',
+    'Français',
+    'Bahasa Indonesia',
+    'Español',
+  ],
+  responseRate: 100,
+  responseTime: 'within an hour',
+  description:
+    'A passionate host, who loves to welcome guest from all over the world and share the beauty of this amazing natural spot that is Batu lagoon.',
+  stayInfo: '24/7 full management',
+}
+
 export const propertyList = [
   {
     imageSrc: [
