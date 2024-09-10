@@ -1,10 +1,10 @@
 import React from "react";
 import BookingCard from "./BookingCard";
-import { UserBookingList } from "@/types/userBookingList";
+import { UserBookings } from "@/types/userBookings";
 
 interface BookingSectionProps {
   title: string;
-  bookings: UserBookingList[];
+  bookings: UserBookings[];
 }
 
 const BookingSection: React.FC<BookingSectionProps> = ({ title, bookings }) => {
@@ -17,7 +17,7 @@ const BookingSection: React.FC<BookingSectionProps> = ({ title, bookings }) => {
       <h2 className="text-2xl font-semibold mb-4">{title}</h2>
       <div className="space-y-6">
         {bookings.map((booking) => (
-          <BookingCard key={booking.id} {...booking} />
+          <BookingCard key={booking.bookingId} {...booking} />
         ))}
       </div>
     </section>

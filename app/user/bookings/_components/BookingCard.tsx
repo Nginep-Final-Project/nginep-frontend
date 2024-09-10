@@ -1,21 +1,31 @@
 import React from "react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { UserBookingList as BookingCardProps } from "@/types/userBookingList";
 import Link from "next/link";
+import { UserBookings } from "@/types/userBookings";
+import { mapBookingStatus } from "@/utils/bookingStatusMapper";
 
-const BookingCard: React.FC<BookingCardProps> = ({
+const BookingCard: React.FC<UserBookings> = ({
+  bookingId,
+  roomId,
   propertyName,
   checkInDate,
   checkOutDate,
   hostName,
-  location,
-  country,
-  imageUrl,
+  propertyAddress,
+  propertyCity,
+  propertyProvince,
+  propertyCoverImage,
   status,
+  numGuests,
+  roomName,
 }) => {
-  const formatDate = (date: Date) => format(date, "MMM d");
-  const formatYear = (date: Date) => format(date, "yyyy");
+  const formatDate = (dateString: string) =>
+    format(new Date(dateString), "MMM d");
+  const formatYear = (dateString: string) =>
+    format(new Date(dateString), "yyyy");
+
+  const displayStatus = mapBookingStatus(status);
 
   const handleCancelBooking = () => {
     // Implement cancellation logic here
@@ -25,29 +35,34 @@ const BookingCard: React.FC<BookingCardProps> = ({
   return (
     <div className="flex flex-col sm:flex-row bg-white rounded-lg shadow-xl border">
       <div className="w-full sm:w-1/2 p-4">
-        <h3 className="text-xl font-semibold mb-1">{propertyName}</h3>
-        <p className="text-gray-600 mb-2">
+        <h3 className="text-xl font-semibold mb-1">
+          {propertyName} in {propertyProvince}
+        </h3>
+        <p className="text-gray-600 mb-2 font-medium">
           {formatDate(checkInDate)} – {formatDate(checkOutDate)},{" "}
           {formatYear(checkOutDate)}
         </p>
-        <p className="text-sm text-gray-500 mb-2">{location}</p>
-        <p className="text-sm text-gray-500 mb-2">{country}</p>
-        <p className="text-sm text-gray-500 mb-1">Hosted by {hostName}</p>
+        <p className="text-sm text-gray-600 mb-2">
+          {propertyAddress}, {propertyCity}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">Room: {roomName}</p>
+        <p className="text-sm text-gray-600 mb-1">Guests: {numGuests}</p>
+        <p className="text-sm text-gray-600 mt-4">Hosted by {hostName}</p>
       </div>
       <div className="relative w-full sm:w-1/2 h-48 sm:h-auto">
-        <Link href={`/property/roomId}`}>
+        <Link href={`/property/${roomId}`}>
           <Image
-            src={imageUrl}
-            alt={propertyName}
+            src={propertyCoverImage}
+            alt={`${propertyName} image`}
             layout="fill"
             objectFit="cover"
           />
         </Link>
 
         <div className="absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full bg-white bg-opacity-80">
-          {status}
+          {displayStatus}
         </div>
-        {status === "Awaiting Payment" && (
+        {status === "PENDING_PAYMENT" && (
           <div
             onClick={handleCancelBooking}
             className="absolute bottom-3 right-3 px-2 py-1 text-xs font-semibold rounded-full text-white bg-primary cursor-pointer"
