@@ -4,6 +4,7 @@ import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { auth } from '@/auth'
 import { SessionProvider } from 'next-auth/react'
+import QueryClientProvider from '@/components/QueryClientProvider'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -25,8 +26,10 @@ export default async function RootLayout({
     <html lang='en'>
       <body className={poppins.className}>
         <SessionProvider session={session}>
-          {children}
-          <Toaster />
+          <QueryClientProvider>
+            {children}
+            <Toaster />
+          </QueryClientProvider>
         </SessionProvider>
       </body>
     </html>
