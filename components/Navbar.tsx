@@ -15,7 +15,7 @@ import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
 import SignupStepTwo from '@/app/(main)/_components/SignupStepTwo'
 import EmailVerification from '@/app/(main)/_components/EmailVerification'
 import { logout } from '@/app/actions'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -27,6 +27,35 @@ const Navbar = () => {
 
   const session = useSession()
   console.log(session.data?.user.role)
+
+  const handleLogout = async () => {
+    console.log('logoutt>>>>>>>')
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/auth/logout`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        }
+      )
+      console.log('response status >>>', response.status)
+      console.log('response body >>>', response.body)
+
+      if (!response.ok) {
+        throw new Error('Logout failed')
+      }
+      const data = await response.json()
+      await signOut({ redirect: false })
+      // toast({
+      //   title: data.message,
+      // })
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
@@ -91,7 +120,8 @@ const Navbar = () => {
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={async () => {
-                      logout()
+                      // logout()
+                      handleLogout()
                     }}
                   >
                     Log out

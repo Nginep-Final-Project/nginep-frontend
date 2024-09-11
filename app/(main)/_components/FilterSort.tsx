@@ -18,7 +18,7 @@ import {
 const FilterSort = () => {
   const [category, setCategory] = useState<string>('')
   const [location, setLocation] = useState<string>('')
-  const [dateRange, setdateRange] = useState<DateRange>()
+  const [dateRange, setdateRange] = useState<DateRange | undefined>()
   const [guest, setGuest] = useState<number>(1)
   const [price, setPrice] = useState<string>('')
   const [sortName, setSortName] = useState<string>('')
@@ -61,7 +61,8 @@ const FilterSort = () => {
           }}
         />
         <DatePicker
-          value={dateRange as DateRange}
+          mode='range'
+          value={dateRange}
           onChange={(value) => setdateRange(value)}
           placeholder='Select date'
         />

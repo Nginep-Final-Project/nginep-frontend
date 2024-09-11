@@ -14,6 +14,7 @@ export async function emailSignIn(data: { email: string; password: string }) {
 }
 
 export async function logout() {
+  console.log('logoutt>>>>>>>')
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/auth/logout`,
@@ -25,7 +26,9 @@ export async function logout() {
         credentials: 'include',
       }
     )
-    console.log(response.body)
+    console.log('response status >>>', response.status)
+    console.log('response body >>>', response.body)
+
     if (!response.ok) {
       throw new Error('Logout failed')
     }

@@ -11,28 +11,54 @@ import { Calendar } from '@/components/ui/calendar'
 import { CalendarIcon } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
 
-type CalenderProps = {
-  value: DateRange
+type CalendarSingleProps = {
+  mode: 'single'
+  value: Date | undefined
+  onChange: (value: Date | undefined) => void
+}
+
+type CalendarRangeProps = {
+  mode: 'range'
+  value: DateRange | undefined
   onChange: (value: DateRange | undefined) => void
+}
+
+type CalendarProps = (CalendarSingleProps | CalendarRangeProps) & {
   placeholder?: string
   className?: string
 }
 
-const DatePicker: React.FC<CalenderProps> = ({
-  value,
-  onChange,
-  placeholder = 'Pick a date',
-  className,
-}) => {
-  const formatDateRange = (range: DateRange | undefined) => {
-    if (!range) return placeholder
-    if (range.from) {
-      if (range.to) {
-        return `${format(range.from, 'P')} - ${format(range.to, 'P')}`
+const DatePicker: React.FC<CalendarProps> = (props) => {
+  const {
+    mode,
+    value,
+    onChange,
+    placeholder = 'Pick a date',
+    className,
+  } = props
+
+  const formatDate = (date: Date | DateRange | undefined) => {
+    if (!date) return placeholder
+    if (mode === 'single' && date instanceof Date) {
+      return format(date, 'PP')
+    }
+    if (mode === 'range' && 'from' in date) {
+      if (date.from) {
+        if (date.to) {
+          return `${format(date.from, 'PP')} - ${format(date.to, 'PP')}`
+        }
+        return `${format(date.from, 'PP')} - ...`
       }
-      return `${format(range.from, 'P')} - ...`
     }
     return placeholder
+  }
+
+  const handleSelect = (newValue: Date | DateRange | undefined) => {
+    if (mode === 'single' && newValue instanceof Date) {
+      onChange(newValue)
+    } else if (mode === 'range' && newValue && 'from' in newValue) {
+      onChange(newValue)
+    }
   }
 
   return (
@@ -46,19 +72,37 @@ const DatePicker: React.FC<CalenderProps> = ({
             className
           )}
         >
-          <div className='w-3/4 line-clamp-2'>{formatDateRange(value)}</div>
+          <div className='w-3/4 line-clamp-2'>{formatDate(value)}</div>
           <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-auto p-0 bg-white' align='start'>
-        <Calendar
-          mode='range'
+        {mode === 'single' ? (
+          <Calendar
+            mode='single'
+            selected={value as Date | undefined}
+            onSelect={onChange as (date: Date | undefined) => void}
+            disabled={(date) => date < new Date()}
+            initialFocus
+          />
+        ) : (
+          <Calendar
+            mode='range'
+            selected={value as DateRange | undefined}
+            onSelect={onChange as (range: DateRange | undefined) => void}
+            disabled={(date) => date < new Date()}
+            numberOfMonths={2}
+            initialFocus
+          />
+        )}
+        {/* <Calendar
+          mode={mode}
           selected={value}
-          onSelect={onChange}
+          onSelect={handleSelect}
           disabled={(date) => date < new Date()}
-          numberOfMonths={2}
+          numberOfMonths={mode === 'range' ? 2 : 1}
           initialFocus
-        />
+        /> */}
       </PopoverContent>
     </Popover>
   )

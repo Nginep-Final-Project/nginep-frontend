@@ -20,7 +20,7 @@ const GuestDialog: React.FC<GuestDialogProps> = ({
   onClose,
   onChange,
 }) => {
-  const [guest, setGuest] = useState<number>(0)
+  const [guest, setGuest] = useState<number>(1)
 
   const handleSubmit = () => {
     onChange(guest)

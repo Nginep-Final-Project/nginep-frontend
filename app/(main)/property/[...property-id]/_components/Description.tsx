@@ -1,6 +1,6 @@
 const Description: React.FC<{ description: string }> = ({ description }) => {
   return (
-    <div className='w-full h-full p-4 lg:px-32 overflow-hidden'>
+    <div className=' h-full p-4 lg:pl-32 overflow-hidden'>
       <h2 className='text-xl sm:text-2xl font-bold pb-4 border-b border-secondary'>
         About this place
       </h2>
