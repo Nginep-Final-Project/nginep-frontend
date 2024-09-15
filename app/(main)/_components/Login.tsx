@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
 import React, { Dispatch, SetStateAction } from 'react'
-import { emailSignIn } from '@/app/actions'
+import { emailSignIn } from '@/actions/auth'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),

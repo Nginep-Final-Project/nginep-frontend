@@ -14,8 +14,9 @@ import ForgotPassword from '@/app/(main)/_components/ForgotPassword'
 import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
 import SignupStepTwo from '@/app/(main)/_components/SignupStepTwo'
 import EmailVerification from '@/app/(main)/_components/EmailVerification'
-import { logout } from '@/app/actions'
-import { signOut, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import useLogout from '@/hooks/useLogout'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -25,42 +26,22 @@ const Navbar = () => {
   const [isSignupStepTwo, setIsSignupStepTwo] = useState(false)
   const [isEmailVerification, setIsEmailVerification] = useState(false)
 
+  const router = useRouter()
   const session = useSession()
+  const { handleLogOut } = useLogout()
   console.log(session.data?.user.role)
-
-  const handleLogout = async () => {
-    console.log('logoutt>>>>>>>')
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/auth/logout`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        }
-      )
-      console.log('response status >>>', response.status)
-      console.log('response body >>>', response.body)
-
-      if (!response.ok) {
-        throw new Error('Logout failed')
-      }
-      const data = await response.json()
-      await signOut({ redirect: false })
-      // toast({
-      //   title: data.message,
-      // })
-    } catch (error) {
-      console.error('Logout error:', error)
-    }
-  }
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-2xl font-bold text-primary'>Nginep</h1>
+        <h1
+          className='text-2xl font-bold text-primary'
+          onClick={() => {
+            router.push('/')
+          }}
+        >
+          Nginep
+        </h1>
 
         <div className='hidden md:flex items-center p-1 lg:p-3 border border-secondary rounded-full lg:w-80 lg:h-14'>
           <input
@@ -75,7 +56,14 @@ const Navbar = () => {
         </div>
 
         <div className='flex items-center lg:gap-x-3'>
-          <Button variant='ghost' className='hidden md:inline-block'>
+          <Button
+            variant='ghost'
+            className='hidden md:inline-block'
+            type='button'
+            onClick={() => {
+              router.push('/dashboard')
+            }}
+          >
             Nginep your property
           </Button>
 
@@ -114,16 +102,22 @@ const Navbar = () => {
 
               {session.data?.user.accessToken && (
                 <>
-                  <DropdownMenuItem className='font-semibold'>
-                    Trips
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem
-                    onSelect={async () => {
-                      // logout()
-                      handleLogout()
+                    className='font-semibold'
+                    onClick={() => {
+                      router.push('/')
                     }}
                   >
+                    Trips
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      router.push('/profile')
+                    }}
+                  >
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={handleLogOut}>
                     Log out
                   </DropdownMenuItem>
                 </>

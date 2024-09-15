@@ -14,7 +14,7 @@ import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import SignupStepTwo from './SignupStepTwo'
-import { googleSignUp } from '@/app/actions'
+import { googleSignUp } from '@/actions/auth'
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
