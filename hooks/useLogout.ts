@@ -1,13 +1,7 @@
 import { logOutAuth } from '@/actions/auth'
 import { toast } from '@/components/ui/use-toast'
+import { response } from '@/types/response'
 import { useState } from 'react'
-
-type response = {
-  statusCode: number
-  message: string
-  success: boolean
-  data: any
-}
 
 const useLogout = () => {
   const [response, setResponse] = useState<response>()
@@ -41,7 +35,7 @@ const useLogout = () => {
       setError(error)
       console.error('Logout error:', error)
     }
-    setLoading(true)
+    setLoading(false)
   }
 
   return { handleLogOut, response, loading, error }

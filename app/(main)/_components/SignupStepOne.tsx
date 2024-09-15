@@ -15,6 +15,9 @@ import GoogleIcon from '@/public/google-icon.svg'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import SignupStepTwo from './SignupStepTwo'
 import { googleSignUp } from '@/actions/auth'
+import useEmailValidation from '@/hooks/useEmailValidation'
+import { toast } from '@/components/ui/use-toast'
+import { SIGN_UP } from '@/utils/constanta'
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -27,6 +30,7 @@ const SignupStepOne: React.FC<{
   setIsSignup: Dispatch<SetStateAction<boolean>>
   setRegister: () => void
 }> = ({ isSignup, setIsSignup, setRegister }) => {
+  const { handleEmailValidation, loading, error } = useEmailValidation()
   const {
     register,
     handleSubmit,
@@ -36,8 +40,17 @@ const SignupStepOne: React.FC<{
     resolver: zodResolver(signUpSchema),
   })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const result = await handleEmailValidation(data.email)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    sessionStorage.setItem(SIGN_UP, JSON.stringify(data))
     reset()
     setRegister()
   }
@@ -64,8 +77,9 @@ const SignupStepOne: React.FC<{
             <Button
               type='submit'
               className='bg-primary w-full text-white text-xl px-4 py-2 rounded'
+              disabled={loading}
             >
-              Continue
+              {loading ? 'loading...' : 'Continue'}
             </Button>
           </form>
         </div>
