@@ -34,7 +34,7 @@ export const MessageToHost: React.FC<MessageToHostProps> = ({
         value={value}
         onChange={handleChange}
         placeholder="Let your host know a little about yourself and why you're coming"
-        className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-pink-500 resize-none"
+        className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-primary resize-none"
         rows={5}
       />
       <div className="mt-2 flex justify-between items-center text-sm text-gray-500">
@@ -45,7 +45,7 @@ export const MessageToHost: React.FC<MessageToHostProps> = ({
           <button
             type="button"
             onClick={onClear}
-            className="text-pink-500 hover:text-pink-700 focus:outline-none"
+            className="text-primary hover:text-pink-700 focus:outline-none"
           >
             Clear
           </button>

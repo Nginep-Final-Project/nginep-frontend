@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   return (
-    <div>
+    <section>
       {children}
-    </div>
+    </section>
   );
 }

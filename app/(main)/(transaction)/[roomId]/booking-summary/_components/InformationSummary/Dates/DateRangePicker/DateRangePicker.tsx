@@ -201,7 +201,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
               className={`p-2 text-center cursor-pointer rounded-full ${
                 date
                   ? isDateSelected(date)
-                    ? "bg-pink-500 text-white"
+                    ? "bg-primary text-white"
                     : isDateInRange(date)
                     ? "bg-pink-100"
                     : "hover:bg-gray-100"
@@ -244,7 +244,7 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
           <button
             type="button"
             onClick={() => onSave(checkInDate, checkOutDate)}
-            className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-pink-600 transition-colors"
           >
             Save
           </button>
