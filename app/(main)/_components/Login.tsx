@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
 import React, { Dispatch, SetStateAction } from 'react'
-import { emailSignIn } from '@/actions/auth'
+import { emailSignIn, googleSignUp } from '@/actions/auth'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -94,6 +94,9 @@ const Login: React.FC<{
           variant='outline'
           className='text-xl flex justify-start'
           type='button'
+          onClick={async () => {
+            googleSignUp()
+          }}
         >
           <Image src={GoogleIcon} alt='Google-Icon' />
           <div className='w-full'>Continue with Google</div>
