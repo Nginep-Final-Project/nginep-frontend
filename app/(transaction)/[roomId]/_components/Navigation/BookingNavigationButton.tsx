@@ -51,13 +51,9 @@ const BookingNavigationButton: React.FC<BookingNavigationButtonProps> = ({
   };
 
   return (
-    <ValidatedNavigation
-      to={to}
-      requiredFields={requiredFields}
-      useRoomId={true}
-    >
-      <Button onClick={handleCreateBooking}>{children}</Button>
-    </ValidatedNavigation>
+    <Button onClick={handleCreateBooking} disabled={isCreatingBooking}>
+      {children}
+    </Button>
   );
 };
 
