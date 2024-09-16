@@ -21,7 +21,7 @@ const signUpSchema = z.object({
   dateOfBirth: z.string().date(),
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  role: z.enum(['User', 'Tenant']),
+  role: z.enum(['guest', 'tenant']),
 })
 
 type FormData = z.infer<typeof signUpSchema>
@@ -42,7 +42,7 @@ const SignupStepTwo: React.FC<{
   } = useForm<FormData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      role: 'User',
+      role: 'guest',
     },
   })
 
@@ -120,24 +120,24 @@ const SignupStepTwo: React.FC<{
                   variant='outline'
                   type='button'
                   className={`flex flex-col items-center h-fit w-1/3 ${
-                    watch('role') === 'User'
+                    watch('role') === 'guest'
                       ? 'border-primary border-2'
                       : 'border-secondary'
                   }`}
-                  onClick={() => setValue('role', 'User')}
+                  onClick={() => setValue('role', 'guest')}
                 >
                   <SquareUserRound />
-                  User
+                  Guest
                 </Button>
                 <Button
                   variant='outline'
                   type='button'
                   className={`flex flex-col items-center h-fit w-1/3 ${
-                    watch('role') === 'Tenant'
+                    watch('role') === 'tenant'
                       ? 'border-primary border-2'
                       : 'border-secondary'
                   }`}
-                  onClick={() => setValue('role', 'Tenant')}
+                  onClick={() => setValue('role', 'tenant')}
                 >
                   <HousePlus />
                   Tenant

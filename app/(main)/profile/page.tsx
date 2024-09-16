@@ -16,6 +16,7 @@ const Profile = () => {
             'https://res.cloudinary.com/dhbg53ncx/image/upload/v1724048239/y2v5dowacq3zuvraaeem.png'
           }
           initName={'John'}
+          picturePublicId={'qyejckmz0gnfzhuupfpi'}
           role={'Guest'}
         />
       </div>

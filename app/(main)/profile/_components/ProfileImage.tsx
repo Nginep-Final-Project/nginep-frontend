@@ -1,6 +1,8 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { toast } from '@/components/ui/use-toast'
+import { response } from '@/types/response'
 import { Camera } from 'lucide-react'
 import Image from 'next/image'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -8,12 +10,14 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 interface ProfileImageProp {
   initImage: string
   initName: string
+  picturePublicId: string | null
   role: string
 }
 
 const ProfileImage: React.FC<ProfileImageProp> = ({
   initImage,
   initName,
+  picturePublicId,
   role,
 }) => {
   const [avatar, setAvatar] = useState<string>(
@@ -68,20 +72,25 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
       const imageUrl = URL.createObjectURL(file)
       setAvatar(imageUrl)
       setError('')
-      // const formData = new FormData()
-      // formData.append('file', file)
+      const formData = new FormData()
+      if (picturePublicId !== null) {
+        formData.append('publicId', picturePublicId)
+      }
+      formData.append('file', file)
 
-      // const response = await fetch('/api/upload', {
-      //   method: 'POST',
-      //   body: formData,
-      // })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/users/update/profile-picture`,
+        {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        }
+      )
 
-      // if (!response.ok) {
-      //   throw new Error('Upload failed')
-      // }
-
-      //  const data: CloudinaryUploadResponse = await response.json()
-      //  setAvatar(data.url)
+      const data: response = await response.json()
+      toast({
+        description: data.message,
+      })
     } catch (err) {
       setError('Error uploading image. Please try again.')
     } finally {
@@ -121,7 +130,7 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
         <h2 className='text-xl font-bold'>{initName}</h2>
         <p className='text-grey-text'>{role}</p>
       </div>
-      {isUploading && <p className='text-blue-500'>Uploading...</p>}
+      {isUploading && <p>Uploading...</p>}
       {/* {error && (
         <Alert variant='destructive'>
           <AlertDescription>{error}</AlertDescription>

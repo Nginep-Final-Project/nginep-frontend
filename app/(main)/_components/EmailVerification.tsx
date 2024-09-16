@@ -17,6 +17,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { BadgeCheck } from 'lucide-react'
 import { SIGN_UP } from '@/utils/constanta'
 import useAccountVerification from '@/hooks/useAccountVerification'
+import useSignup from '@/hooks/useSignup'
 
 interface signUp {
   dateOfBirth: string
@@ -31,6 +32,11 @@ const EmailVerification: React.FC<{
   setIsEmailVerification: Dispatch<SetStateAction<boolean>>
 }> = ({ isEmailVerification, setIsEmailVerification }) => {
   const { handleAccountVerification, loading, error } = useAccountVerification()
+  const {
+    handleSignup,
+    loading: loadingSignUp,
+    error: errorSignUp,
+  } = useSignup()
   const [otp, setOtp] = useState<string>('')
   const [signUpData, setSignUpData] = useState<signUp>({
     dateOfBirth: '',
@@ -62,7 +68,7 @@ const EmailVerification: React.FC<{
         <div className='border-t border-secondary py-4'>
           <p className='mb-4 font-medium '>Enter your verification code</p>
           <p className='mb-4'>
-            Enter the code we emailed to {`kiddoytube01@gmail.com`}.
+            Enter the code we emailed to {signUpData.email}.
           </p>
           <InputOTP
             maxLength={6}
@@ -83,33 +89,27 @@ const EmailVerification: React.FC<{
                   })
                   return
                 }
+                const resultSignUp = await handleSignup(signUpData)
+                if (!resultSignUp?.success) {
+                  toast({
+                    variant: 'destructive',
+                    description: resultSignUp?.message,
+                  })
+                  return
+                }
                 setOtp('')
                 setIsEmailVerification(false)
                 toast({
                   description: (
                     <div className='flex gap-x-1'>
                       <BadgeCheck color='#00BA88' strokeWidth={3} />
-                      Sign up success
+                      {resultSignUp.message}
                     </div>
                   ),
                 })
-                // setLoading(true)
-                // setTimeout(() => {
-                //   setOtp('')
-                //   setIsEmailVerification(false)
-                //   toast({
-                //     description: (
-                //       <div className='flex gap-x-1'>
-                //         <BadgeCheck color='#00BA88' strokeWidth={3} />
-                //         Sign up success
-                //       </div>
-                //     ),
-                //   })
-                //   setLoading(false)
-                // }, 2000)
               }
             }}
-            disabled={loading}
+            disabled={loading || loadingSignUp}
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />
