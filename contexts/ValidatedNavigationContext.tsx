@@ -1,5 +1,5 @@
+import useValidatedNavigation from "@/hooks/booking/useValidatedNavigation";
 import React, { createContext, useContext, ReactNode } from "react";
-import useValidatedNavigation from "../hooks/useValidatedNavigation";
 
 type ValidatedNavigationContextType = ReturnType<
   typeof useValidatedNavigation
