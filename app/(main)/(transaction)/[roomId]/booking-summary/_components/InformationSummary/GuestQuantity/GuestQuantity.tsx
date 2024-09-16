@@ -37,7 +37,7 @@ export const GuestQuantity: React.FC<GuestQuantityProps> = ({
           type="button"
           onClick={handleDecrement}
           disabled={value <= 1}
-          className="p-4 bg-pink-500 hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-4 bg-primary hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Minus size={18} />
         </button>
@@ -51,7 +51,7 @@ export const GuestQuantity: React.FC<GuestQuantityProps> = ({
           type="button"
           onClick={handleIncrement}
           disabled={value >= maxGuests}
-          className="p-4 bg-pink-500 hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-4 bg-primary hover:bg-pink-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus size={18} />
         </button>
