@@ -2,6 +2,7 @@ import axios from "axios";
 import { UserBookings } from "@/types/userBookings";
 import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
 import { CreateBookingDto } from "@/types/createBookingDto";
+import { TenantBooking } from "@/types/tenantBookings";
 
 export const createBooking = async (
   bookingData: CreateBookingDto
@@ -62,9 +63,7 @@ export const getBookingPaymentDetails = async (
   }
 };
 
-export const cancelBookingByUser = async (
-  bookingId: number
-): Promise<void> => {
+export const cancelBookingByUser = async (bookingId: number): Promise<void> => {
   try {
     const response = await axios.patch(
       `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/${bookingId}/cancel/user`
@@ -74,4 +73,25 @@ export const cancelBookingByUser = async (
     console.error("Error cancelling the booking:", error);
     throw error;
   }
+};
+
+export const getTenantBookings = async (
+  tenantId: number
+): Promise<TenantBooking[]> => {
+  const response = await axios.get<TenantBooking[]>(
+    `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/tenant/${tenantId}`
+  );
+  return response.data;
+};
+
+export const confirmBooking = async (bookingId: number): Promise<void> => {
+  await axios.post(
+    `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/${bookingId}/confirm`
+  );
+};
+
+export const confirmPayment = async (bookingId: number): Promise<void> => {
+  await axios.post(
+    `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/${bookingId}/confirm-payment`
+  );
 };
