@@ -6,8 +6,16 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { gender } from '@/utils/dummy'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+
+interface PersonalDataProps {
+  initName: string
+  initGender: string
+  initDateOfBirth: string
+  initPhone: string
+}
 
 const PersonalDataSchema = z.object({
   name: z
@@ -23,22 +31,46 @@ const PersonalDataSchema = z.object({
 
 type FormData = z.infer<typeof PersonalDataSchema>
 
-const PersonalData = () => {
+const PersonalData: React.FC<PersonalDataProps> = ({
+  initName,
+  initDateOfBirth,
+  initGender,
+  initPhone,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
     reset,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(PersonalDataSchema),
     defaultValues: {
-      name: 'yosef',
-      gender: 'male',
+      name: '',
+      gender: '',
       dateOfBirth: '',
       phone: '',
     },
   })
+
+  useEffect(() => {
+    reset({
+      name: initName,
+      gender: initGender,
+      dateOfBirth: initDateOfBirth,
+      phone: initPhone,
+    })
+  }, [initDateOfBirth, initGender, initName, initPhone, reset])
+
+  const onCancel = () => {
+    reset({
+      name: initName,
+      gender: initGender,
+      dateOfBirth: initDateOfBirth,
+      phone: initPhone,
+    })
+  }
 
   const onSubmit = (data: FormData) => {
     console.log(data)
@@ -95,7 +127,7 @@ const PersonalData = () => {
             />
           </div>
           <div className='flex gap-x-4 justify-end'>
-            <Button variant='cancel' type='button'>
+            <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
             <Button type='submit'>Save</Button>

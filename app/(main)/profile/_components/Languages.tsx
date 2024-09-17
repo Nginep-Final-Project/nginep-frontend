@@ -6,14 +6,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Delete from '@/public/delete.svg'
 
 interface Item {
   id: number
-  name: string
+  languageName: string
+}
+
+interface LanguagesProps {
+  props: Item[]
 }
 
 const LanguageSchema = z.object({
@@ -21,7 +25,7 @@ const LanguageSchema = z.object({
 })
 type FormData = z.infer<typeof LanguageSchema>
 
-const Languages = () => {
+const Languages: React.FC<LanguagesProps> = ({ props }) => {
   const [items, setItems] = useState<Item[]>([])
   const {
     register,
@@ -32,9 +36,13 @@ const Languages = () => {
     resolver: zodResolver(LanguageSchema),
   })
 
+  useEffect(() => {
+    setItems(props)
+  }, [props])
+
   const onSubmit = (data: FormData) => {
     const itemExists = items.some(
-      (i) => i.name.toLowerCase() === data.language.toLowerCase()
+      (i) => i.languageName.toLowerCase() === data.language.toLowerCase()
     )
 
     if (itemExists) {
@@ -46,7 +54,7 @@ const Languages = () => {
     }
     const newItem: Item = {
       id: items.length > 0 ? items[items.length - 1].id + 1 : 0,
-      name: data.language,
+      languageName: data.language,
     }
     setItems([...items, newItem])
     reset()
@@ -79,7 +87,7 @@ const Languages = () => {
             />
           </div>
           <div className='flex gap-x-4 justify-end'>
-            <Button variant='cancel' type='button'>
+            <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
             <Button type='submit'>Save</Button>
@@ -99,7 +107,7 @@ const Languages = () => {
                   className='flex gap-3'
                   type='button'
                 >
-                  {e.name}
+                  {e.languageName}
                   <Image
                     src={Delete}
                     alt='delete'

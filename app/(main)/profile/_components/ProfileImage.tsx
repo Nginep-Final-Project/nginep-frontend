@@ -68,7 +68,6 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
     setError('')
 
     try {
-      //  const resizedBlob = await resizeImage(file)
       const imageUrl = URL.createObjectURL(file)
       setAvatar(imageUrl)
       setError('')
@@ -88,10 +87,21 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
       )
 
       const data: response = await response.json()
+      if (!data.success) {
+        toast({
+          variant: 'destructive',
+          description: data.message,
+        })
+        return
+      }
       toast({
         description: data.message,
       })
     } catch (err) {
+      toast({
+        variant: 'destructive',
+        description: 'Upload image failed',
+      })
       setError('Error uploading image. Please try again.')
     } finally {
       setIsUploading(false)
@@ -99,20 +109,20 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
   }
 
   return (
-    <div className='flex flex-col items-center space-y-4 p-4 bg-white rounded-lg border-secondary  shadow'>
+    <div className='flex flex-col items-center space-y-8 p-4 bg-white rounded-lg border border-secondary shadow'>
       <div className='relative'>
         <Image
           src={avatar}
           alt='Profile-image'
           width={128}
           height={128}
-          style={{ height: 'auto', width: 'auto' }}
-          className='rounded-full object-cover'
+          style={{ height: '128px', width: '128px', objectFit: 'cover' }}
+          className='rounded-full shadow-2xl border border-secondary'
         />
         <Button
           variant='outline'
           onClick={handleEditClick}
-          className='absolute bottom-0 left-1/2 -translate-x-1/2 p-2 rounded-full bg-white'
+          className='absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 p-2 rounded-full bg-white'
           disabled={isUploading}
         >
           <Camera size={20} />
@@ -131,11 +141,6 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
         <p className='text-grey-text'>{role}</p>
       </div>
       {isUploading && <p>Uploading...</p>}
-      {/* {error && (
-        <Alert variant='destructive'>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )} */}
     </div>
   )
 }
