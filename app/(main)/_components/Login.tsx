@@ -13,6 +13,7 @@ import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
 import React, { Dispatch, SetStateAction } from 'react'
 import { emailSignIn, googleSignUp } from '@/actions/auth'
+import { toast } from '@/components/ui/use-toast'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -36,10 +37,21 @@ const Login: React.FC<{
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
-    emailSignIn(data)
-    reset()
-    setIsLogin(false)
+    try {
+      console.log(data)
+      emailSignIn(data)
+      reset()
+      setIsLogin(false)
+      toast({
+        description: 'login success',
+      })
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        description: 'Logout failed',
+      })
+      console.log('Login email error: ', err)
+    }
   }
 
   return (

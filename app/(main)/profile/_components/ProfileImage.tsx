@@ -9,14 +9,12 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
 interface ProfileImageProp {
   initImage: string
-  initName: string
   picturePublicId: string | null
   role: string
 }
 
 const ProfileImage: React.FC<ProfileImageProp> = ({
   initImage,
-  initName,
   picturePublicId,
   role,
 }) => {
@@ -137,7 +135,6 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
         className='hidden'
       />
       <div className='text-center'>
-        <h2 className='text-xl font-bold'>{initName}</h2>
         <p className='text-grey-text'>{role}</p>
       </div>
       {isUploading && <p>Uploading...</p>}

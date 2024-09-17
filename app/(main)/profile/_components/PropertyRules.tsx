@@ -3,6 +3,8 @@
 import Input from '@/components/Input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
+import useProfile from '@/hooks/useProfile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -33,6 +35,7 @@ const PropertyRules: React.FC<PropertyRulesProps> = ({
   initCheckout,
   initCancelPolicy,
 }) => {
+  const { handleUpdatePropertyRules, loading } = useProfile()
   const {
     register,
     handleSubmit,
@@ -55,8 +58,24 @@ const PropertyRules: React.FC<PropertyRulesProps> = ({
     })
   }, [initCancelPolicy, initCheckin, initCheckout, reset])
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const request = {
+      checkinTime: data.Checkin,
+      checkoutTime: data.Checkout,
+      cancelPolicy: data.cancelPolicy,
+    }
+    const result = await handleUpdatePropertyRules(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    toast({
+      description: result.data,
+    })
   }
 
   const onCancel = () => {
@@ -99,7 +118,9 @@ const PropertyRules: React.FC<PropertyRulesProps> = ({
             <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'loading...' : 'Save'}
+            </Button>
           </div>
         </form>
       </CardContent>

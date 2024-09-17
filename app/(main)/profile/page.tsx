@@ -28,7 +28,6 @@ const Profile = () => {
                 ? result.profilePicture
                 : 'https://res.cloudinary.com/dhbg53ncx/image/upload/v1724048239/y2v5dowacq3zuvraaeem.png'
             }
-            initName={result.fullName}
             picturePublicId={result.picturePublicId}
             role={result.role}
           />
@@ -44,6 +43,7 @@ const Profile = () => {
           {result.accountType === 'email' && (
             <>
               <Email
+                name={result.fullName}
                 initialEmail={result.email}
                 isVerified={result.isVerified}
               />

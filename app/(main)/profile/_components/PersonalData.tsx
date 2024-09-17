@@ -4,6 +4,8 @@ import Input from '@/components/Input'
 import Select from '@/components/Select'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
+import useProfile from '@/hooks/useProfile'
 import { gender } from '@/utils/dummy'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
@@ -37,13 +39,13 @@ const PersonalData: React.FC<PersonalDataProps> = ({
   initGender,
   initPhone,
 }) => {
+  const { handleUpdatePersonalData, loading } = useProfile()
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
     reset,
-    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(PersonalDataSchema),
     defaultValues: {
@@ -72,8 +74,25 @@ const PersonalData: React.FC<PersonalDataProps> = ({
     })
   }
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const request = {
+      fullName: data.name,
+      dateOfBirth: data.dateOfBirth,
+      gender: data.gender,
+      phoneNumber: data.phone,
+    }
+    const result = await handleUpdatePersonalData(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    toast({
+      description: result.data,
+    })
   }
 
   return (
@@ -130,7 +149,9 @@ const PersonalData: React.FC<PersonalDataProps> = ({
             <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'loading...' : 'Save'}
+            </Button>
           </div>
         </form>
       </CardContent>

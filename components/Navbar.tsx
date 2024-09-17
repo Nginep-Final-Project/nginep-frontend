@@ -17,6 +17,7 @@ import EmailVerification from '@/app/(main)/_components/EmailVerification'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import useLogout from '@/hooks/useLogout'
+import { toast } from './ui/use-toast'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -117,7 +118,14 @@ const Navbar = () => {
                   >
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={handleLogOut}>
+                  <DropdownMenuItem
+                    onSelect={async () => {
+                      const result = await handleLogOut()
+                      toast({
+                        title: result?.message,
+                      })
+                    }}
+                  >
                     Log out
                   </DropdownMenuItem>
                 </>

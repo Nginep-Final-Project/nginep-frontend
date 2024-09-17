@@ -9,6 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
+import useLogout from '@/hooks/useLogout'
+import useProfile from '@/hooks/useProfile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -21,6 +24,7 @@ const ChangePasswordSchema = z.object({
 type FormData = z.infer<typeof ChangePasswordSchema>
 
 const ChangePassword = () => {
+  const { handleUpdatePassword, loading } = useProfile()
   const {
     register,
     handleSubmit,
@@ -30,8 +34,26 @@ const ChangePassword = () => {
     resolver: zodResolver(ChangePasswordSchema),
   })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    if (data.password !== data.confirmPass) {
+      toast({
+        variant: 'destructive',
+        description: 'Password and password confirmation must be same',
+      })
+      return
+    }
+    const request = {
+      password: data.password,
+    }
+    const result = await handleUpdatePassword(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
     reset()
   }
   return (
@@ -60,10 +82,18 @@ const ChangePassword = () => {
             errors={errors}
           />
           <div className='flex gap-x-4 justify-end'>
-            <Button variant='cancel' type='button'>
+            <Button
+              variant='cancel'
+              type='button'
+              onClick={() => {
+                reset()
+              }}
+            >
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'loading...' : 'Save'}
+            </Button>
           </div>
         </form>
       </CardContent>

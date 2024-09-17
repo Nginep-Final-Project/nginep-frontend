@@ -1,12 +1,14 @@
 import { logOutAuth } from '@/actions/auth'
 import { toast } from '@/components/ui/use-toast'
 import { response } from '@/types/response'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const useLogout = () => {
   const [response, setResponse] = useState<response>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
+  const router = useRouter()
 
   const handleLogOut = async () => {
     setLoading(true)
@@ -25,12 +27,11 @@ const useLogout = () => {
       if (!response.ok) {
         throw new Error('Logout failed')
       }
-      const data = await response.json()
+      const data: response = await response.json()
       logOutAuth()
 
-      toast({
-        title: data?.message,
-      })
+      router.push('/')
+      return data
     } catch (error) {
       setError(error)
       console.error('Logout error:', error)
