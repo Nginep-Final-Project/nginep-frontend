@@ -52,17 +52,21 @@ const Profile = () => {
           )}
 
           <AboutYourself initialValue={result.aboutYourself} />
-          <Languages props={result.languages} />
+          {result.role === 'tenant' && (
+            <Languages props={result.languages} userId={result.id} />
+          )}
           <BankAccount
             initBankName={result.bankName}
             initAccNumber={result.bankAccountNumber}
             initHolderName={result.bankHolderName}
           />
-          <PropertyRules
-            initCheckin={result.checkinTime}
-            initCheckout={result.checkoutTime}
-            initCancelPolicy={result.cancelPolicy}
-          />
+          {result.role === 'tenant' && (
+            <PropertyRules
+              initCheckin={result.checkinTime}
+              initCheckout={result.checkoutTime}
+              initCancelPolicy={result.cancelPolicy}
+            />
+          )}
         </div>
       </div>
       {loading && <Loading />}

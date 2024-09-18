@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Delete from '@/public/delete.svg'
+import useLanguage from '@/hooks/useLanguage'
 
 interface Item {
   id: number
@@ -18,6 +19,7 @@ interface Item {
 
 interface LanguagesProps {
   props: Item[]
+  userId: number
 }
 
 const LanguageSchema = z.object({
@@ -25,8 +27,9 @@ const LanguageSchema = z.object({
 })
 type FormData = z.infer<typeof LanguageSchema>
 
-const Languages: React.FC<LanguagesProps> = ({ props }) => {
+const Languages: React.FC<LanguagesProps> = ({ props, userId }) => {
   const [items, setItems] = useState<Item[]>([])
+  const { handleAddLanguage, handleDeleteLanguage, loading } = useLanguage()
   const {
     register,
     handleSubmit,
@@ -40,7 +43,7 @@ const Languages: React.FC<LanguagesProps> = ({ props }) => {
     setItems(props)
   }, [props])
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     const itemExists = items.some(
       (i) => i.languageName.toLowerCase() === data.language.toLowerCase()
     )
@@ -52,22 +55,45 @@ const Languages: React.FC<LanguagesProps> = ({ props }) => {
       })
       return
     }
-    const newItem: Item = {
-      id: items.length > 0 ? items[items.length - 1].id + 1 : 0,
+
+    const request = {
       languageName: data.language,
+      tenantId: userId,
     }
-    setItems([...items, newItem])
+    const result = await handleAddLanguage(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    } else {
+      setItems((prevItems) => [...prevItems, result.data])
+    }
     reset()
-    console.log(items)
+    toast({
+      description: result?.message,
+    })
   }
 
   const onCancel = () => {
     reset()
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
+    const result = await handleDeleteLanguage(id)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
     const updatedItems = items.filter((i) => i.id !== id)
     setItems(updatedItems)
+    toast({
+      description: result?.data,
+    })
   }
 
   return (
@@ -90,9 +116,12 @@ const Languages: React.FC<LanguagesProps> = ({ props }) => {
             <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'Loading...' : 'Save'}
+            </Button>
           </div>
         </form>
+
         <div className='flex flex-wrap justify-start gap-3 mt-4'>
           {items.length === 0 ? (
             <p className='text-sm text-start w-full'>
@@ -102,7 +131,7 @@ const Languages: React.FC<LanguagesProps> = ({ props }) => {
             items.map((e) => {
               return (
                 <Button
-                  key={e.id}
+                  key={e.languageName}
                   variant='outline'
                   className='flex gap-3'
                   type='button'
