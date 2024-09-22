@@ -7,12 +7,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
+import { Category } from '@/types/property'
 import React, { Dispatch, SetStateAction, useState } from 'react'
-
-interface Category {
-  value: string
-  label: string
-}
 
 interface CategoryProps {
   categories: Category[]
