@@ -55,6 +55,28 @@ const SignupStepOne: React.FC<{
     setRegister()
   }
 
+  const googleSignup = async () => {
+    try {
+      await googleSignUp().catch(() => {
+        toast({
+          title: 'Signup failed',
+          variant: 'destructive',
+          description: 'Please try again',
+        })
+      })
+      toast({
+        description: 'Signup success',
+      })
+    } catch (error) {
+      toast({
+        title: 'Signup failed',
+        variant: 'destructive',
+        description: 'Please try again',
+      })
+      console.log('Signup google error: ', error)
+    }
+  }
+
   return (
     <Dialog open={isSignup} onOpenChange={setIsSignup}>
       <DialogContent className='sm:max-w-[425px] bg-white'>
@@ -93,9 +115,7 @@ const SignupStepOne: React.FC<{
           variant='outline'
           className='text-xl flex justify-start'
           type='button'
-          onClick={async () => {
-            googleSignUp()
-          }}
+          onClick={googleSignup}
         >
           <Image src={GoogleIcon} alt='Google-Icon' />
           <div className='w-full'>Continue with Google</div>

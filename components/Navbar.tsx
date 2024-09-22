@@ -18,6 +18,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import useLogout from '@/hooks/useLogout'
 import { toast } from './ui/use-toast'
+import { logOutAuth } from '@/actions/auth'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -31,6 +32,32 @@ const Navbar = () => {
   const session = useSession()
   const { handleLogOut } = useLogout()
   console.log(session.data?.user.role)
+
+  const logOut = async () => {
+    const result = await handleLogOut()
+    if (!result?.success) {
+      toast({
+        title: 'Login failed',
+        variant: 'destructive',
+        description: result?.message,
+      })
+      return
+    }
+    logOutAuth()
+      .then(() => {
+        toast({
+          title: result?.message,
+        })
+      })
+      .catch((error) => {
+        toast({
+          title: 'Login failed',
+          variant: 'destructive',
+          description: error,
+        })
+      })
+    router.refresh()
+  }
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
@@ -118,16 +145,7 @@ const Navbar = () => {
                   >
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onSelect={async () => {
-                      const result = await handleLogOut()
-                      toast({
-                        title: result?.message,
-                      })
-                    }}
-                  >
-                    Log out
-                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={logOut}>Log out</DropdownMenuItem>
                 </>
               )}
             </DropdownMenuContent>

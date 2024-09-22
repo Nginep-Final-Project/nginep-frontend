@@ -40,17 +40,51 @@ const Login: React.FC<{
     try {
       console.log(data)
       emailSignIn(data)
-      reset()
-      setIsLogin(false)
-      toast({
-        description: 'login success',
-      })
+        .then(() => {
+          toast({
+            description: 'Login success',
+          })
+          reset()
+          setIsLogin(false)
+        })
+        .catch(() => {
+          toast({
+            title: 'Login failed',
+            variant: 'destructive',
+            description: 'Invalid email or password. Please try again',
+          })
+        })
     } catch (err) {
       toast({
+        title: 'Login failed',
         variant: 'destructive',
-        description: 'Logout failed',
+        description: 'Invalid email or password. Please try again',
       })
       console.log('Login email error: ', err)
+    }
+  }
+
+  const googleLogin = async () => {
+    try {
+      await googleSignUp().catch(() => {
+        toast({
+          title: 'Login failed',
+          variant: 'destructive',
+          description: 'Please try again',
+        })
+      })
+      toast({
+        description: 'Login success',
+      })
+      reset()
+      setIsLogin(false)
+    } catch (error) {
+      toast({
+        title: 'Login failed',
+        variant: 'destructive',
+        description: 'Please try again',
+      })
+      console.log('Login google error: ', error)
     }
   }
 
@@ -106,9 +140,7 @@ const Login: React.FC<{
           variant='outline'
           className='text-xl flex justify-start'
           type='button'
-          onClick={async () => {
-            googleSignUp()
-          }}
+          onClick={googleLogin}
         >
           <Image src={GoogleIcon} alt='Google-Icon' />
           <div className='w-full'>Continue with Google</div>

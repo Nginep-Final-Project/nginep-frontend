@@ -24,13 +24,8 @@ const useLogout = () => {
         }
       )
 
-      if (!response.ok) {
-        throw new Error('Logout failed')
-      }
       const data: response = await response.json()
-      logOutAuth()
 
-      router.push('/')
       return data
     } catch (error) {
       setError(error)

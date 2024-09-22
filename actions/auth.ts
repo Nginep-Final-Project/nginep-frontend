@@ -6,9 +6,9 @@ export async function googleSignUp() {
 }
 
 export async function emailSignIn(data: { email: string; password: string }) {
-  await signIn('credentials', data)
+  await signIn('credentials', data, { redirectTo: '/' })
 }
 
 export async function logOutAuth() {
-  await signOut({ redirect: false })
+  await signOut({ redirectTo: '/' })
 }
