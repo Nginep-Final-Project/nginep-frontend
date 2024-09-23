@@ -21,7 +21,7 @@ const Availability: React.FC = () => {
   }
   return (
     <div className='mb-6 lg:pl-32'>
-      <h2 className='text-2xl font-bold p-4 lg:px-32 '>Availability</h2>
+      <h2 className='text-2xl font-bold pl-4 lg:pl-0 pb-4'>Availability</h2>
       <div className='space-y-4'>
         <div className='flex flex-col justify-center md:flex-row gap-4 mx-4 mb-4'>
           <DatePicker
@@ -48,16 +48,16 @@ const Availability: React.FC = () => {
           {availableRooms.map((room) => (
             <Card
               key={room.id}
-              className='flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 md:ml-0 md:mr-4'
+              className='flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 lg:ml-0 lg:mr-4'
             >
               <CardContent className='p-4 flex flex-col justify-center'>
                 <Image
                   src={room.image}
                   alt={room.name}
-                  height={50}
-                  width={50}
-                  style={{ height: '100', width: 'auto' }}
-                  className='object-cover rounded-md mb-2'
+                  height={100}
+                  width={100}
+                  style={{ height: 'auto', width: 'auto' }}
+                  className='h-[100px] w-[100px] object-cover rounded-md mb-2'
                 />
                 <h3 className='font-semibold'>{room.name}</h3>
                 <p className='text-sm text-grey-text whitespace-pre-wrap break-words line-clamp-2'>

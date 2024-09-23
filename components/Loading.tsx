@@ -8,9 +8,10 @@ const Loading = () => {
         src={LoadingGif}
         width={300}
         height={300}
-        style={{ height: '300px', width: '300px' }}
+        priority={true}
+        style={{ height: 'auto', width: 'auto' }}
         alt='loading-gif'
-        className=' object-contain'
+        className='h-[300px] w-[300px] object-contain'
       />
       <p className='text-white lg:text-3xl'>Loading....</p>
     </div>

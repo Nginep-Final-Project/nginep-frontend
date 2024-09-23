@@ -41,6 +41,33 @@ export interface Property {
   rating: number
 }
 
+export interface PropertyDetail {
+  id: number
+  propertyName: string
+  propertyCategory: string
+  propertyDescription: string
+  propertyFacilities: Facility[]
+  propertyImage: PropertyImage[]
+  guestPlaceType: string
+  propertyAddress: string
+  propertyCity: string
+  propertyProvince: string
+  propertyPostalCode: string
+  propertyLatitude: number
+  propertyLongitude: number
+  rooms: Room[]
+  peakSeasonRate: PeakSeasonRate[]
+  reviewSummary: ReviewSummary
+  reviewList: ReviewItem[]
+  tenant: Tenant
+}
+
+export interface Facility {
+  id: number
+  value: string
+  propertyId: number
+}
+
 export interface PropertyImage {
   id: number
   path: string
@@ -69,6 +96,75 @@ export interface Booking {
   userMessage: string | null
   createdAt: string
   updatedAt: string
+}
+
+export interface PeakSeasonRate {
+  id: number
+  peakSeasonDates: {
+    from: string
+    to: string
+  }
+  rateType: string
+  rateValue: number
+}
+
+export interface ReviewSummary {
+  averageRating: number
+  totalReviews: number
+  cleanlinessRating: number
+  communicationRating: number
+  checkInRating: number
+  accuracyRating: number
+  locationRating: number
+  valueRating: number
+}
+
+export interface ReviewItem {
+  id: number
+  bookingId: number
+  propertyName: string
+  userPicture: string
+  fullName: string
+  cleanlinessRating: number
+  communicationRating: number
+  checkInRating: number
+  accuracyRating: number
+  locationRating: number
+  valueRating: number
+  comment: string
+  averageRating: number
+  createdAt: string
+  reply: string | null
+}
+
+export interface Tenant {
+  id: number
+  fullName: string
+  email: string
+  profilePicture: string
+  picturePublicId: string
+  isVerified: boolean
+  role: string
+  languages: Languages[]
+  accountType: string
+  dateOfBirth: string
+  gender: string
+  phoneNumber: string
+  aboutYourself: string
+  checkinTime: string
+  checkoutTime: string
+  cancelPolicy: string
+  bankName: string
+  bankAccountNumber: string
+  bankHolderName: string
+  createdAt: string
+  updatedAt: string
+  deletedAt: null | string
+}
+
+export interface Languages {
+  id: number
+  languageName: string
 }
 
 export interface Sort {
@@ -117,4 +213,57 @@ export const emptyPropertyData: PropertyData = {
     empty: false,
   },
   cities: [],
+}
+
+export const initialPropertyDetail: PropertyDetail = {
+  id: 0,
+  propertyName: '',
+  propertyCategory: '',
+  propertyDescription: '',
+  propertyFacilities: [],
+  propertyImage: [],
+  guestPlaceType: '',
+  propertyAddress: '',
+  propertyCity: '',
+  propertyProvince: '',
+  propertyPostalCode: '',
+  propertyLatitude: 0,
+  propertyLongitude: 0,
+  rooms: [],
+  peakSeasonRate: [],
+  reviewSummary: {
+    averageRating: 0,
+    totalReviews: 0,
+    cleanlinessRating: 0,
+    communicationRating: 0,
+    checkInRating: 0,
+    accuracyRating: 0,
+    locationRating: 0,
+    valueRating: 0,
+  },
+  reviewList: [],
+  tenant: {
+    id: 0,
+    fullName: '',
+    email: '',
+    profilePicture: '',
+    picturePublicId: '',
+    isVerified: false,
+    role: '',
+    languages: [],
+    accountType: '',
+    dateOfBirth: '',
+    gender: '',
+    phoneNumber: '',
+    aboutYourself: '',
+    checkinTime: '',
+    checkoutTime: '',
+    cancelPolicy: '',
+    bankName: '',
+    bankAccountNumber: '',
+    bankHolderName: '',
+    createdAt: '',
+    updatedAt: '',
+    deletedAt: null,
+  },
 }
