@@ -43,9 +43,9 @@ const ImageCarousel: React.FC<{
               <Image
                 src={imageSrc[index]}
                 alt={imageSrc[index]}
-                width={315}
+                width={320}
                 height={320}
-                style={{ width: 'auto', height: 'auto' }}
+                style={{ width: '320px', height: '320px' }}
                 className='object-cover'
               />
             </CarouselItem>
