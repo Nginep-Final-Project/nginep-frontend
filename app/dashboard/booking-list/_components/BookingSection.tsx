@@ -1,11 +1,11 @@
 import React from "react";
 import BookingCard from "./BookingCard";
-import { TenantBooking } from "@/types/tenantBookings";
+import { TenantBookings } from "@/types/tenantBookings";
 
 interface BookingSectionProps {
   title: string;
-  bookings: TenantBooking[];
-  type: "confirmation" | "payment";
+  bookings: TenantBookings[];
+  type: "confirmation" | "payment" | "pending" | "cancelled" | "confirmed";
 }
 
 const BookingSection: React.FC<BookingSectionProps> = ({ title, bookings, type }) => {

@@ -1,24 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { confirmPayment } from "@/services/bookingService";
 import { toast } from "@/components/ui/use-toast";
+import { uploadProofOfManualPayment } from "@/services/paymentService";
 
-export const useConfirmPayment = () => {
+export const useUploadProof = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: confirmPayment,
+    mutationFn: uploadProofOfManualPayment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenantBookings"] });
       toast({
-        title: "Payment Confirmed",
-        description:
-          "The payment has been verified and the booking is confirmed.",
+        title: "Proof of Payment",
+        description: "The proof of payment has been successfully uploaded.",
       });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to confirm the payment. Please try again.",
+        description: "Failed to upload the proof of payment. Please try again.",
         variant: "destructive",
       });
     },

@@ -5,9 +5,10 @@ import BookingSection from "./_components/BookingSection";
 import SkeletonSection from "./_components/SkeletonSection";
 import { BookingStatus } from "@/types/tenantBookings";
 import { useTenantBookings } from "@/hooks/booking/tenant/useTenantBookings";
+import { PaymentStatus, PaymentType } from "@/types/bookingPaymentDetails";
 
 const BookingList: React.FC = () => {
-  const tenantId = 1;
+  const tenantId = 10;
 
   const { isLoading, error, data: bookings } = useTenantBookings(tenantId);
 
@@ -38,8 +39,22 @@ const BookingList: React.FC = () => {
 
     const manualPaymentBookings = bookings.filter(
       (booking) =>
-        booking.paymentType === "MANUAL_PAYMENT" &&
-        booking.paymentStatus === "AWAITING_CONFIRMATION"
+        booking.paymentType === PaymentType.MANUAL_PAYMENT &&
+        booking.paymentStatus === PaymentStatus.AWAITING_CONFIRMATION
+    );
+
+    const awaitingPaymentFromGuest = bookings.filter(
+      (booking) =>
+        booking.status === BookingStatus.PENDING_PAYMENT &&
+        booking.paymentStatus === PaymentStatus.PENDING_PAYMENT
+    );
+
+    const confirmedBookings = bookings.filter(
+      (booking) => booking.status === BookingStatus.CONFIRMED
+    );
+
+    const cancelledBookings = bookings.filter(
+      (booking) => booking.status === BookingStatus.CANCELLED
     );
 
     return (
@@ -53,6 +68,21 @@ const BookingList: React.FC = () => {
           title="Manual Payments to Verify"
           bookings={manualPaymentBookings}
           type="payment"
+        />
+        <BookingSection
+          title="Awaiting Payment from the Guest"
+          bookings={awaitingPaymentFromGuest}
+          type="pending"
+        />
+        <BookingSection
+          title="Confirmed Bookings"
+          bookings={confirmedBookings}
+          type="confirmed"
+        />
+        <BookingSection
+          title="Cancelled Bookings"
+          bookings={cancelledBookings}
+          type="cancelled"
         />
       </>
     );
