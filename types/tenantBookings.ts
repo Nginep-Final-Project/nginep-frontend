@@ -5,9 +5,10 @@ export enum BookingStatus {
     CANCELLED = "CANCELLED",
   }
   
-  export interface TenantBooking {
+  export interface TenantBookings {
     bookingId: number;
     roomId: number;
+    paymentId: number;
     propertyName: string;
     checkInDate: string;
     checkOutDate: string;
@@ -19,4 +20,6 @@ export enum BookingStatus {
     paymentType: string;
     paymentStatus: string;
     proofOfPayment?: string;
+    propertyCoverImage: string;
+    type: string;
   }
