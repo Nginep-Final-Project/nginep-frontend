@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     "The dashboard for tenant managements on properties and bookings",
 };
 
-export default function Dashboard({ children }: { children: React.ReactNode }) {
+export default function BookingList({ children }: { children: React.ReactNode }) {
   return (
     <section>
       {children}

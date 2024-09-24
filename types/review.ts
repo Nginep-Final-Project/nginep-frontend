@@ -34,3 +34,9 @@ export interface ReviewReplyDto {
   reply: string;
   createdAt: string;
 }
+
+export interface CreateReviewReplyDto {
+  reviewId: number;
+  tenantId: number;
+  reply: string;
+}
