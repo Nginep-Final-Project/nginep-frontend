@@ -11,8 +11,12 @@ const nextConfig = {
         hostname: "res.cloudinary.com",
       },
       {
-        protocol: "https",
-        hostname: "dummyimage.com",
+        protocol: 'http',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'dummyimage.com',
       },
       {
         protocol: "https",
@@ -24,6 +28,6 @@ const nextConfig = {
       },
     ],
   },
-};
+}
 
 export default nextConfig

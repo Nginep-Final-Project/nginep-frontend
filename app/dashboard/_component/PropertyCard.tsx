@@ -58,7 +58,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           alt={name}
           width={300}
           height={200}
-          className='rounded-md object-cover'
+          style={{ height: 'auto', width: 'auto' }}
+          className='h-[200px] w-[300px] rounded-md object-cover'
           layout='responsive'
         />
       </div>

@@ -10,10 +10,14 @@ import { z } from 'zod'
 import Check from '@/public/Check.svg'
 import { ShieldAlert } from 'lucide-react'
 import EmailVerification from '../../_components/EmailVerification'
+import useEmailVerification from '@/hooks/useEmailVerification'
+import { toast } from '@/components/ui/use-toast'
+import ProfileEmailVerification from './ProfileEmailVerification'
 
 interface EmailProps {
   initialEmail: string
   isVerified: boolean
+  name: string
 }
 
 const EmailSchema = z.object({
@@ -21,13 +25,15 @@ const EmailSchema = z.object({
 })
 type FormData = z.infer<typeof EmailSchema>
 
-const Email: React.FC<EmailProps> = ({ initialEmail, isVerified }) => {
+const Email: React.FC<EmailProps> = ({ initialEmail, isVerified, name }) => {
+  const { handleEmailVerification, loading } = useEmailVerification()
   const [isEmailVerification, setIsEmailVerification] = useState(false)
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<FormData>({
     resolver: zodResolver(EmailSchema),
     defaultValues: {
@@ -39,11 +45,40 @@ const Email: React.FC<EmailProps> = ({ initialEmail, isVerified }) => {
     setValue('email', initialEmail)
   }, [initialEmail, setValue])
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    if (data.email === initialEmail) {
+      return
+    }
+
+    const request = {
+      email: data.email,
+      name: name,
+    }
+    const result = await handleEmailVerification(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    setIsEmailVerification(true)
   }
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
+    const request = {
+      email: watch('email'),
+      name: name,
+    }
+    const result = await handleEmailVerification(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
     setIsEmailVerification(true)
   }
 
@@ -83,14 +118,18 @@ const Email: React.FC<EmailProps> = ({ initialEmail, isVerified }) => {
               <Button variant='cancel' type='button'>
                 Cancel
               </Button>
-              <Button type='submit'>Save</Button>
+              <Button type='submit' disabled={loading}>
+                {loading ? 'Loading...' : 'Save'}
+              </Button>
             </div>
           </form>
         </CardContent>
       </Card>
-      <EmailVerification
+      <ProfileEmailVerification
         isEmailVerification={isEmailVerification}
         setIsEmailVerification={setIsEmailVerification}
+        email={watch('email')}
+        name={name}
       />
     </div>
   )

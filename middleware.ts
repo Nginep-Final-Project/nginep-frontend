@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { auth } from './auth'
-import { toast } from './components/ui/use-toast'
 
 export async function middleware(request: NextRequest) {
   const session = await auth()

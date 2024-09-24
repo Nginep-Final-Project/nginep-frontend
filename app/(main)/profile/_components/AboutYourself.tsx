@@ -2,6 +2,8 @@
 import Input from '@/components/Input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
+import useProfile from '@/hooks/useProfile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -17,11 +19,11 @@ const AboutYourselfSchema = z.object({
 type FormData = z.infer<typeof AboutYourselfSchema>
 
 const AboutYourself: React.FC<AboutYourselfProps> = ({ initialValue }) => {
+  const { handleUpdateAboutYourself, loading } = useProfile()
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(AboutYourselfSchema),
@@ -31,11 +33,25 @@ const AboutYourself: React.FC<AboutYourselfProps> = ({ initialValue }) => {
   })
 
   useEffect(() => {
-    setValue('value', initialValue)
-  }, [initialValue, setValue])
+    reset({ value: initialValue })
+  }, [initialValue, reset])
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const request = {
+      aboutYourself: data.value,
+    }
+    const result = await handleUpdateAboutYourself(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    toast({
+      description: result.data,
+    })
   }
 
   const onCancel = () => {
@@ -64,7 +80,9 @@ const AboutYourself: React.FC<AboutYourselfProps> = ({ initialValue }) => {
             <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'loading...' : 'Save'}
+            </Button>
           </div>
         </form>
       </CardContent>

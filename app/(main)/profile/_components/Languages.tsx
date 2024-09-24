@@ -6,14 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Delete from '@/public/delete.svg'
+import useLanguage from '@/hooks/useLanguage'
 
 interface Item {
   id: number
-  name: string
+  languageName: string
+}
+
+interface LanguagesProps {
+  props: Item[]
+  userId: number
 }
 
 const LanguageSchema = z.object({
@@ -21,8 +27,9 @@ const LanguageSchema = z.object({
 })
 type FormData = z.infer<typeof LanguageSchema>
 
-const Languages = () => {
+const Languages: React.FC<LanguagesProps> = ({ props, userId }) => {
   const [items, setItems] = useState<Item[]>([])
+  const { handleAddLanguage, handleDeleteLanguage, loading } = useLanguage()
   const {
     register,
     handleSubmit,
@@ -32,9 +39,13 @@ const Languages = () => {
     resolver: zodResolver(LanguageSchema),
   })
 
-  const onSubmit = (data: FormData) => {
+  useEffect(() => {
+    setItems(props)
+  }, [props])
+
+  const onSubmit = async (data: FormData) => {
     const itemExists = items.some(
-      (i) => i.name.toLowerCase() === data.language.toLowerCase()
+      (i) => i.languageName.toLowerCase() === data.language.toLowerCase()
     )
 
     if (itemExists) {
@@ -44,22 +55,45 @@ const Languages = () => {
       })
       return
     }
-    const newItem: Item = {
-      id: items.length > 0 ? items[items.length - 1].id + 1 : 0,
-      name: data.language,
+
+    const request = {
+      languageName: data.language,
+      tenantId: userId,
     }
-    setItems([...items, newItem])
+    const result = await handleAddLanguage(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    } else {
+      setItems((prevItems) => [...prevItems, result.data])
+    }
     reset()
-    console.log(items)
+    toast({
+      description: result?.message,
+    })
   }
 
   const onCancel = () => {
     reset()
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
+    const result = await handleDeleteLanguage(id)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
     const updatedItems = items.filter((i) => i.id !== id)
     setItems(updatedItems)
+    toast({
+      description: result?.data,
+    })
   }
 
   return (
@@ -79,12 +113,15 @@ const Languages = () => {
             />
           </div>
           <div className='flex gap-x-4 justify-end'>
-            <Button variant='cancel' type='button'>
+            <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'Loading...' : 'Save'}
+            </Button>
           </div>
         </form>
+
         <div className='flex flex-wrap justify-start gap-3 mt-4'>
           {items.length === 0 ? (
             <p className='text-sm text-start w-full'>
@@ -94,12 +131,12 @@ const Languages = () => {
             items.map((e) => {
               return (
                 <Button
-                  key={e.id}
+                  key={e.languageName}
                   variant='outline'
                   className='flex gap-3'
                   type='button'
                 >
-                  {e.name}
+                  {e.languageName}
                   <Image
                     src={Delete}
                     alt='delete'

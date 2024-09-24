@@ -4,10 +4,20 @@ import Input from '@/components/Input'
 import Select from '@/components/Select'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
+import useProfile from '@/hooks/useProfile'
 import { gender } from '@/utils/dummy'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+
+interface PersonalDataProps {
+  initName: string
+  initGender: string
+  initDateOfBirth: string
+  initPhone: string
+}
 
 const PersonalDataSchema = z.object({
   name: z
@@ -23,7 +33,13 @@ const PersonalDataSchema = z.object({
 
 type FormData = z.infer<typeof PersonalDataSchema>
 
-const PersonalData = () => {
+const PersonalData: React.FC<PersonalDataProps> = ({
+  initName,
+  initDateOfBirth,
+  initGender,
+  initPhone,
+}) => {
+  const { handleUpdatePersonalData, loading } = useProfile()
   const {
     register,
     handleSubmit,
@@ -33,15 +49,50 @@ const PersonalData = () => {
   } = useForm<FormData>({
     resolver: zodResolver(PersonalDataSchema),
     defaultValues: {
-      name: 'yosef',
-      gender: 'male',
+      name: '',
+      gender: '',
       dateOfBirth: '',
       phone: '',
     },
   })
 
-  const onSubmit = (data: FormData) => {
+  useEffect(() => {
+    reset({
+      name: initName,
+      gender: initGender,
+      dateOfBirth: initDateOfBirth,
+      phone: initPhone,
+    })
+  }, [initDateOfBirth, initGender, initName, initPhone, reset])
+
+  const onCancel = () => {
+    reset({
+      name: initName,
+      gender: initGender,
+      dateOfBirth: initDateOfBirth,
+      phone: initPhone,
+    })
+  }
+
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const request = {
+      fullName: data.name,
+      dateOfBirth: data.dateOfBirth,
+      gender: data.gender,
+      phoneNumber: data.phone,
+    }
+    const result = await handleUpdatePersonalData(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    toast({
+      description: result.data,
+    })
   }
 
   return (
@@ -95,10 +146,12 @@ const PersonalData = () => {
             />
           </div>
           <div className='flex gap-x-4 justify-end'>
-            <Button variant='cancel' type='button'>
+            <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'loading...' : 'Save'}
+            </Button>
           </div>
         </form>
       </CardContent>

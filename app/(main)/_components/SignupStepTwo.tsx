@@ -9,16 +9,19 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect } from 'react'
 import { SquareUserRound } from 'lucide-react'
 import { HousePlus } from 'lucide-react'
+import { SIGN_UP } from '@/utils/constanta'
+import useEmailVerification from '@/hooks/useEmailVerification'
+import { toast } from '@/components/ui/use-toast'
 
 const signUpSchema = z.object({
   fullName: z.string().min(3, 'Full name must be at least 3 characters'),
   dateOfBirth: z.string().date(),
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  role: z.enum(['User', 'Tenant']),
+  role: z.enum(['guest', 'tenant']),
 })
 
 type FormData = z.infer<typeof signUpSchema>
@@ -28,6 +31,7 @@ const SignupStepTwo: React.FC<{
   setIsSignupStepTwo: Dispatch<SetStateAction<boolean>>
   setEmailVerification: () => void
 }> = ({ isSignupStepTwo, setIsSignupStepTwo, setEmailVerification }) => {
+  const { handleEmailVerification, loading, error } = useEmailVerification()
   const {
     register,
     handleSubmit,
@@ -38,12 +42,34 @@ const SignupStepTwo: React.FC<{
   } = useForm<FormData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      role: 'User',
+      role: 'guest',
     },
   })
 
-  const onSubmit = (data: FormData) => {
+  useEffect(() => {
+    const storedData = sessionStorage.getItem(SIGN_UP)
+    if (storedData) {
+      const parseStoredData = JSON.parse(storedData)
+      console.log(parseStoredData)
+      setValue('email', parseStoredData.email)
+    }
+  }, [isSignupStepTwo, setValue])
+
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const request = {
+      email: data.email,
+      name: data.fullName,
+    }
+    const result = await handleEmailVerification(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    sessionStorage.setItem(SIGN_UP, JSON.stringify(data))
     reset()
     setEmailVerification()
   }
@@ -94,24 +120,24 @@ const SignupStepTwo: React.FC<{
                   variant='outline'
                   type='button'
                   className={`flex flex-col items-center h-fit w-1/3 ${
-                    watch('role') === 'User'
+                    watch('role') === 'guest'
                       ? 'border-primary border-2'
                       : 'border-secondary'
                   }`}
-                  onClick={() => setValue('role', 'User')}
+                  onClick={() => setValue('role', 'guest')}
                 >
                   <SquareUserRound />
-                  User
+                  Guest
                 </Button>
                 <Button
                   variant='outline'
                   type='button'
                   className={`flex flex-col items-center h-fit w-1/3 ${
-                    watch('role') === 'Tenant'
+                    watch('role') === 'tenant'
                       ? 'border-primary border-2'
                       : 'border-secondary'
                   }`}
-                  onClick={() => setValue('role', 'Tenant')}
+                  onClick={() => setValue('role', 'tenant')}
                 >
                   <HousePlus />
                   Tenant
@@ -133,8 +159,9 @@ const SignupStepTwo: React.FC<{
             <Button
               type='submit'
               className='bg-primary w-full text-white text-xl px-4 py-2 rounded'
+              disabled={loading}
             >
-              Agree and continue
+              {loading ? 'Loading...' : 'Agree and continue'}
             </Button>
           </form>
         </div>
