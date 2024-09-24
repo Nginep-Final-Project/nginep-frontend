@@ -35,8 +35,8 @@ const DetailProperty: React.FC<{ propertyId: number }> = ({ propertyId }) => {
             </div>
             <div>
               <Availability
-                room={result.rooms}
-                peakSeasonRate={result.peakSeasonRate}
+                rooms={result.rooms}
+                peakSeasonRates={result.peakSeasonRate}
               />
             </div>
           </div>
