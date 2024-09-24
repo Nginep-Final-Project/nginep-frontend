@@ -4,9 +4,8 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { UserBookings } from "@/types/userBookings";
 import { mapBookingStatus } from "@/utils/bookingStatusMapper";
-import { useCancelBooking } from "@/hooks/booking/useCancelBooking";
 import CancelConfirmationModal from "./CancelConfirmationModal";
-import { toast } from "@/components/ui/use-toast";
+import { useCancelBooking } from "@/hooks/booking/user/useCancelBooking";
 
 const BookingCard: React.FC<UserBookings> = ({
   bookingId,

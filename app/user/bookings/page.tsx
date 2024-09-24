@@ -4,7 +4,7 @@ import React from "react";
 import BookingSection from "./_components/BookingSection";
 import SkeletonSection from "./_components/SkeletonSection";
 import Link from "next/link";
-import { useUserBookings } from "@/hooks/booking/useUserBookings";
+import { useUserBookings } from "@/hooks/booking/user/useUserBookings";
 
 const Bookings: React.FC = () => {
   const userId = 11;
