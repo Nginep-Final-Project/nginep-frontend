@@ -6,12 +6,27 @@ import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent } from '@/components/ui/card'
 import { availableRooms } from '@/utils/dummy'
 import { Users } from 'lucide-react'
+import moment from 'moment'
 import Image from 'next/image'
 import { useState } from 'react'
+import { DateRange } from 'react-day-picker'
+import RoomDatePicker from './RoomDatePicker'
+import { PeakSeasonRate, Room } from '@/types/property'
 
-const Availability: React.FC = () => {
-  const [checkInDate, setCheckInDate] = useState<Date | undefined>()
-  const [checkInOut, setCheckInOut] = useState<Date | undefined>()
+const Availability: React.FC<{
+  room: Room[]
+  peakSeasonRate: PeakSeasonRate[]
+}> = ({ room, peakSeasonRate }) => {
+  const [dateRange, setdateRange] = useState<DateRange | undefined>({
+    from: moment().toDate(),
+    to: moment().add(1, 'days').toDate(),
+  })
+  const [checkInDate, setCheckInDate] = useState<string>(
+    moment(dateRange?.from).format('YYYY-MM-DD')
+  )
+  const [checkOutDate, setCheckInOut] = useState<string>(
+    moment(dateRange?.to).format('YYYY-MM-DD')
+  )
   const [guest, setGuest] = useState<number>(1)
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
@@ -19,22 +34,39 @@ const Availability: React.FC = () => {
     setGuest(value)
     setIsDialogOpen(false)
   }
+
+  const handleSearch = () => {
+    console.log(guest, checkInDate, checkOutDate)
+  }
+
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    console.log('Selected range:', range)
+  }
+
   return (
     <div className='mb-6 lg:pl-32'>
       <h2 className='text-2xl font-bold pl-4 lg:pl-0 pb-4'>Availability</h2>
       <div className='space-y-4'>
         <div className='flex flex-col justify-center md:flex-row gap-4 mx-4 mb-4'>
-          <DatePicker
-            mode='single'
-            value={checkInDate}
-            placeholder='Checkin date'
-            onChange={setCheckInDate}
-          />
-          <DatePicker
-            mode='single'
-            value={checkInOut}
-            placeholder='Checkout date'
-            onChange={setCheckInOut}
+          {/* <DatePicker
+            mode='range'
+            value={dateRange}
+            onChange={(value) => {
+              setdateRange(value)
+              setCheckInDate(moment(value?.from).format('YYYY-MM-DD'))
+              setCheckInOut(moment(value?.to).format('YYYY-MM-DD'))
+            }}
+            placeholder='Select date'
+          /> */}
+          <RoomDatePicker
+            value={dateRange}
+            onChange={(value) => {
+              setdateRange(value)
+              setCheckInDate(moment(value?.from).format('YYYY-MM-DD'))
+              setCheckInOut(moment(value?.to).format('YYYY-MM-DD'))
+            }}
+            basePrice={1000}
+            peakSeasonRate={peakSeasonRate}
           />
           <Button
             variant='outline'
@@ -43,6 +75,8 @@ const Availability: React.FC = () => {
           >
             {`${guest} Guests`} <Users size={20} />
           </Button>
+
+          <Button onClick={handleSearch}>Search</Button>
         </div>
         <div className='flex overflow-x-auto snap-x snap-mandatory'>
           {availableRooms.map((room) => (

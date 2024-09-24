@@ -15,7 +15,6 @@ import Error from '@/components/Error'
 
 const DetailProperty: React.FC<{ propertyId: number }> = ({ propertyId }) => {
   const { result, loading, error } = useProperty(propertyId)
-
   if (error) {
     return <Error />
   }
@@ -35,7 +34,10 @@ const DetailProperty: React.FC<{ propertyId: number }> = ({ propertyId }) => {
               <Description description={result.propertyDescription} />
             </div>
             <div>
-              <Availability />
+              <Availability
+                room={result.rooms}
+                peakSeasonRate={result.peakSeasonRate}
+              />
             </div>
           </div>
           <div className='max-md:w-full flex justify-center lg:justify-start p-4'>
