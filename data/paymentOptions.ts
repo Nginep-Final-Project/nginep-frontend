@@ -1,14 +1,18 @@
 export const automaticPaymentOptions = [
   {
-    category: "E-Wallet",
+    category: "QRIS",
     methods: [
-      { id: "qris", name: "QRIS", icon: "/icons/payment-icons/qris.png" },
-      { id: "gopay", name: "GoPay", icon: "/icons/payment-icons/gopay.png" },
       {
-        id: "shopeepay",
-        name: "ShopeePay",
-        icon: "/icons/payment-icons/shopeepay.png",
+        id: "e-wallet/qris",
+        name: "QRIS",
+        icon: "/icons/payment-icons/qris.png",
       },
+      // { id: "gopay", name: "GoPay", icon: "/icons/payment-icons/gopay.png" },
+      // {
+      //   id: "shopeepay",
+      //   name: "ShopeePay",
+      //   icon: "/icons/payment-icons/shopeepay.png",
+      // },
     ],
   },
   {
@@ -41,14 +45,14 @@ export const automaticPaymentOptions = [
       },
     ],
   },
-  {
-    category: "Credit Card",
-    methods: [
-      {
-        id: "credit_card",
-        name: "Credit Card",
-        icon: "/icons/payment-icons/credit-card.png",
-      },
-    ],
-  },
+  // {
+  //   category: "Credit Card",
+  //   methods: [
+  //     {
+  //       id: "credit_card",
+  //       name: "Credit Card",
+  //       icon: "/icons/payment-icons/credit-card.png",
+  //     },
+  //   ],
+  // },
 ];

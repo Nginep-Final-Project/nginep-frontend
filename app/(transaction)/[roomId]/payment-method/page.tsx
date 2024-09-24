@@ -1,16 +1,29 @@
 "use client";
 
-import React from "react";
-import { useParams } from "next/navigation";
+import React, { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
-import useBookingData from "@/hooks/useBookingData";
 import TransactionLayout from "../_components/TransactionLayout/TransactionLayout";
 import PaymentOptions from "./_components/PaymentOptions/PaymentOptions";
+import useBookingData from "@/hooks/booking/useBookingData";
+import { useCheckExistingPendingBooking, useCreateBooking } from "@/hooks";
 
 const PaymentMethod = () => {
   const params = useParams();
   const roomId = params.roomId as string;
+  const router = useRouter();
+  const userId = 11;
+
   const { bookingData, updateBookingData } = useBookingData(roomId);
+  const { data: existingBookingId, isLoading } =
+    useCheckExistingPendingBooking(userId, parseInt(roomId));
+  const createBookingMutation = useCreateBooking();
+
+  useEffect(() => {
+    if (existingBookingId) {
+      router.push(`/${roomId}/payment-process`);
+    }
+  }, [existingBookingId, roomId, router]);
 
   const handleMethodSelect = (
     methodId: string,
@@ -24,12 +37,30 @@ const PaymentMethod = () => {
     }
   };
 
+  const handleCreateBooking = async () => {
+    try {
+      await createBookingMutation.mutateAsync({
+        roomId: parseInt(roomId),
+        userId: userId,
+        checkInDate: bookingData.checkIn,
+        checkOutDate: bookingData.checkOut,
+        numGuests: bookingData.guestCount,
+        paymentMethod: bookingData.paymentMethod,
+        userMessage: bookingData.message,
+      });
+      router.push(`/${roomId}/payment-process`);
+    } catch (error) {
+      console.error("Error creating booking:", error);
+    }
+  };
+
   return (
     <TransactionLayout title="Select Payment Method">
       <PaymentOptions
         selectedMethod={bookingData.paymentMethod}
         selectedSpecificMethod={bookingData.specificPaymentMethod}
         onMethodSelect={handleMethodSelect}
+        onCreateBooking={handleCreateBooking}
       />
       <PriceSummary
         roomId={roomId}

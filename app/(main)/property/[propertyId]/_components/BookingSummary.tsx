@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
 
 interface BookingSummaryProps {
   pricePerNight: number
@@ -7,6 +8,7 @@ interface BookingSummaryProps {
   checkOutDate: string
   guests: number
   roomType: string
+  roomId: number
 }
 
 const BookingSummary: React.FC<BookingSummaryProps> = ({
@@ -15,6 +17,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
   checkOutDate,
   guests,
   roomType,
+  roomId,
 }) => {
   const calculateNights = (checkIn: string, checkOut: string): number => {
     const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
@@ -25,6 +28,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
     )
     return nights
   }
+  const router = useRouter()
 
   const nights = calculateNights(checkInDate, checkOutDate)
   const total = pricePerNight * nights
@@ -59,7 +63,13 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
         </div>
       </div>
 
-      <Button className='w-full rounded-lg mb-4' type='button'>
+      <Button
+        className='w-full rounded-lg mb-4'
+        type='button'
+        onClick={() => {
+          router.push(`/${roomId}/booking-summary`)
+        }}
+      >
         Reserve
       </Button>
 

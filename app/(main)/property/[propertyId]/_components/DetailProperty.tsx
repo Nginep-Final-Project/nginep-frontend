@@ -41,7 +41,7 @@ const DetailProperty: React.FC<{ propertyId: number }> = ({ propertyId }) => {
             </div>
           </div>
           <div className='max-md:w-full flex justify-center lg:justify-start p-4'>
-            <BookingSummary {...bookingData} />
+            <BookingSummary {...bookingData} roomId={result.rooms[0].id} />
           </div>
         </div>
 

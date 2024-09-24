@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { BookingData } from "@/types/bookingData";
-import globalEventEmitter from "../utils/events";
+import globalEventEmitter from "@/utils/events";
 
 const useBookingData = (roomId?: string) => {
   const [bookingData, setBookingData] = useState<BookingData>(() => ({

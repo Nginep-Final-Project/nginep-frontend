@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import Image from "next/image";
-import useBookingData from "@/hooks/useBookingData";
+import useBookingData from "@/hooks/booking/useBookingData";
 
 interface PriceSummaryProps {
   roomId: string;

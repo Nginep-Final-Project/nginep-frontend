@@ -65,7 +65,7 @@ const Availability: React.FC<{
               setCheckInDate(moment(value?.from).format('YYYY-MM-DD'))
               setCheckInOut(moment(value?.to).format('YYYY-MM-DD'))
             }}
-            basePrice={1000}
+            basePrice={room[0].basePrice}
             peakSeasonRate={peakSeasonRate}
           />
           <Button

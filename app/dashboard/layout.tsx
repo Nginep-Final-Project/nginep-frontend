@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
-import DashboardSidebar from './_components/DashboardSidebar/DashboardSidebar'
 import { Toaster } from '@/components/ui/toaster'
+import DashboardSidebar from './_components/DashboardSidebar/DashboardSidebar'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Nginep - Dashboard',
@@ -10,9 +12,13 @@ export const metadata: Metadata = {
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   return (
-    <DashboardSidebar>
-      <section>{children}</section>
-      <Toaster />
-    </DashboardSidebar>
+    <div>
+      <Navbar />
+      <DashboardSidebar>
+        <section>{children}</section>
+        <Toaster />
+      </DashboardSidebar>
+      <Footer />
+    </div>
   )
 }

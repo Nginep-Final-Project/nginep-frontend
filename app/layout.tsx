@@ -3,6 +3,7 @@ import { Poppins } from 'next/font/google'
 import './globals.css'
 import { auth } from '@/auth'
 import { SessionProvider } from 'next-auth/react'
+import QueryClientProvider from '@/components/QueryClientProvider'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -23,7 +24,9 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={poppins.className}>
-        <SessionProvider session={session}>{children}</SessionProvider>
+        <SessionProvider session={session}>
+          <QueryClientProvider>{children}</QueryClientProvider>
+        </SessionProvider>
       </body>
     </html>
   )

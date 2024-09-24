@@ -229,7 +229,17 @@ export const initialPropertyDetail: PropertyDetail = {
   propertyPostalCode: '',
   propertyLatitude: 0,
   propertyLongitude: 0,
-  rooms: [],
+  rooms: [
+    {
+      id: 0,
+      name: '',
+      description: '',
+      maxGuests: 0,
+      basePrice: 0,
+      totalRoom: 0,
+      booking: [],
+    },
+  ],
   peakSeasonRate: [],
   reviewSummary: {
     averageRating: 0,

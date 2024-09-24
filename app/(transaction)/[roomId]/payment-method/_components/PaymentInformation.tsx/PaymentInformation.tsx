@@ -10,7 +10,7 @@ const PaymentInformation: React.FC<PaymentInformationProps> = ({
 }) => {
   if (!selectedMethod) return null;
 
-  if (selectedMethod === "manual_payment") {
+  if (selectedMethod === "MANUAL_PAYMENT") {
     return (
       <div className="mt-4 p-4 border border-gray-200 rounded-lg">
         <h3 className="text-lg font-semibold mb-2">
@@ -35,7 +35,7 @@ const PaymentInformation: React.FC<PaymentInformationProps> = ({
         </ul>
       </div>
     );
-  } else if (selectedMethod === "automatic_payment") {
+  } else if (selectedMethod === "AUTOMATIC_PAYMENT") {
     const paymentOptions = automaticPaymentOptions.flatMap((category) =>
       category.methods.map((method) => method.name)
     );

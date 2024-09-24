@@ -1,33 +1,34 @@
 import React from "react";
 import { CreditCard, Wallet } from "lucide-react";
 import WarningModal from "../../../_components/Modal/WarningModal";
-import useWarningModal from "@/hooks/useWarningModal";
-import ValidatedNavigation from "../../../_components/Navigation/ValidatedNavigation";
-import Button from "../../../_components/Button/Button";
 import AutomaticPaymentOptions from "../AutomaticPaymentOptions/AutomaticPaymentOptions";
 import { BookingData } from "@/types/bookingData";
 import PaymentInformation from "../PaymentInformation.tsx/PaymentInformation";
+import useWarningModal from "@/hooks/common/useWarningModal";
+import BookingNavigationButton from "../../../_components/Navigation/BookingNavigationButton";
 
 const paymentMethods = [
-  { id: "manual_payment", name: "Manual Transfer", icon: Wallet },
-  { id: "automatic_payment", name: "Automatic Payment", icon: CreditCard },
+  { id: "MANUAL_PAYMENT", name: "Manual Transfer", icon: Wallet },
+  { id: "AUTOMATIC_PAYMENT", name: "Automatic Payment", icon: CreditCard },
 ];
 
 interface PaymentOptionsProps {
   selectedMethod: string | undefined;
   selectedSpecificMethod: string | undefined;
   onMethodSelect: (methodId: string, specificPaymentMethod?: string) => void;
+  onCreateBooking: () => void;
 }
 
 const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   selectedMethod,
   selectedSpecificMethod,
   onMethodSelect,
+  onCreateBooking,
 }) => {
   const { showWarning, closeWarning } = useWarningModal();
 
   const handleMethodSelect = (methodId: string) => {
-    if (methodId === "automatic_payment") {
+    if (methodId === "AUTOMATIC_PAYMENT") {
       onMethodSelect(methodId, selectedSpecificMethod);
     } else {
       onMethodSelect(methodId);
@@ -35,7 +36,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   };
 
   const handleAutomaticMethodSelect = (specificMethod: string) => {
-    onMethodSelect("automatic_payment", specificMethod);
+    onMethodSelect("AUTOMATIC_PAYMENT", specificMethod);
   };
 
   const requiredFields: (keyof BookingData)[] = [
@@ -45,7 +46,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
     "paymentMethod",
   ];
 
-  if (selectedMethod === "automatic_payment") {
+  if (selectedMethod === "AUTOMATIC_PAYMENT") {
     requiredFields.push("specificPaymentMethod" as keyof BookingData);
   }
 
@@ -72,20 +73,19 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
 
         <PaymentInformation selectedMethod={selectedMethod} />
 
-        {selectedMethod === "automatic_payment" && (
+        {selectedMethod === "AUTOMATIC_PAYMENT" && (
           <AutomaticPaymentOptions
             selectedPayment={selectedSpecificMethod}
             onPaymentSelect={handleAutomaticMethodSelect}
           />
         )}
 
-        <ValidatedNavigation
+        <BookingNavigationButton
           to="/payment-process"
           requiredFields={requiredFields}
-          useRoomId={true}
         >
-          <Button>Proceed to Payment</Button>
-        </ValidatedNavigation>
+          Create Your Booking and Proceed to Payment
+        </BookingNavigationButton>
       </div>
       <WarningModal
         isOpen={showWarning}

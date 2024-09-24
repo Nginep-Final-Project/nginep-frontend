@@ -18,7 +18,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`mt-6 w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors ${className} ${
+      className={`mt-6 w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors ${className} ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
       disabled={disabled}

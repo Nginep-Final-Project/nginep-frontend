@@ -1,16 +1,13 @@
-import { usePathname } from "next/navigation";
 import { GuestQuantity } from "./GuestQuantity/GuestQuantity";
 import { MessageToHost } from "./MessageToHost/MessageToHost";
 import Dates from "./Dates/Dates";
-import useBookingData from "@/hooks/useBookingData";
 import WarningModal from "../../../_components/Modal/WarningModal";
-import useWarningModal from "@/hooks/useWarningModal";
 import ValidatedNavigation from "../../../_components/Navigation/ValidatedNavigation";
 import Button from "../../../_components/Button/Button";
+import useBookingData from "@/hooks/booking/useBookingData";
+import useWarningModal from "@/hooks/common/useWarningModal";
 
-const InformationSummary = () => {
-  const pathname = usePathname();
-  const roomId = pathname.split("/")[1];
+const InformationSummary = ({ roomId }: { roomId: string }) => {
   const { bookingData, updateBookingData } = useBookingData(roomId);
   const { showWarning, closeWarning } = useWarningModal();
 
@@ -65,7 +62,7 @@ const InformationSummary = () => {
         isOpen={showWarning}
         onClose={closeWarning}
         title="Check Inputs"
-        message="Please ensure to fill-out the number of guests, check-in and check-out dates, and the payment method before proceeding"
+        message="Please ensure to fill-out the number of guests, check-in and check-out dates before proceeding"
       />
     </div>
   );

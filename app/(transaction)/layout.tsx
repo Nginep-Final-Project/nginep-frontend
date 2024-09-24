@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Header from "./[roomId]/_components/Header/Header";
 import ClientValidatedNavigationWrapper from "./[roomId]/_components/Navigation/ClientValidatedNavigationWrapper";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Nginep - Reservation Summary",
@@ -16,8 +17,9 @@ export default function Transaction({
   return (
     <section>
       <ClientValidatedNavigationWrapper>
-        <Header />
+        <Navbar />
         {children}
+        <Footer />
       </ClientValidatedNavigationWrapper>
     </section>
   );

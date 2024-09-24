@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Upload, AlertCircle } from "lucide-react";
-import useBookingData from "@/hooks/useBookingData";
+import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
+import Button from "../../../_components/Button/Button";
 
-const ManualTransferPayment: React.FC<{
-  roomId: string;
-  basePrice: number;
-}> = ({ roomId, basePrice }) => {
-  const { bookingData } = useBookingData(roomId);
+interface ManualPaymentProps {
+  bookingDetails: BookingPaymentDetails;
+}
+
+const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const expiryTime = new Date(bookingDetails.expiryTime).getTime();
+      const remaining = Math.max(0, expiryTime - now);
+      setTimeRemaining(remaining);
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [bookingDetails.expiryTime]);
 
   const formatTime = (milliseconds: number): string => {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -36,6 +52,7 @@ const ManualTransferPayment: React.FC<{
 
   const handleUpload = () => {
     if (file) {
+      // Implement file upload logic here
       console.log("Uploading file:", file);
     }
   };
@@ -47,15 +64,15 @@ const ManualTransferPayment: React.FC<{
       <div className="bg-gray-100 p-4 rounded-lg">
         <p className="font-semibold">Total Amount to Pay:</p>
         <p className="text-2xl text-pink-600">
-          Rp {basePrice.toLocaleString()}
+          Rp {bookingDetails.finalPrice.toLocaleString()}
         </p>
       </div>
 
       <div>
         <p className="font-semibold">Bank Account Details:</p>
-        <p>Bank Name: Nginep Punya Bank</p>
-        <p>Account Number: 12313123</p>
-        <p>Account Holder: Nginep Sekejap</p>
+        <p>Bank Name: {bookingDetails.bankName}</p>
+        <p>Account Number: {bookingDetails.bankAccountNumber}</p>
+        <p>Account Holder: {bookingDetails.bankHolderName}</p>
       </div>
 
       <div
@@ -90,13 +107,9 @@ const ManualTransferPayment: React.FC<{
         {error && <p className="text-red-500 mt-2">{error}</p>}
       </div>
 
-      <button
-        onClick={handleUpload}
-        disabled={!file || timeRemaining <= 0}
-        className="w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-      >
+      <Button onClick={handleUpload} disabled={!file || timeRemaining <= 0}>
         <Upload className="inline-block mr-2 h-4 w-4" /> Upload Proof of Payment
-      </button>
+      </Button>
 
       <div className="text-sm text-gray-600">
         <p>Please ensure:</p>
@@ -111,4 +124,4 @@ const ManualTransferPayment: React.FC<{
   );
 };
 
-export default ManualTransferPayment;
+export default ManualPayment;
