@@ -7,20 +7,23 @@ import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import RoomDatePicker from './RoomDatePicker'
-import { PeakSeasonRate, Room } from '@/types/property'
+import { PeakSeasonRate, PropertyDetail, Room } from '@/types/property'
 import { addDays, format } from 'date-fns'
 import useRoom from '@/hooks/useRoom'
+import { SelectedRoom } from './DetailProperty'
 
 const Availability: React.FC<{
+  property: PropertyDetail
   rooms: Room[]
   propertyId: number
   peakSeasonRates: PeakSeasonRate[]
-}> = ({ rooms, propertyId, peakSeasonRates }) => {
+  onSelectedRoom: (value: SelectedRoom) => void
+}> = ({ property, rooms, propertyId, peakSeasonRates, onSelectedRoom }) => {
   const [dateRange, setdateRange] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 1),
   })
-
+  const [selectedRoomId, setSelectedRoomId] = useState<number>(0)
   const [guest, setGuest] = useState<number>(1)
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const [searchResult, setSearchResult] = useState<Room[] | null>(null)
@@ -28,6 +31,16 @@ const Availability: React.FC<{
 
   const handleGuestChange = (value: number) => {
     setGuest(value)
+    onSelectedRoom({
+      property: property,
+      pricePerNight: 0,
+      checkInDate: format(dateRange?.from!, 'yyyy-MM-dd'),
+      checkOutDate: format(dateRange?.to!, 'yyyy-MM-dd'),
+      guests: value,
+      roomType: '',
+      roomId: 0,
+    })
+    setSelectedRoomId(0)
     setIsDialogOpen(false)
   }
   const handleSearch = async () => {
@@ -40,6 +53,7 @@ const Availability: React.FC<{
       }
       const result = await handleRoomAvailable(request)
       setSearchResult(result?.data)
+      setSelectedRoomId(0)
     }
   }
 
@@ -120,7 +134,34 @@ const Availability: React.FC<{
               return (
                 <Card
                   key={room.id}
-                  className='flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 lg:ml-0 lg:mr-4'
+                  className={`flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 lg:ml-0 lg:mr-4 ${
+                    selectedRoomId === room.id && 'border-primary border-2'
+                  }`}
+                  onClick={() => {
+                    setSelectedRoomId(room.id)
+                    onSelectedRoom({
+                      property: property,
+                      pricePerNight: room.basePrice,
+                      checkInDate: format(dateRange?.from!, 'yyyy-MM-dd'),
+                      checkOutDate: format(dateRange?.to!, 'yyyy-MM-dd'),
+                      guests: guest,
+                      roomType: room.name,
+                      roomId: room.id,
+                    })
+
+                    if (selectedRoomId === room.id) {
+                      setSelectedRoomId(0)
+                      onSelectedRoom({
+                        property: property,
+                        pricePerNight: 0,
+                        checkInDate: format(dateRange?.from!, 'yyyy-MM-dd'),
+                        checkOutDate: format(dateRange?.to!, 'yyyy-MM-dd'),
+                        guests: guest,
+                        roomType: '',
+                        roomId: 0,
+                      })
+                    }
+                  }}
                 >
                   <CardContent className='p-4 flex flex-col justify-center'>
                     {!room.roomPicture ? (
@@ -142,9 +183,7 @@ const Availability: React.FC<{
                     <p className='text-sm text-grey-text whitespace-pre-wrap break-words line-clamp-2'>
                       {room.description}
                     </p>
-                    <p className='text-xs text-grey-text'>
-                      Total available room: {room.totalRoom}
-                    </p>
+
                     <p className='font-bold mt-2'>
                       Rp {room.basePrice.toLocaleString()} / night
                     </p>

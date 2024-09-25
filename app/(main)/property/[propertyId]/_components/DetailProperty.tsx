@@ -12,9 +12,36 @@ import TenantProfile from './TenantProfile'
 import { bookingData } from '@/utils/dummy'
 import Loading from '@/components/Loading'
 import Error from '@/components/Error'
+import { useState } from 'react'
+import { addDays, format } from 'date-fns'
+import { PropertyDetail } from '@/types/property'
+
+export interface SelectedRoom {
+  property: PropertyDetail
+  pricePerNight: number
+  checkInDate: string
+  checkOutDate: string
+  guests: number
+  roomType: string
+  roomId: number
+}
 
 const DetailProperty: React.FC<{ propertyId: number }> = ({ propertyId }) => {
   const { result, loading, error } = useProperty(propertyId)
+  const [selectedRoom, setSelectedRoom] = useState<SelectedRoom>({
+    property: result,
+    pricePerNight: 0,
+    checkInDate: format(new Date(), 'yyyy-MM-dd'),
+    checkOutDate: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
+    guests: 1,
+    roomType: '',
+    roomId: 0,
+  })
+
+  const handleSelectRoom = (value: SelectedRoom) => {
+    setSelectedRoom(value)
+  }
+
   if (error) {
     return <Error />
   }
@@ -35,14 +62,16 @@ const DetailProperty: React.FC<{ propertyId: number }> = ({ propertyId }) => {
             </div>
             <div>
               <Availability
+                property={result}
                 rooms={result.rooms}
                 propertyId={result.id}
                 peakSeasonRates={result.peakSeasonRate}
+                onSelectedRoom={handleSelectRoom}
               />
             </div>
           </div>
           <div className='max-md:w-full flex justify-center lg:justify-start p-4'>
-            <BookingSummary {...bookingData} roomId={result.rooms[0].id} />
+            <BookingSummary {...selectedRoom} />
           </div>
         </div>
 

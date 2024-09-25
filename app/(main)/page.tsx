@@ -7,6 +7,7 @@ import FilterSort from './_components/FilterSort'
 import useHome from '@/hooks/useHome'
 import Loading from '@/components/Loading'
 import Error from '@/components/Error'
+import AlertHandler from '@/components/AlertHandler'
 
 const Home = () => {
   const { result, loading, error } = useHome()
@@ -18,6 +19,9 @@ const Home = () => {
   return (
     <>
       <div className='flex flex-col items-center'>
+        <div className='p-4 w-full'>
+          <AlertHandler />
+        </div>
         <Hero />
         <FilterSort categories={result.categories} cities={result.cities} />
         <PropertyListCard properties={result.properties.content} />

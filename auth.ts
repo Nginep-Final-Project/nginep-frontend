@@ -77,6 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.accessToken = user.token
         token.name = user.name!
         token.picture = user.image
+        token.id = user.id
       }
       if (account) {
         if (account.provider === 'google') {
@@ -121,6 +122,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.accessToken = token.accessToken
         session.user.name = token.name!
         session.user.image = token.picture!
+        session.user.id = token.id!
       }
       return session
     },
