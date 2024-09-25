@@ -9,11 +9,13 @@ import { DateRange } from 'react-day-picker'
 import RoomDatePicker from './RoomDatePicker'
 import { PeakSeasonRate, Room } from '@/types/property'
 import { addDays, format } from 'date-fns'
+import useRoom from '@/hooks/useRoom'
 
 const Availability: React.FC<{
   rooms: Room[]
+  propertyId: number
   peakSeasonRates: PeakSeasonRate[]
-}> = ({ rooms, peakSeasonRates }) => {
+}> = ({ rooms, propertyId, peakSeasonRates }) => {
   const [dateRange, setdateRange] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 1),
@@ -21,51 +23,69 @@ const Availability: React.FC<{
 
   const [guest, setGuest] = useState<number>(1)
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const [searchResult, setSearchResult] = useState<Room[] | null>(null)
+  const { handleRoomAvailable, loading, error } = useRoom()
 
   const handleGuestChange = (value: number) => {
     setGuest(value)
     setIsDialogOpen(false)
   }
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (dateRange?.from && dateRange.to) {
-      console.log(
-        guest,
-        format(dateRange.from, 'yyyy-MM-dd'),
-        format(dateRange.to, 'yyyy-MM-dd')
-      )
-    } else {
-      console.log('Please select a date range')
+      const request = {
+        startDate: format(dateRange.from, 'yyyy-MM-dd'),
+        endDate: format(dateRange.to, 'yyyy-MM-dd'),
+        totalGuest: guest,
+        propertyId: propertyId,
+      }
+      const result = await handleRoomAvailable(request)
+      setSearchResult(result?.data)
     }
   }
 
-  const roomPrices = useMemo(() => {
-    return rooms.map((room) => {
-      let totalPrice = room.basePrice
-      if (dateRange?.from && dateRange?.to) {
-        const startDate = new Date(dateRange.from)
-        const endDate = new Date(dateRange.to)
+  const calculatePriceWithPeakSeason = (
+    room: Room,
+    startDate: Date,
+    endDate: Date
+  ) => {
+    let totalPrice = room.basePrice
+    peakSeasonRates.forEach((season) => {
+      const seasonStartDate = new Date(season.peakSeasonDates.from)
+      const seasonEndDate = new Date(season.peakSeasonDates.to)
 
-        peakSeasonRates.forEach((season) => {
-          const seasonStartDate = new Date(season.peakSeasonDates.from)
-          const seasonEndDate = new Date(season.peakSeasonDates.to)
-
-          if (
-            (startDate >= seasonStartDate && startDate <= seasonEndDate) ||
-            (endDate >= seasonStartDate && endDate <= seasonEndDate) ||
-            (startDate <= seasonStartDate && endDate >= seasonEndDate)
-          ) {
-            if (season.rateType === 'PERCENTAGE') {
-              totalPrice += (room.basePrice * season.rateValue) / 100
-            } else if (season.rateType === 'FIXED_AMOUNT') {
-              totalPrice += season.rateValue
-            }
-          }
-        })
+      if (
+        (startDate >= seasonStartDate && startDate <= seasonEndDate) ||
+        (endDate >= seasonStartDate && endDate <= seasonEndDate) ||
+        (startDate <= seasonStartDate && endDate >= seasonEndDate)
+      ) {
+        totalPrice +=
+          season.rateType === 'PERCENTAGE'
+            ? (room.basePrice * season.rateValue) / 100
+            : season.rateValue
       }
-
-      return { ...room, price: totalPrice }
     })
-  }, [rooms, peakSeasonRates, dateRange])
+    return totalPrice
+  }
+
+  const roomPrices = useMemo(() => {
+    let data = rooms
+
+    if (searchResult !== null) {
+      data = searchResult.length > 0 ? searchResult : []
+    }
+
+    if (dateRange?.from && dateRange?.to && data.length > 0) {
+      const startDate = new Date(dateRange.from)
+      const endDate = new Date(dateRange.to)
+
+      return data.map((room) => ({
+        ...room,
+        basePrice: calculatePriceWithPeakSeason(room, startDate, endDate),
+      }))
+    }
+
+    return data
+  }, [rooms, searchResult, peakSeasonRates])
 
   return (
     <div className='mb-6 lg:pl-32'>
@@ -90,40 +110,53 @@ const Availability: React.FC<{
 
           <Button onClick={handleSearch}>Search</Button>
         </div>
-        <div className='flex overflow-x-auto snap-x snap-mandatory'>
-          {roomPrices.map((room) => {
-            return (
-              <Card
-                key={room.id}
-                className='flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 lg:ml-0 lg:mr-4'
-              >
-                <CardContent className='p-4 flex flex-col justify-center'>
-                  <Image
-                    src={room.roomPicture}
-                    alt={room.name}
-                    height={100}
-                    width={100}
-                    style={{ height: 'auto', width: 'auto' }}
-                    className='h-[100px] w-[100px] object-cover rounded-md mb-2'
-                  />
-                  <h3 className='font-semibold'>{room.name}</h3>
-                  <p className='text-sm text-grey-text whitespace-pre-wrap break-words line-clamp-2'>
-                    {room.description}
-                  </p>
-                  <p className='text-xs text-grey-text'>
-                    Total available room: {room.totalRoom}
-                  </p>
-                  <p className='font-bold mt-2'>
-                    Rp {room.price.toLocaleString()} / night
-                  </p>
-                  <p className='text-xs text-grey-text'>
-                    Max occupancy: {room.maxGuests} guests
-                  </p>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+        {roomPrices.length === 0 ? (
+          <div className='w-full flex items-center justify-center'>
+            There is not an available room yet
+          </div>
+        ) : (
+          <div className='flex overflow-x-auto snap-x snap-mandatory'>
+            {roomPrices.map((room) => {
+              return (
+                <Card
+                  key={room.id}
+                  className='flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 lg:ml-0 lg:mr-4'
+                >
+                  <CardContent className='p-4 flex flex-col justify-center'>
+                    {!room.roomPicture ? (
+                      <div>Loading...</div>
+                    ) : room.roomPicture.length === 0 ? (
+                      <div>No images available</div>
+                    ) : (
+                      <Image
+                        src={room.roomPicture}
+                        alt={room.name}
+                        height={100}
+                        width={100}
+                        style={{ height: 'auto', width: 'auto' }}
+                        className='h-[100px] w-[100px] object-cover rounded-md mb-2'
+                      />
+                    )}
+
+                    <h3 className='font-semibold'>{room.name}</h3>
+                    <p className='text-sm text-grey-text whitespace-pre-wrap break-words line-clamp-2'>
+                      {room.description}
+                    </p>
+                    <p className='text-xs text-grey-text'>
+                      Total available room: {room.totalRoom}
+                    </p>
+                    <p className='font-bold mt-2'>
+                      Rp {room.basePrice.toLocaleString()} / night
+                    </p>
+                    <p className='text-xs text-grey-text'>
+                      Max occupancy: {room.maxGuests} guests
+                    </p>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
       </div>
       <GuestDialog
         open={isDialogOpen}

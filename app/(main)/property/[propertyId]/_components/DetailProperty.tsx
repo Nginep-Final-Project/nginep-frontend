@@ -9,7 +9,7 @@ import ImageGallery from './ImageGallery'
 import Location from './Location'
 import Review from './Review'
 import TenantProfile from './TenantProfile'
-import { bookingData, reviewData, tenantData } from '@/utils/dummy'
+import { bookingData } from '@/utils/dummy'
 import Loading from '@/components/Loading'
 import Error from '@/components/Error'
 
@@ -36,6 +36,7 @@ const DetailProperty: React.FC<{ propertyId: number }> = ({ propertyId }) => {
             <div>
               <Availability
                 rooms={result.rooms}
+                propertyId={result.id}
                 peakSeasonRates={result.peakSeasonRate}
               />
             </div>

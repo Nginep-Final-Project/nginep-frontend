@@ -24,14 +24,20 @@ const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
   const [isForgotPassword, setIsForgotPassword] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isSignup, setIsSignup] = useState(false)
   const [isSignupStepTwo, setIsSignupStepTwo] = useState(false)
   const [isEmailVerification, setIsEmailVerification] = useState(false)
 
   const router = useRouter()
-  const session = useSession()
+  const session = useSession({
+    onUnauthenticated() {
+      setIsAuthenticated(false)
+    },
+    required: true,
+  })
   const { handleLogOut } = useLogout()
-  console.log(session.data?.user.role)
+  console.log(session.data)
 
   const logOut = async () => {
     const result = await handleLogOut()
