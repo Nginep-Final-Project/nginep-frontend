@@ -47,6 +47,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
       guests: guests,
       roomType: roomType,
       roomId: roomId,
+      totalNights: nights,
       userId: session.data?.user.id,
     }
     localStorage.setItem(RESERVE_BOOKING_DATA, JSON.stringify(reserveBooking))

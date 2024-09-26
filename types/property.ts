@@ -79,7 +79,7 @@ export interface PropertyImage {
 export interface Room {
   id: number
   roomPicture: string
-  roomPictureId: string
+  roomPictureId: string | null
   name: string
   description: string
   maxGuests: number

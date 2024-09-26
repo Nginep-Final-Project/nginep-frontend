@@ -63,6 +63,7 @@ const Availability: React.FC<{
     endDate: Date
   ) => {
     let totalPrice = room.basePrice
+    let increase = 0
     peakSeasonRates.forEach((season) => {
       const seasonStartDate = new Date(season.peakSeasonDates.from)
       const seasonEndDate = new Date(season.peakSeasonDates.to)
@@ -72,12 +73,16 @@ const Availability: React.FC<{
         (endDate >= seasonStartDate && endDate <= seasonEndDate) ||
         (startDate <= seasonStartDate && endDate >= seasonEndDate)
       ) {
-        totalPrice +=
-          season.rateType === 'PERCENTAGE'
-            ? (room.basePrice * season.rateValue) / 100
-            : season.rateValue
+        if (season.rateType === 'PERCENTAGE') {
+          increase = (room.basePrice * season.rateValue) / 100
+        } else {
+          increase = season.rateValue
+        }
       }
     })
+
+    totalPrice += increase
+
     return totalPrice
   }
 
@@ -111,7 +116,7 @@ const Availability: React.FC<{
             onChange={(value) => {
               setdateRange(value)
             }}
-            basePrice={rooms[0].basePrice}
+            basePrice={rooms.length > 0 ? rooms[0].basePrice : 0}
             peakSeasonRate={peakSeasonRates}
           />
           <Button
@@ -130,70 +135,74 @@ const Availability: React.FC<{
           </div>
         ) : (
           <div className='flex overflow-x-auto snap-x snap-mandatory'>
-            {roomPrices.map((room) => {
-              return (
-                <Card
-                  key={room.id}
-                  className={`flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 lg:ml-0 lg:mr-4 ${
-                    selectedRoomId === room.id && 'border-primary border-2'
-                  }`}
-                  onClick={() => {
-                    setSelectedRoomId(room.id)
-                    onSelectedRoom({
-                      property: property,
-                      pricePerNight: room.basePrice,
-                      checkInDate: format(dateRange?.from!, 'yyyy-MM-dd'),
-                      checkOutDate: format(dateRange?.to!, 'yyyy-MM-dd'),
-                      guests: guest,
-                      roomType: room.name,
-                      roomId: room.id,
-                    })
-
-                    if (selectedRoomId === room.id) {
-                      setSelectedRoomId(0)
+            {loading ? (
+              <div>Loading...</div>
+            ) : (
+              roomPrices.map((room) => {
+                return (
+                  <Card
+                    key={room.id}
+                    className={`flex-shrink-0 w-64 sm:w-72 md:w-80 ml-4 lg:ml-0 lg:mr-4 ${
+                      selectedRoomId === room.id && 'border-primary border-2'
+                    }`}
+                    onClick={() => {
+                      setSelectedRoomId(room.id)
                       onSelectedRoom({
                         property: property,
-                        pricePerNight: 0,
+                        pricePerNight: room.basePrice,
                         checkInDate: format(dateRange?.from!, 'yyyy-MM-dd'),
                         checkOutDate: format(dateRange?.to!, 'yyyy-MM-dd'),
                         guests: guest,
-                        roomType: '',
-                        roomId: 0,
+                        roomType: room.name,
+                        roomId: room.id,
                       })
-                    }
-                  }}
-                >
-                  <CardContent className='p-4 flex flex-col justify-center'>
-                    {!room.roomPicture ? (
-                      <div>Loading...</div>
-                    ) : room.roomPicture.length === 0 ? (
-                      <div>No images available</div>
-                    ) : (
-                      <Image
-                        src={room.roomPicture}
-                        alt={room.name}
-                        height={100}
-                        width={100}
-                        style={{ height: 'auto', width: 'auto' }}
-                        className='h-[100px] w-[100px] object-cover rounded-md mb-2'
-                      />
-                    )}
 
-                    <h3 className='font-semibold'>{room.name}</h3>
-                    <p className='text-sm text-grey-text whitespace-pre-wrap break-words line-clamp-2'>
-                      {room.description}
-                    </p>
+                      if (selectedRoomId === room.id) {
+                        setSelectedRoomId(0)
+                        onSelectedRoom({
+                          property: property,
+                          pricePerNight: 0,
+                          checkInDate: format(dateRange?.from!, 'yyyy-MM-dd'),
+                          checkOutDate: format(dateRange?.to!, 'yyyy-MM-dd'),
+                          guests: guest,
+                          roomType: '',
+                          roomId: 0,
+                        })
+                      }
+                    }}
+                  >
+                    <CardContent className='p-4 flex flex-col justify-center'>
+                      {!room.roomPicture ? (
+                        <div>Loading...</div>
+                      ) : room.roomPicture.length === 0 ? (
+                        <div>No images available</div>
+                      ) : (
+                        <Image
+                          src={room.roomPicture}
+                          alt={room.name}
+                          height={100}
+                          width={100}
+                          style={{ height: 'auto', width: 'auto' }}
+                          className='h-[100px] w-[100px] object-cover rounded-md mb-2'
+                        />
+                      )}
 
-                    <p className='font-bold mt-2'>
-                      Rp {room.basePrice.toLocaleString()} / night
-                    </p>
-                    <p className='text-xs text-grey-text'>
-                      Max occupancy: {room.maxGuests} guests
-                    </p>
-                  </CardContent>
-                </Card>
-              )
-            })}
+                      <h3 className='font-semibold'>{room.name}</h3>
+                      <p className='text-sm text-grey-text whitespace-pre-wrap break-words line-clamp-2'>
+                        {room.description}
+                      </p>
+
+                      <p className='font-bold mt-2'>
+                        Rp {room.basePrice.toLocaleString()} / night
+                      </p>
+                      <p className='text-xs text-grey-text'>
+                        Max occupancy: {room.maxGuests} guests
+                      </p>
+                    </CardContent>
+                  </Card>
+                )
+              })
+            )}
           </div>
         )}
       </div>
