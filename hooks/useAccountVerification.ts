@@ -13,7 +13,6 @@ const useAccountVerification = () => {
   const handleAccountVerification = async (request: AccountVerification) => {
     setLoading(true)
     try {
-      console.log('req>>> ', request)
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/users/verification`,
         {

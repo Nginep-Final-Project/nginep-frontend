@@ -19,7 +19,6 @@ const ResetPassword = () => {
   const { handleResetPassword, loading } = useResetPassword()
   const router = useRouter()
   const email = useSearchParams().get('email')
-  console.log('email', email)
 
   const {
     register,
@@ -30,7 +29,6 @@ const ResetPassword = () => {
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     if (data.password !== data.confirmPass) {
       toast({
         variant: 'destructive',

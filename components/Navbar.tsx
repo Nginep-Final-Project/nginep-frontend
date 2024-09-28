@@ -21,7 +21,6 @@ import { toast } from './ui/use-toast'
 import { logOutAuth } from '@/actions/auth'
 
 const Navbar = () => {
-  const [isSearch, setIsSearch] = useState(false)
   const [isLogin, setIsLogin] = useState(false)
   const [isForgotPassword, setIsForgotPassword] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -77,18 +76,6 @@ const Navbar = () => {
           Nginep
         </h1>
 
-        <div className='hidden md:flex items-center p-1 lg:p-3 border border-secondary rounded-full lg:w-80 lg:h-14'>
-          <input
-            // onChange={(e) => debounced(e.target.value)}
-            className='px-4 py-[6px] text-sm w-full focus:outline-none'
-            type='text'
-            placeholder='Search...'
-          />
-          <div className='bg-primary rounded-full p-2'>
-            <Search size={25} color='white' />
-          </div>
-        </div>
-
         <div className='flex items-center lg:gap-x-3'>
           <Button
             variant='ghost'
@@ -101,13 +88,7 @@ const Navbar = () => {
             Nginep your property
           </Button>
 
-          <Search
-            size={35}
-            className='md:hidden px-2'
-            onClick={() => setIsSearch(!isSearch)}
-          />
-
-          <DropdownMenu onOpenChange={() => setIsSearch(false)}>
+          <DropdownMenu>
             <DropdownMenuTrigger>
               <div className='hidden md:flex items-center px-4 h-[55px] gap-x-3 border rounded-full border-secondary'>
                 <Menu size={25} />
@@ -190,14 +171,6 @@ const Navbar = () => {
         isForgotPassword={isForgotPassword}
         setIsForgotPassword={setIsForgotPassword}
       />
-      {isSearch ? (
-        <input
-          // onChange={(e) => debounced(e.target.value)}
-          className='px-4 py-[6px] text-sm w-full rounded-full border border-secondary focus:outline-none'
-          type='text'
-          placeholder='Search...'
-        />
-      ) : null}
     </div>
   )
 }

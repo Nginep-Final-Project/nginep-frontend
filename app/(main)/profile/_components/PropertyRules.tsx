@@ -59,7 +59,6 @@ const PropertyRules: React.FC<PropertyRulesProps> = ({
   }, [initCancelPolicy, initCheckin, initCheckout, reset])
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     const request = {
       checkinTime: data.Checkin,
       checkoutTime: data.Checkout,

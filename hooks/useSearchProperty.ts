@@ -36,7 +36,8 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
 
   const fetchProperty = async (
     params: QueryParams,
-    append: boolean = false
+    append: boolean = false,
+    isSearch: boolean = false
   ) => {
     setLoading(true)
 
@@ -69,15 +70,30 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
       }
 
       setData((prevData) => {
+        if (append && isSearch && prevData) {
+          console.log('search')
+          return {
+            ...result.data,
+            content: result.data.content,
+          }
+        }
+
         if (append && prevData) {
+          console.log('viewmore')
           return {
             ...result.data,
             content: [...prevData.content, ...result.data.content],
           }
         }
+
         return result.data
       })
       setLoading(false)
+      console.log(data)
+      if (isSearch) {
+        router.push(`/property/search?${queryString}`, { scroll: false })
+        return
+      }
       router.push(`?${queryString}`, { scroll: false })
     } catch (error) {
       setError(error)
@@ -85,12 +101,16 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
     setLoading(false)
   }
 
-  useEffect(() => {
-    fetchProperty(initialParams)
-  }, [])
+  // useEffect(() => {
+  //   fetchProperty(initialParams)
+  // }, [])
 
   const refetch = useCallback(
-    (newParams: QueryParams = {}, append: boolean = false) => {
+    (
+      newParams: QueryParams = {},
+      append: boolean = false,
+      isSearch: boolean = false
+    ) => {
       const currentParams = Object.fromEntries(searchParams.entries())
       const combinedParams = {
         ...initialParams,
@@ -98,7 +118,6 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
         ...newParams,
       }
 
-      // Filter out empty string values and undefined values
       const filteredParams = Object.entries(combinedParams).reduce<QueryParams>(
         (acc, [key, value]) => {
           if (value !== '' && value !== undefined) {
@@ -109,7 +128,7 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
         {} as QueryParams
       )
 
-      fetchProperty(filteredParams, append)
+      fetchProperty(filteredParams, append, isSearch)
     },
     [searchParams, initialParams]
   )

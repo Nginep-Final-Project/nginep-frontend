@@ -75,7 +75,6 @@ const PersonalData: React.FC<PersonalDataProps> = ({
   }
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     const request = {
       fullName: data.name,
       dateOfBirth: data.dateOfBirth,

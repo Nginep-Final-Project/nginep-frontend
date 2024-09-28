@@ -50,13 +50,11 @@ const SignupStepTwo: React.FC<{
     const storedData = sessionStorage.getItem(SIGN_UP)
     if (storedData) {
       const parseStoredData = JSON.parse(storedData)
-      console.log(parseStoredData)
       setValue('email', parseStoredData.email)
     }
   }, [isSignupStepTwo, setValue])
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     const request = {
       email: data.email,
       name: data.fullName,

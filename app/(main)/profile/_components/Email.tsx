@@ -46,7 +46,6 @@ const Email: React.FC<EmailProps> = ({ initialEmail, isVerified, name }) => {
   }, [initialEmail, setValue])
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     if (data.email === initialEmail) {
       return
     }

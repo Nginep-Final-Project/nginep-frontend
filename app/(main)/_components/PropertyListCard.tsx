@@ -8,7 +8,6 @@ interface PropertyListCardProps {
   properties: Property[]
 }
 const PropertyListCard: React.FC<PropertyListCardProps> = ({ properties }) => {
-  console.log(properties)
   return (
     <>
       {properties.length === 0 ? (

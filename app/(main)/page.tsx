@@ -9,6 +9,18 @@ import Loading from '@/components/Loading'
 import Error from '@/components/Error'
 import AlertHandler from '@/components/AlertHandler'
 import useSearchProperty from '@/hooks/useSearchProperty'
+import { useSearchParams } from 'next/navigation'
+
+export interface FilterRequest {
+  name: string
+  category: string
+  city: string
+  checkInDate: string
+  checkoutDate: string
+  totalGuests: number
+  sortBy: string
+  sortDirection: string
+}
 
 const initialParams = {
   page: 0,
@@ -23,6 +35,8 @@ const Home = () => {
     error: ErrorViewMore,
     refetch,
   } = useSearchProperty(initialParams)
+  const searchParams = useSearchParams()
+  const errorAuth = searchParams.get('error')
 
   const handleViewMore = () => {
     if (data) {
@@ -30,26 +44,51 @@ const Home = () => {
     }
   }
 
+  const handleFilter = (request: FilterRequest) => {
+    if (data) {
+      refetch(
+        {
+          propertyName: request.name,
+          propertyCategory: request.category,
+          propertyCity: request.city,
+          checkinDate: request.checkInDate,
+          checkoutDate: request.checkoutDate,
+          totalGuests: request.totalGuests,
+          sortBy: request.sortBy,
+          sortDirection: request.sortDirection,
+          page: 0,
+        },
+        true,
+        true
+      )
+    }
+  }
+
   if (error || ErrorViewMore) {
     return <Error />
   }
 
-  {
-    console.log(data)
-  }
   return (
     <>
       <div className='flex flex-col items-center'>
-        <div className='p-4 w-full'>
-          <AlertHandler />
-        </div>
+        {errorAuth && (
+          <div className='p-4 w-full'>
+            <AlertHandler />
+          </div>
+        )}
+
         <Hero />
-        <FilterSort categories={result.categories} cities={result.cities} />
+        <FilterSort
+          onFilter={handleFilter}
+          categories={result.categories}
+          cities={result.cities}
+        />
         <PropertyListCard
           properties={
             data.content.length === 0 ? result.properties.content : data.content
           }
         />
+
         {data.last === false && (
           <Button
             className='bg-black text-white rounded-3xl mt-4 mb-16 md:mt-8 lg:mb-36'
@@ -60,7 +99,7 @@ const Home = () => {
           </Button>
         )}
       </div>
-      {loading && <Loading />}
+      {loading || (loadingViewMore && <Loading />)}
     </>
   )
 }
