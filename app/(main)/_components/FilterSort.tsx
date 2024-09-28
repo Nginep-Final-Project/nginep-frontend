@@ -32,10 +32,7 @@ const FilterSort: React.FC<FilterSortProps> = ({
   const [category, setCategory] = useState<string>('')
   const [search, setSearch] = useState<string>('')
   const [location, setLocation] = useState<string>('')
-  const [dateRange, setdateRange] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 1),
-  })
+  const [dateRange, setdateRange] = useState<DateRange | undefined>()
   const [guest, setGuest] = useState<number>(1)
   const [sortBy, setSortBy] = useState<string>('')
   const [sortDirection, setSortDirection] = useState<string>('')
@@ -76,8 +73,12 @@ const FilterSort: React.FC<FilterSortProps> = ({
       name: search,
       category: category,
       city: location,
-      checkInDate: format(dateRange?.from!, 'yyyy-MM-dd'),
-      checkoutDate: format(dateRange?.to!, 'yyyy-MM-dd'),
+      checkInDate:
+        dateRange?.from !== undefined
+          ? format(dateRange?.from!, 'yyyy-MM-dd')
+          : '',
+      checkoutDate:
+        dateRange?.to !== undefined ? format(dateRange?.to!, 'yyyy-MM-dd') : '',
       totalGuests: guest,
       sortBy: sortBy,
       sortDirection: sortDirection,

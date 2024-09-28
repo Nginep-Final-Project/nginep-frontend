@@ -46,27 +46,25 @@ const Home = () => {
 
   const handleFilter = (request: FilterRequest) => {
     if (data) {
-      refetch(
-        {
-          propertyName: request.name,
-          propertyCategory: request.category,
-          propertyCity: request.city,
-          checkinDate: request.checkInDate,
-          checkoutDate: request.checkoutDate,
-          totalGuests: request.totalGuests,
-          sortBy: request.sortBy,
-          sortDirection: request.sortDirection,
-          page: 0,
-        },
-        true,
-        true
-      )
+      refetch({
+        propertyName: request.name,
+        propertyCategory: request.category,
+        propertyCity: request.city,
+        checkinDate: request.checkInDate,
+        checkoutDate: request.checkoutDate,
+        totalGuests: request.totalGuests,
+        sortBy: request.sortBy,
+        sortDirection: request.sortDirection,
+        page: 0,
+      })
     }
   }
 
   if (error || ErrorViewMore) {
     return <Error />
   }
+
+  console.log('search result >>>', data.content)
 
   return (
     <>
@@ -84,9 +82,8 @@ const Home = () => {
           cities={result.cities}
         />
         <PropertyListCard
-          properties={
-            data.content.length === 0 ? result.properties.content : data.content
-          }
+          properties={data.content}
+          loading={loading || loadingViewMore}
         />
 
         {data.last === false && (

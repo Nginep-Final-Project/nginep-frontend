@@ -36,8 +36,7 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
 
   const fetchProperty = async (
     params: QueryParams,
-    append: boolean = false,
-    isSearch: boolean = false
+    append: boolean = false
   ) => {
     setLoading(true)
 
@@ -70,14 +69,6 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
       }
 
       setData((prevData) => {
-        if (append && isSearch && prevData) {
-          console.log('search')
-          return {
-            ...result.data,
-            content: result.data.content,
-          }
-        }
-
         if (append && prevData) {
           console.log('viewmore')
           return {
@@ -89,11 +80,7 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
         return result.data
       })
       setLoading(false)
-      console.log(data)
-      if (isSearch) {
-        router.push(`/property/search?${queryString}`, { scroll: false })
-        return
-      }
+
       router.push(`?${queryString}`, { scroll: false })
     } catch (error) {
       setError(error)
@@ -101,16 +88,12 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
     setLoading(false)
   }
 
-  // useEffect(() => {
-  //   fetchProperty(initialParams)
-  // }, [])
+  useEffect(() => {
+    fetchProperty(initialParams)
+  }, [])
 
   const refetch = useCallback(
-    (
-      newParams: QueryParams = {},
-      append: boolean = false,
-      isSearch: boolean = false
-    ) => {
+    (newParams: QueryParams = {}, append: boolean = false) => {
       const currentParams = Object.fromEntries(searchParams.entries())
       const combinedParams = {
         ...initialParams,
@@ -128,7 +111,7 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
         {} as QueryParams
       )
 
-      fetchProperty(filteredParams, append, isSearch)
+      fetchProperty(filteredParams, append)
     },
     [searchParams, initialParams]
   )

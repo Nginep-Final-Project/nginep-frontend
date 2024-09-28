@@ -11,6 +11,8 @@ import { PeakSeasonRate, PropertyDetail, Room } from '@/types/property'
 import { addDays, format } from 'date-fns'
 import useRoom from '@/hooks/useRoom'
 import { SelectedRoom } from './DetailProperty'
+import NoResult from '@/components/NoResult'
+import Searching from '@/components/Searching'
 
 const Availability: React.FC<{
   property: PropertyDetail
@@ -130,13 +132,11 @@ const Availability: React.FC<{
           <Button onClick={handleSearch}>Search</Button>
         </div>
         {roomPrices.length === 0 ? (
-          <div className='w-full flex items-center justify-center'>
-            There is not an available room yet
-          </div>
+          <NoResult message="Whoops! We've searched high and low, but the search results have gone on vacation!" />
         ) : (
           <div className='flex overflow-x-auto snap-x snap-mandatory'>
             {loading ? (
-              <div>Loading...</div>
+              <Searching />
             ) : (
               roomPrices.map((room) => {
                 return (
