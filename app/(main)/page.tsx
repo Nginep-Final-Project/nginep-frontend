@@ -64,8 +64,6 @@ const Home = () => {
     return <Error />
   }
 
-  console.log('search result >>>', data.content)
-
   return (
     <>
       <div className='flex flex-col items-center'>

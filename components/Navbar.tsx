@@ -8,7 +8,7 @@ import {
 import { Button } from './ui/button'
 import { Menu, Search } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Login from '@/app/(main)/_components/Login'
 import ForgotPassword from '@/app/(main)/_components/ForgotPassword'
 import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
@@ -36,7 +36,6 @@ const Navbar = () => {
     required: true,
   })
   const { handleLogOut } = useLogout()
-  console.log(session.data)
 
   const logOut = async () => {
     const result = await handleLogOut()
