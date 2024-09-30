@@ -14,8 +14,11 @@ import ForgotPassword from '@/app/(main)/_components/ForgotPassword'
 import SignupStepOne from '@/app/(main)/_components/SignupStepOne'
 import SignupStepTwo from '@/app/(main)/_components/SignupStepTwo'
 import EmailVerification from '@/app/(main)/_components/EmailVerification'
-import { logout } from '@/app/actions'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import useLogout from '@/hooks/useLogout'
+import { toast } from './ui/use-toast'
+import { logOutAuth } from '@/actions/auth'
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false)
@@ -25,13 +28,48 @@ const Navbar = () => {
   const [isSignupStepTwo, setIsSignupStepTwo] = useState(false)
   const [isEmailVerification, setIsEmailVerification] = useState(false)
 
+  const router = useRouter()
   const session = useSession()
+  const { handleLogOut } = useLogout()
   console.log(session.data?.user.role)
+
+  const logOut = async () => {
+    const result = await handleLogOut()
+    if (!result?.success) {
+      toast({
+        title: 'Login failed',
+        variant: 'destructive',
+        description: result?.message,
+      })
+      return
+    }
+    logOutAuth()
+      .then(() => {
+        toast({
+          title: result?.message,
+        })
+      })
+      .catch((error) => {
+        toast({
+          title: 'Login failed',
+          variant: 'destructive',
+          description: error,
+        })
+      })
+    router.refresh()
+  }
 
   return (
     <div className='p-4 lg:px-11 lg:py-5'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-2xl font-bold text-primary'>Nginep</h1>
+        <h1
+          className='text-2xl font-bold text-primary'
+          onClick={() => {
+            router.push('/')
+          }}
+        >
+          Nginep
+        </h1>
 
         <div className='hidden md:flex items-center p-1 lg:p-3 border border-secondary rounded-full lg:w-80 lg:h-14'>
           <input
@@ -46,7 +84,14 @@ const Navbar = () => {
         </div>
 
         <div className='flex items-center lg:gap-x-3'>
-          <Button variant='ghost' className='hidden md:inline-block'>
+          <Button
+            variant='ghost'
+            className='hidden md:inline-block'
+            type='button'
+            onClick={() => {
+              router.push('/dashboard')
+            }}
+          >
             Nginep your property
           </Button>
 
@@ -85,17 +130,22 @@ const Navbar = () => {
 
               {session.data?.user.accessToken && (
                 <>
-                  <DropdownMenuItem className='font-semibold'>
-                    Trips
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem
-                    onSelect={async () => {
-                      logout()
+                    className='font-semibold'
+                    onClick={() => {
+                      router.push('/')
                     }}
                   >
-                    Log out
+                    Trips
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      router.push('/profile')
+                    }}
+                  >
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={logOut}>Log out</DropdownMenuItem>
                 </>
               )}
             </DropdownMenuContent>

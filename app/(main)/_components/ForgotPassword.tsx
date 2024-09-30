@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Dispatch, SetStateAction } from 'react'
+import useSendEmailForgotPassword from '@/hooks/useSendEmailForgotPassword'
+import { toast } from '@/components/ui/use-toast'
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -21,6 +23,8 @@ const ForgotPassword: React.FC<{
   isForgotPassword: boolean
   setIsForgotPassword: Dispatch<SetStateAction<boolean>>
 }> = ({ isForgotPassword, setIsForgotPassword }) => {
+  const { handleSendEmailForgotPassword, loading, error } =
+    useSendEmailForgotPassword()
   const {
     register,
     handleSubmit,
@@ -30,8 +34,19 @@ const ForgotPassword: React.FC<{
     resolver: zodResolver(forgotPasswordSchema),
   })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const result = await handleSendEmailForgotPassword(data.email)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    toast({
+      description: result?.data,
+    })
     reset()
     setIsForgotPassword(false)
   }
@@ -60,8 +75,9 @@ const ForgotPassword: React.FC<{
             <Button
               type='submit'
               className='bg-black w-full text-white text-xl px-4 py-2 rounded'
+              disabled={loading}
             >
-              Send reset link
+              {loading ? 'Loading...' : 'Send reset link'}
             </Button>
           </form>
         </div>

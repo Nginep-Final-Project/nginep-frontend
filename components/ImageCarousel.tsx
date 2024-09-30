@@ -43,10 +43,11 @@ const ImageCarousel: React.FC<{
               <Image
                 src={imageSrc[index]}
                 alt={imageSrc[index]}
-                width={315}
+                width={320}
                 height={320}
+                priority={true}
                 style={{ width: 'auto', height: 'auto' }}
-                className='object-cover'
+                className='h-[320px] w-[320px] object-cover'
               />
             </CarouselItem>
           ))}

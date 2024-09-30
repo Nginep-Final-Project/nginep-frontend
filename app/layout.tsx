@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
-import { Toaster } from '@/components/ui/toaster'
 import { auth } from '@/auth'
 import { SessionProvider } from 'next-auth/react'
 import QueryClientProvider from '@/components/QueryClientProvider'
@@ -26,10 +25,7 @@ export default async function RootLayout({
     <html lang='en'>
       <body className={poppins.className}>
         <SessionProvider session={session}>
-          <QueryClientProvider>
-            {children}
-            <Toaster />
-          </QueryClientProvider>
+          <QueryClientProvider>{children}</QueryClientProvider>
         </SessionProvider>
       </body>
     </html>

@@ -12,7 +12,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import GoogleIcon from '@/public/google-icon.svg'
 import React, { Dispatch, SetStateAction } from 'react'
-import { emailSignIn } from '@/app/actions'
+import { emailSignIn, googleSignUp } from '@/actions/auth'
+import { toast } from '@/components/ui/use-toast'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -36,10 +37,55 @@ const Login: React.FC<{
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
-    emailSignIn(data)
-    reset()
-    setIsLogin(false)
+    try {
+      console.log(data)
+      emailSignIn(data)
+        .then(() => {
+          toast({
+            description: 'Login success',
+          })
+          reset()
+          setIsLogin(false)
+        })
+        .catch(() => {
+          toast({
+            title: 'Login failed',
+            variant: 'destructive',
+            description: 'Invalid email or password. Please try again',
+          })
+        })
+    } catch (err) {
+      toast({
+        title: 'Login failed',
+        variant: 'destructive',
+        description: 'Invalid email or password. Please try again',
+      })
+      console.log('Login email error: ', err)
+    }
+  }
+
+  const googleLogin = async () => {
+    try {
+      await googleSignUp().catch(() => {
+        toast({
+          title: 'Login failed',
+          variant: 'destructive',
+          description: 'Please try again',
+        })
+      })
+      toast({
+        description: 'Login success',
+      })
+      reset()
+      setIsLogin(false)
+    } catch (error) {
+      toast({
+        title: 'Login failed',
+        variant: 'destructive',
+        description: 'Please try again',
+      })
+      console.log('Login google error: ', error)
+    }
   }
 
   return (
@@ -94,6 +140,7 @@ const Login: React.FC<{
           variant='outline'
           className='text-xl flex justify-start'
           type='button'
+          onClick={googleLogin}
         >
           <Image src={GoogleIcon} alt='Google-Icon' />
           <div className='w-full'>Continue with Google</div>

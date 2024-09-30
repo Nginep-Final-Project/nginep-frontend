@@ -1,55 +1,55 @@
-"use client";
+'use client'
 
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import ManualPayment from "./_components/ManualPayment/ManualPayment";
-import AutomaticPayment from "./_components/AutomaticPayment/AutomaticPayment";
-import PriceSummary from "../_components/PriceSummary/PriceSummary";
-import TransactionLayout from "../_components/TransactionLayout/TransactionLayout";
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import ManualPayment from './_components/ManualPayment/ManualPayment'
+import AutomaticPayment from './_components/AutomaticPayment/AutomaticPayment'
+import PriceSummary from '../_components/PriceSummary/PriceSummary'
+import TransactionLayout from '../_components/TransactionLayout/TransactionLayout'
 import {
   useBookingPaymentDetails,
   useCheckExistingPendingBooking,
-} from "@/hooks";
+} from '@/hooks'
 
 const PaymentProcess = () => {
-  const params = useParams();
-  const roomId = params.roomId as string;
+  const params = useParams()
+  const roomId = params.roomId as string
   const [paymentType, setPaymentType] = useState<
-    "MANUAL_PAYMENT" | "AUTOMATIC_PAYMENT" | null
-  >(null);
+    'MANUAL_PAYMENT' | 'AUTOMATIC_PAYMENT' | null
+  >(null)
 
-  const userId = 11;
+  const userId = 11
 
   const { data: existingBookingId, isLoading: isCheckingBooking } =
-    useCheckExistingPendingBooking(userId, parseInt(roomId));
+    useCheckExistingPendingBooking(userId, parseInt(roomId))
   const {
     data: bookingDetails,
     isLoading: isLoadingDetails,
     error,
-  } = useBookingPaymentDetails(existingBookingId);
+  } = useBookingPaymentDetails(existingBookingId)
 
   useEffect(() => {
     if (bookingDetails) {
       setPaymentType(
-        bookingDetails.paymentType === "MANUAL_PAYMENT"
-          ? "MANUAL_PAYMENT"
-          : "AUTOMATIC_PAYMENT"
-      );
+        bookingDetails.paymentType === 'MANUAL_PAYMENT'
+          ? 'MANUAL_PAYMENT'
+          : 'AUTOMATIC_PAYMENT'
+      )
     }
-  }, [bookingDetails]);
+  }, [bookingDetails])
 
   if (!bookingDetails)
     return (
-      <TransactionLayout title="There is no existing booking, please return to the previous page">
+      <TransactionLayout title='There is no existing booking, please return to the previous page'>
         -
       </TransactionLayout>
-    );
+    )
 
   return (
-    <TransactionLayout title="Process Your Payment">
-      {paymentType === "MANUAL_PAYMENT" ? (
+    <TransactionLayout title='Process Your Payment'>
+      {paymentType === 'MANUAL_PAYMENT' ? (
         <ManualPayment bookingDetails={bookingDetails} />
-      ) : paymentType === "AUTOMATIC_PAYMENT" ? (
+      ) : paymentType === 'AUTOMATIC_PAYMENT' ? (
         <AutomaticPayment bookingDetails={bookingDetails} />
       ) : null}
       <PriceSummary
@@ -62,7 +62,7 @@ const PaymentProcess = () => {
         coverImage={bookingDetails.coverImage}
       />
     </TransactionLayout>
-  );
-};
+  )
+}
 
-export default PaymentProcess;
+export default PaymentProcess

@@ -10,25 +10,31 @@ import Delete from '@/public/delete.svg'
 import Edit from '@/public/pencil.svg'
 import { useToast } from '@/components/ui/use-toast'
 
-interface Item {
+export interface Item {
   id: number
-  name: string
+  value: string
+  label: string
 }
 
 interface ItemManagementProps<T extends ZodSchema> {
   schema: T
   itemName: string
   label: string
-  placeholder: string
+  items: Item[]
+  onAdd: (newValue: string) => void
+  onEdit: (id: number, newValue: string) => void
+  onDelete: (id: number) => void
 }
 
 const ItemManagement = <T extends ZodSchema>({
   schema,
   itemName,
   label,
-  placeholder,
+  items,
+  onAdd,
+  onEdit,
+  onDelete,
 }: ItemManagementProps<T>) => {
-  const [items, setItems] = useState<Item[]>([])
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [currentItemId, setCurrentItemId] = useState<number | null>(null)
   const { toast } = useToast()
@@ -45,7 +51,7 @@ const ItemManagement = <T extends ZodSchema>({
 
   const onSubmit = (data: { name: string }) => {
     const itemExists = items.some(
-      (i) => i.name.toLowerCase() === data.name.toLowerCase()
+      (i) => i.label.toLowerCase() === data.name.toLowerCase()
     )
 
     if (itemExists) {
@@ -58,19 +64,12 @@ const ItemManagement = <T extends ZodSchema>({
 
     if (isEditing && currentItemId !== null) {
       // Edit existing item
-      const updatedItems = items.map((i) =>
-        i.id === currentItemId ? { ...i, name: data.name } : i
-      )
-      setItems(updatedItems)
+      onEdit(currentItemId, data.name)
       setIsEditing(false)
       setCurrentItemId(null)
     } else {
       // Add new item
-      const newItem: Item = {
-        id: items.length > 0 ? items[items.length - 1].id + 1 : 0,
-        name: data.name,
-      }
-      setItems([...items, newItem])
+      onAdd(data.name)
     }
     reset()
   }
@@ -78,15 +77,10 @@ const ItemManagement = <T extends ZodSchema>({
   const handleEdit = (id: number) => {
     const itemToEdit = items.find((i) => i.id === id)
     if (itemToEdit) {
-      setValue('name', itemToEdit.name)
+      setValue('name', itemToEdit.label)
       setIsEditing(true)
       setCurrentItemId(id)
     }
-  }
-
-  const handleDelete = (id: number) => {
-    const updatedItems = items.filter((i) => i.id !== id)
-    setItems(updatedItems)
   }
 
   return (
@@ -145,11 +139,11 @@ const ItemManagement = <T extends ZodSchema>({
                   className='flex gap-3'
                   type='button'
                 >
-                  {e.name}
+                  {e.label}
                   <Image
                     src={Delete}
                     alt='delete'
-                    onClick={() => handleDelete(e.id)}
+                    onClick={() => onDelete(e.id)}
                   />
                   <Image
                     src={Edit}

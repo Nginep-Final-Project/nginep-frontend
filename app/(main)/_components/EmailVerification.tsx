@@ -13,16 +13,48 @@ import {
 } from '@/components/ui/input-otp'
 import { useToast } from '@/components/ui/use-toast'
 import { REGEXP_ONLY_DIGITS } from 'input-otp'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { BadgeCheck } from 'lucide-react'
+import { SIGN_UP } from '@/utils/constanta'
+import useAccountVerification from '@/hooks/useAccountVerification'
+import useSignup from '@/hooks/useSignup'
+
+interface signUp {
+  dateOfBirth: string
+  email: string
+  fullName: string
+  password: string
+  role: string
+}
 
 const EmailVerification: React.FC<{
   isEmailVerification: boolean
   setIsEmailVerification: Dispatch<SetStateAction<boolean>>
 }> = ({ isEmailVerification, setIsEmailVerification }) => {
+  const { handleAccountVerification, loading, error } = useAccountVerification()
+  const {
+    handleSignup,
+    loading: loadingSignUp,
+    error: errorSignUp,
+  } = useSignup()
   const [otp, setOtp] = useState<string>('')
-  const [loading, setLoading] = useState(false)
+  const [signUpData, setSignUpData] = useState<signUp>({
+    dateOfBirth: '',
+    email: '',
+    fullName: '',
+    password: '',
+    role: '',
+  })
   const { toast } = useToast()
+
+  useEffect(() => {
+    const storedData = sessionStorage.getItem(SIGN_UP)
+    if (storedData) {
+      const parseStoredData = JSON.parse(storedData)
+      console.log(parseStoredData)
+      setSignUpData(parseStoredData)
+    }
+  }, [isEmailVerification])
 
   return (
     <Dialog open={isEmailVerification} onOpenChange={setIsEmailVerification}>
@@ -36,32 +68,48 @@ const EmailVerification: React.FC<{
         <div className='border-t border-secondary py-4'>
           <p className='mb-4 font-medium '>Enter your verification code</p>
           <p className='mb-4'>
-            Enter the code we emailed to {`kiddoytube01@gmail.com`}.
+            Enter the code we emailed to {signUpData.email}.
           </p>
           <InputOTP
             maxLength={6}
             pattern={REGEXP_ONLY_DIGITS}
             value={otp}
-            onChange={(value) => {
+            onChange={async (value) => {
               setOtp(value)
               if (value.length === 6) {
-                setLoading(true)
-                setTimeout(() => {
-                  setOtp('')
-                  setIsEmailVerification(false)
+                const request = {
+                  email: signUpData.email,
+                  code: value,
+                }
+                const result = await handleAccountVerification(request)
+                if (!result?.success) {
                   toast({
-                    description: (
-                      <div className='flex gap-x-1'>
-                        <BadgeCheck color='#00BA88' strokeWidth={3} />
-                        Sign up success
-                      </div>
-                    ),
+                    variant: 'destructive',
+                    description: result?.data,
                   })
-                  setLoading(false)
-                }, 2000)
+                  return
+                }
+                const resultSignUp = await handleSignup(signUpData)
+                if (!resultSignUp?.success) {
+                  toast({
+                    variant: 'destructive',
+                    description: resultSignUp?.message,
+                  })
+                  return
+                }
+                setOtp('')
+                setIsEmailVerification(false)
+                toast({
+                  description: (
+                    <div className='flex gap-x-1'>
+                      <BadgeCheck color='#00BA88' strokeWidth={3} />
+                      {resultSignUp.message}
+                    </div>
+                  ),
+                })
               }
             }}
-            disabled={loading}
+            disabled={loading || loadingSignUp}
           >
             <InputOTPGroup>
               <InputOTPSlot index={0} />

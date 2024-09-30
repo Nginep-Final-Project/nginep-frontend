@@ -1,7 +1,7 @@
 'use client'
 import { propertyCategories, propertyLocation } from '@/utils/dummy'
 import CategoryCarousel from './CategoryCarousel'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Select from '@/components/Select'
 import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
@@ -14,11 +14,17 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
+import { Category, City } from '@/types/property'
 
-const FilterSort = () => {
+interface FilterSortProps {
+  categories: Category[]
+  cities: City[]
+}
+
+const FilterSort: React.FC<FilterSortProps> = ({ categories, cities }) => {
   const [category, setCategory] = useState<string>('')
   const [location, setLocation] = useState<string>('')
-  const [dateRange, setdateRange] = useState<DateRange>()
+  const [dateRange, setdateRange] = useState<DateRange | undefined>()
   const [guest, setGuest] = useState<number>(1)
   const [price, setPrice] = useState<string>('')
   const [sortName, setSortName] = useState<string>('')
@@ -44,15 +50,12 @@ const FilterSort = () => {
   return (
     <div className='w-full space-y-4 my-4'>
       <div className='px-4 md:px-16'>
-        <CategoryCarousel
-          categories={propertyCategories}
-          setCtg={setCategory}
-        />
+        <CategoryCarousel categories={categories} setCtg={setCategory} />
       </div>
 
       <div className={`grid md:grid-cols-6 gap-5 px-4 lg:px-11`}>
         <Select
-          options={propertyLocation}
+          options={cities}
           placeholder='Select destination'
           onSelect={(selectedValue) => {
             if (typeof selectedValue === 'string') {
@@ -61,7 +64,8 @@ const FilterSort = () => {
           }}
         />
         <DatePicker
-          value={dateRange as DateRange}
+          mode='range'
+          value={dateRange}
           onChange={(value) => setdateRange(value)}
           placeholder='Select date'
         />

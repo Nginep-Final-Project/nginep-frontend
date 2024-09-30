@@ -3,6 +3,8 @@
 import Input from '@/components/Input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
+import useProfile from '@/hooks/useProfile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -31,6 +33,7 @@ const BankAccount: React.FC<BankAccountProps> = ({
   initAccNumber,
   initHolderName,
 }) => {
+  const { handleUpdateBankAccount, loading } = useProfile()
   const {
     register,
     handleSubmit,
@@ -54,8 +57,24 @@ const BankAccount: React.FC<BankAccountProps> = ({
     })
   }, [initAccNumber, initBankName, initHolderName, reset])
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
+    const request = {
+      bankName: data.bankName,
+      bankAccountNumber: data.accountNumber,
+      bankHolderName: data.holderName,
+    }
+    const result = await handleUpdateBankAccount(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.data,
+      })
+      return
+    }
+    toast({
+      description: result.data,
+    })
   }
 
   const onCancel = () => {
@@ -97,7 +116,9 @@ const BankAccount: React.FC<BankAccountProps> = ({
             <Button variant='cancel' type='button' onClick={onCancel}>
               Cancel
             </Button>
-            <Button type='submit'>Save</Button>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'loading...' : 'Save'}
+            </Button>
           </div>
         </form>
       </CardContent>

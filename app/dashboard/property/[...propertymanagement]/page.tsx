@@ -60,7 +60,8 @@ const schema = z.object({
   propertyPrice: z
     .string()
     .min(1, 'Property price is required')
-    .regex(/^[0-9]+$/, 'Only numbers are allowed'),
+    .regex(/^[0-9]+$/, 'Only numbers are allowed')
+    .optional(),
   guestPlaceType: z.string({
     required_error: 'Property type is required',
   }),
@@ -136,6 +137,7 @@ const PropertyManagement = () => {
   const [debouncedAddress] = useDebounce(addressWatch, 1000)
 
   const onSubmit = (data: FormData) => {
+    console.log('submit')
     console.log(data)
     // reset()
   }
@@ -208,7 +210,7 @@ const PropertyManagement = () => {
     fetchAddressSuggestions(debouncedAddress)
   }, [debouncedAddress])
   return (
-    <div>
+    <div className='p-4 lg:px-32 '>
       <div>
         <h2 className='font-semibold md:text-2xl mb-4'>Add Property</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -398,7 +400,7 @@ const PropertyManagement = () => {
             <label className='text-sm font-medium mb-2'>
               Pin property location
             </label>
-            <div className='h-96 w-1/2'>
+            <div className='h-96 w-full'>
               <MapWithNoSSR
                 position={position}
                 onLocationChange={setPosition}
@@ -414,6 +416,7 @@ const PropertyManagement = () => {
                 label='Property not availability datess'
                 render={
                   <DatePicker
+                    mode='range'
                     value={field.value as DateRange}
                     onChange={(value) => field.onChange(value)}
                     placeholder='Select not availability dates'
@@ -431,6 +434,7 @@ const PropertyManagement = () => {
                 label='Property peak season dates'
                 render={
                   <DatePicker
+                    mode='range'
                     value={field.value as DateRange}
                     onChange={(value) => field.onChange(value)}
                     placeholder='Select not availability dates'

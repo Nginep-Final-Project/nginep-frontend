@@ -82,6 +82,265 @@ export const incrementType = [
   { value: 'amount', label: 'Amount: add price by adding amount' },
 ]
 
+export const reviewData = {
+  rating: 4.83,
+  totalReviews: 1800,
+  categories: [
+    { name: 'Cleanliness', score: 4.8 },
+    { name: 'Accuracy', score: 4.8 },
+    { name: 'Communication', score: 4.9 },
+    { name: 'Location', score: 4.8 },
+    { name: 'Check-in', score: 4.9 },
+    { name: 'Value', score: 4.7 },
+  ],
+  reviews: [
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+    {
+      user: 'Melissa',
+      date: 'April 2023',
+      comment:
+        'Fantastic villa, beautiful scenic view of the ocean. Turtles swimming in the bay. Amazing',
+      avatar: 'https://dummyimage.com/300x200/000/fff',
+    },
+  ],
+}
+
+export const tenantData = {
+  name: 'Mr Irfan',
+  pictureProfile: 'https://dummyimage.com/300x200/000/fff',
+  joinDate: 'September 2020',
+  rating: 4.83,
+  reviewCount: 1800,
+  isSuperhost: true,
+  isIdentityVerified: true,
+  languages: [
+    '中文',
+    'English',
+    'Bradt',
+    'Français',
+    'Bahasa Indonesia',
+    'Español',
+  ],
+  responseRate: 100,
+  responseTime: 'within an hour',
+  description:
+    'A passionate host, who loves to welcome guest from all over the world and share the beauty of this amazing natural spot that is Batu lagoon.',
+  stayInfo: '24/7 full management',
+}
+
+export const bookingData = {
+  pricePerNight: 159305,
+  checkInDate: '2023-05-08', // Using ISO date format for better parsing
+  checkOutDate: '2023-05-12',
+  guests: 1,
+  roomType: 'Standard Room',
+}
+
+export const availableRooms = [
+  {
+    id: 1,
+    name: 'Standard Room',
+    description:
+      'Comfortable room with basic amenitiessssssssssssssssssssssssssssssssssssssssssssssss asdfwefqwef',
+    price: 159305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/300x200/000/fff',
+    amenities: ['Free WiFi', 'Air Conditioning', 'TV'],
+    maxOccupancy: 2,
+  },
+  {
+    id: 2,
+    name: 'Deluxe Room',
+    description: 'Spacious room with premium amenities',
+    price: 259305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/400x300/00ff00/000',
+    amenities: ['Free WiFi', 'Air Conditioning', 'TV', 'Mini Bar', 'City View'],
+    maxOccupancy: 3,
+  },
+  {
+    id: 3,
+    name: 'Suite',
+    description: 'Luxurious suite with separate living area',
+    price: 459305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/600x400/0000ff/fff',
+    amenities: [
+      'Free WiFi',
+      'Air Conditioning',
+      'TV',
+      'Mini Bar',
+      'City View',
+      'Jacuzzi',
+    ],
+    maxOccupancy: 4,
+  },
+  {
+    id: 4,
+    name: 'Suite',
+    description: 'Luxurious suite with separate living area',
+    price: 459305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/600x400/0000ff/fff',
+    amenities: [
+      'Free WiFi',
+      'Air Conditioning',
+      'TV',
+      'Mini Bar',
+      'City View',
+      'Jacuzzi',
+    ],
+    maxOccupancy: 4,
+  },
+  {
+    id: 5,
+    name: 'Suite',
+    description: 'Luxurious suite with separate living area',
+    price: 459305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/600x400/0000ff/fff',
+    amenities: [
+      'Free WiFi',
+      'Air Conditioning',
+      'TV',
+      'Mini Bar',
+      'City View',
+      'Jacuzzi',
+    ],
+    maxOccupancy: 4,
+  },
+  {
+    id: 6,
+    name: 'Suite',
+    description: 'Luxurious suite with separate living area',
+    price: 459305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/600x400/0000ff/fff',
+    amenities: [
+      'Free WiFi',
+      'Air Conditioning',
+      'TV',
+      'Mini Bar',
+      'City View',
+      'Jacuzzi',
+    ],
+    maxOccupancy: 4,
+  },
+  {
+    id: 7,
+    name: 'Suite',
+    description: 'Luxurious suite with separate living area',
+    price: 459305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/600x400/0000ff/fff',
+    amenities: [
+      'Free WiFi',
+      'Air Conditioning',
+      'TV',
+      'Mini Bar',
+      'City View',
+      'Jacuzzi',
+    ],
+    maxOccupancy: 4,
+  },
+  {
+    id: 8,
+    name: 'Suite',
+    description: 'Luxurious suite with separate living area',
+    price: 459305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/600x400/0000ff/fff',
+    amenities: [
+      'Free WiFi',
+      'Air Conditioning',
+      'TV',
+      'Mini Bar',
+      'City View',
+      'Jacuzzi',
+    ],
+    maxOccupancy: 4,
+  },
+  {
+    id: 9,
+    name: 'Suite',
+    description: 'Luxurious suite with separate living area',
+    price: 459305,
+    currency: 'Rp',
+    image: 'https://dummyimage.com/600x400/0000ff/fff',
+    amenities: [
+      'Free WiFi',
+      'Air Conditioning',
+      'TV',
+      'Mini Bar',
+      'City View',
+      'Jacuzzi',
+    ],
+    maxOccupancy: 4,
+  },
+]
+
 export const propertyList = [
   {
     imageSrc: [

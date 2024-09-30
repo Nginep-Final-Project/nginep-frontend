@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import useResetPassword from '@/hooks/useResetPassword'
+import { toast } from '@/components/ui/use-toast'
 
 const resetPasswordSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -14,6 +16,8 @@ const resetPasswordSchema = z.object({
 type FormData = z.infer<typeof resetPasswordSchema>
 
 const ResetPassword = () => {
+  const { handleResetPassword, loading } = useResetPassword()
+  const router = useRouter()
   const email = useSearchParams().get('email')
   console.log('email', email)
 
@@ -21,14 +25,35 @@ const ResetPassword = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<FormData>({
     resolver: zodResolver(resetPasswordSchema),
   })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log(data)
-    reset()
+    if (data.password !== data.confirmPass) {
+      toast({
+        variant: 'destructive',
+        description: 'Password and password confirmation must be same',
+      })
+      return
+    }
+    const request = {
+      email: email!,
+      newPassword: data.password,
+    }
+    const result = await handleResetPassword(request)
+    if (!result?.success) {
+      toast({
+        variant: 'destructive',
+        description: result?.message,
+      })
+      return
+    }
+    toast({
+      description: result?.message,
+    })
+    router.push('/')
   }
 
   return (
@@ -58,8 +83,9 @@ const ResetPassword = () => {
             <Button
               type='submit'
               className='bg-black w-full text-white text-xl px-4 py-2 rounded'
+              disabled={loading}
             >
-              Reset
+              {loading ? 'Loading...' : 'Reset'}
             </Button>
           </form>
         </div>
