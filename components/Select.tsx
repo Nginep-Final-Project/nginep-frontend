@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
   Popover,
   PopoverContent,
@@ -34,6 +34,7 @@ interface SelectProps {
   className?: string
   onSelect?: (value: string | string[]) => void
   isMulti?: boolean
+  initialValue?: string | string[]
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -44,9 +45,18 @@ const Select: React.FC<SelectProps> = ({
   className = '',
   onSelect,
   isMulti = false,
+  initialValue,
 }) => {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState<string | string[]>(isMulti ? [] : '')
+  const [value, setValue] = useState<string | string[]>(
+    initialValue !== undefined ? initialValue : isMulti ? [] : ''
+  )
+
+  useEffect(() => {
+    if (initialValue !== undefined) {
+      setValue(initialValue)
+    }
+  }, [initialValue])
 
   const handleSelect = (currentValue: string) => {
     let newValue: string | string[]

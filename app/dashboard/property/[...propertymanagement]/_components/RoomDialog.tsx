@@ -15,21 +15,16 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { ACCEPTED_IMAGE_TYPES, createRoomSchema } from '@/utils/schema'
+import DatePicker from '@/components/DatePicker'
+import { DateRange } from 'react-day-picker'
+import useUploadImage from '@/hooks/useUploadImage'
+import { toast } from '@/components/ui/use-toast'
 
-const roomSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, 'Room name is required'),
-  description: z.string().min(1, 'Room description is required'),
-  guests: z
-    .number()
-    .min(1, 'At least 1 guest is required')
-    .max(10, 'Maximum 10 guests allowed'),
-  price: z.number().min(0, 'Price must be a positive number'),
-})
-
-export type RoomFormValues = z.infer<typeof roomSchema>
+export type RoomFormValues = z.infer<typeof createRoomSchema>
 
 interface RoomDialogProps {
   open: boolean
@@ -45,12 +40,13 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
   initialRoom,
 }) => {
   const form = useForm<RoomFormValues>({
-    resolver: zodResolver(roomSchema),
+    resolver: zodResolver(createRoomSchema),
     defaultValues: {
       name: '',
       description: '',
-      guests: 1,
-      price: 0,
+      maxGuests: 1,
+      basePrice: '1',
+      totalRoom: 1,
     },
   })
 
@@ -61,12 +57,19 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
       form.reset({
         name: '',
         description: '',
-        guests: 1,
+        maxGuests: 1,
+        basePrice: '1',
+        totalRoom: 1,
+        notAvailabilityDates: {
+          from: undefined,
+          to: undefined,
+        },
       })
     }
   }, [initialRoom, form])
 
-  const onSubmit = (data: RoomFormValues) => {
+  const onSubmit = async (data: RoomFormValues) => {
+    console.log(data)
     onSave(data)
     form.reset()
   }
@@ -84,6 +87,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
               name='name'
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Room Name or Type</FormLabel>
                   <FormControl>
                     <Input placeholder='Room name' {...field} />
                   </FormControl>
@@ -96,6 +100,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
               name='description'
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Room Description</FormLabel>
                   <FormControl>
                     <Input placeholder='Room description' {...field} />
                   </FormControl>
@@ -105,16 +110,17 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
             />
             <FormField
               control={form.control}
-              name='guests'
+              name='maxGuests'
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Room Max Guests</FormLabel>
                   <FormControl>
                     <Input
                       type='number'
                       placeholder='Number of guests'
                       {...field}
                       onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10) || 0)
+                        field.onChange(parseInt(e.target.value, 10) || 1)
                       }
                     />
                   </FormControl>
@@ -124,17 +130,38 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
             />
             <FormField
               control={form.control}
-              name='price'
+              name='basePrice'
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Room Price</FormLabel>
                   <FormControl>
                     <Input
                       type='number'
                       placeholder='Room price'
                       {...field}
-                      value={field.value || 0}
+                      value={field.value || '1'}
+                      onChange={(e) => field.onChange(e.target.value || '1')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='totalRoom'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Room Total Room</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='number'
+                      placeholder='Total room'
+                      {...field}
+                      value={field.value || 1}
                       onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value) || 0)
+                        field.onChange(parseFloat(e.target.value) || 1)
                       }
                     />
                   </FormControl>
@@ -142,6 +169,51 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name='roomImage'
+              render={({ field: { onChange, value, ...rest } }) => (
+                <FormItem>
+                  <FormLabel>Room Image</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='file'
+                      accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                      placeholder='Room Image'
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          onChange(file)
+                        }
+                      }}
+                      {...rest}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='notAvailabilityDates'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Not Available Date</FormLabel>
+                  <FormControl>
+                    <DatePicker
+                      mode='range'
+                      value={field.value as DateRange}
+                      onChange={(value) => field.onChange(value)}
+                      placeholder='Select dates'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className='flex justify-end space-x-2'>
               <Button
                 variant='outline'

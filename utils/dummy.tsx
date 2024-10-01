@@ -78,8 +78,8 @@ export const gender = [
 ]
 
 export const incrementType = [
-  { value: 'percentage', label: '%: add price by percentage' },
-  { value: 'amount', label: 'Amount: add price by adding amount' },
+  { value: 'PERCENTAGE', label: '%: add price by percentage' },
+  { value: 'FIXED_AMOUNT', label: 'Amount: add price by adding amount' },
 ]
 
 export const reviewData = {
