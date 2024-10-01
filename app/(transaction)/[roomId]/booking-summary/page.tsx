@@ -20,7 +20,7 @@ interface ExtendedSelectedRoom extends SelectedRoom {
   bank?: string;
 }
 
-const CombinedBookingPaymentPage: React.FC = () => {
+const BookingSummary: React.FC = () => {
   const params = useParams();
   const roomId = params.roomId as string;
   const router = useRouter();
@@ -181,4 +181,4 @@ const CombinedBookingPaymentPage: React.FC = () => {
   );
 };
 
-export default CombinedBookingPaymentPage;
+export default BookingSummary;
