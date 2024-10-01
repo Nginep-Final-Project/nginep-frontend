@@ -58,7 +58,6 @@ const BankAccount: React.FC<BankAccountProps> = ({
   }, [initAccNumber, initBankName, initHolderName, reset])
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     const request = {
       bankName: data.bankName,
       bankAccountNumber: data.accountNumber,

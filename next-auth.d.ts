@@ -8,6 +8,7 @@ declare module 'next-auth' {
       role?: string
       name?: string
       image?: string
+      id?: string
     }
   }
 
@@ -16,6 +17,7 @@ declare module 'next-auth' {
     token?: string
     name?: string
     image?: string
+    id?: string
   }
 }
 
@@ -24,5 +26,6 @@ declare module 'next-auth/jwt' {
     role?: string
     accessToken?: string
     name?: string
+    id?: string
   }
 }

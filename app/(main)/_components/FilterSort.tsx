@@ -1,7 +1,7 @@
 'use client'
 import { propertyCategories, propertyLocation } from '@/utils/dummy'
 import CategoryCarousel from './CategoryCarousel'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Select from '@/components/Select'
 import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
@@ -15,19 +15,27 @@ import {
   Users,
 } from 'lucide-react'
 import { Category, City } from '@/types/property'
+import { FilterRequest } from '../page'
+import { addDays, format } from 'date-fns'
 
 interface FilterSortProps {
   categories: Category[]
   cities: City[]
+  onFilter: (req: FilterRequest) => void
 }
 
-const FilterSort: React.FC<FilterSortProps> = ({ categories, cities }) => {
+const FilterSort: React.FC<FilterSortProps> = ({
+  categories,
+  cities,
+  onFilter,
+}) => {
   const [category, setCategory] = useState<string>('')
+  const [search, setSearch] = useState<string>('')
   const [location, setLocation] = useState<string>('')
   const [dateRange, setdateRange] = useState<DateRange | undefined>()
   const [guest, setGuest] = useState<number>(1)
-  const [price, setPrice] = useState<string>('')
-  const [sortName, setSortName] = useState<string>('')
+  const [sortBy, setSortBy] = useState<string>('')
+  const [sortDirection, setSortDirection] = useState<string>('')
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
 
   const handleGuestChange = (value: number) => {
@@ -35,25 +43,68 @@ const FilterSort: React.FC<FilterSortProps> = ({ categories, cities }) => {
     setIsDialogOpen(false)
   }
 
+  const handleToggleSort = (sort: string) => {
+    if (sortBy === sort) {
+      setSortDirection('DESC')
+    }
+
+    if (sortBy === sort && sortDirection === 'DESC') {
+      setSortBy('')
+      setSortDirection('')
+    }
+
+    if (sortBy === '') {
+      setSortBy(sort)
+      setSortDirection('ASC')
+    }
+
+    if (sortBy !== sort) {
+      setSortBy(sort)
+      setSortDirection('ASC')
+    }
+  }
+
+  useEffect(() => {
+    console.log(sortBy, sortDirection)
+  }, [sortBy, sortDirection])
+
   const handleSubmit = () => {
     const data = {
+      name: search,
       category: category,
-      location: location,
-      dateRange: dateRange,
-      guest: guest,
-      price: price,
-      sortName: sortName,
+      city: location,
+      checkInDate:
+        dateRange?.from !== undefined
+          ? format(dateRange?.from!, 'yyyy-MM-dd')
+          : '',
+      checkoutDate:
+        dateRange?.to !== undefined ? format(dateRange?.to!, 'yyyy-MM-dd') : '',
+      totalGuests: guest,
+      sortBy: sortBy,
+      sortDirection: sortDirection,
     }
     console.log(data)
+    onFilter(data)
   }
 
   return (
     <div className='w-full space-y-4 my-4'>
       <div className='px-4 md:px-16'>
-        <CategoryCarousel categories={categories} setCtg={setCategory} />
+        <CategoryCarousel
+          selectedCategory={category}
+          categories={categories}
+          setCtg={setCategory}
+        />
       </div>
 
-      <div className={`grid md:grid-cols-6 gap-5 px-4 lg:px-11`}>
+      <div className={`grid lg:grid-cols-7 gap-5 px-4 lg:px-11`}>
+        <input
+          onChange={(e) => setSearch(e.target.value)}
+          className='px-4 py-[6px] text-sm w-full focus:outline-none border border-secondary rounded-md'
+          type='text'
+          placeholder='Search...'
+        />
+
         <Select
           options={cities}
           placeholder='Select destination'
@@ -80,35 +131,25 @@ const FilterSort: React.FC<FilterSortProps> = ({ categories, cities }) => {
           variant='outline'
           type='button'
           className={`gap-x-4 justify-between ${
-            price !== '' && 'border-2 border-primary'
+            sortBy === 'PRICE' && 'border-2 border-primary'
           }`}
-          onClick={() => {
-            if (price === '') setPrice('asc')
-            if (price === 'asc') setPrice('desc')
-            if (price === 'desc') setPrice('')
-          }}
+          onClick={() => handleToggleSort('PRICE')}
         >
           Price
-          {price === 'asc' || price === '' ? <TrendingDown /> : <TrendingUp />}
+          {sortBy === 'PRICE' && sortDirection === 'ASC' && <TrendingDown />}
+          {sortBy === 'PRICE' && sortDirection === 'DESC' && <TrendingUp />}
         </Button>
         <Button
           variant='outline'
           type='button'
           className={`gap-x-4 justify-between ${
-            sortName !== '' && 'border-2 border-primary'
+            sortBy === 'NAME' && 'border-2 border-primary'
           }`}
-          onClick={() => {
-            if (sortName === '') setSortName('asc')
-            if (sortName === 'asc') setSortName('desc')
-            if (sortName === 'desc') setSortName('')
-          }}
+          onClick={() => handleToggleSort('NAME')}
         >
           Name
-          {sortName === 'asc' || sortName === '' ? (
-            <ArrowDownAZ />
-          ) : (
-            <ArrowUpZA />
-          )}
+          {sortBy === 'NAME' && sortDirection === 'ASC' && <ArrowDownAZ />}
+          {sortBy === 'NAME' && sortDirection === 'DESC' && <ArrowUpZA />}
         </Button>
         <Button type='button' onClick={handleSubmit}>
           Submit

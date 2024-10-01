@@ -61,9 +61,14 @@ const RoomDatePicker: React.FC<DateRangePickerProps> = ({
     return (
       <div className='flex flex-col items-center'>
         <div>{format(day, 'd')}</div>
-        {price !== undefined && (
-          <div className='text-xs text-error'>{price.toFixed(0)}</div>
-        )}
+        {day > new Date() &&
+          (price !== undefined ? (
+            <div className='text-xs bg-error bg-opacity-30 rounded-full'>
+              {price.toFixed(0)}
+            </div>
+          ) : (
+            <div className='text-xs '>{basePrice.toFixed(0)}</div>
+          ))}
       </div>
     )
   }
@@ -100,12 +105,14 @@ const RoomDatePicker: React.FC<DateRangePickerProps> = ({
             onSelect={onChange as (range: DateRange | undefined) => void}
             disabled={(date) => date < new Date()}
             numberOfMonths={2}
-            // modifiers={{
-            //   selected: (day) => {
-            //     const dateKey = format(day, 'yyyy-MM-dd')
-            //     return Boolean(pricingData[dateKey])
-            //   },
-            // }}
+            modifiers={
+              {
+                // selected: (day) => {
+                //   const dateKey = format(day, 'yyyy-MM-dd')
+                //   return Boolean(pricingData[dateKey])
+                // },
+              }
+            }
             // modifiersClassNames={{
             //   selected: 'bg-primary text-white',
             // }}

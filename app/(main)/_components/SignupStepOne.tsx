@@ -41,7 +41,6 @@ const SignupStepOne: React.FC<{
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     const result = await handleEmailValidation(data.email)
     if (!result?.success) {
       toast({

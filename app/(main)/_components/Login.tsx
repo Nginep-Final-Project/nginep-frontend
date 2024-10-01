@@ -38,7 +38,6 @@ const Login: React.FC<{
 
   const onSubmit = async (data: FormData) => {
     try {
-      console.log(data)
       emailSignIn(data)
         .then(() => {
           toast({

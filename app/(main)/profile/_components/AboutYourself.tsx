@@ -37,7 +37,6 @@ const AboutYourself: React.FC<AboutYourselfProps> = ({ initialValue }) => {
   }, [initialValue, reset])
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     const request = {
       aboutYourself: data.value,
     }

@@ -1,8 +1,12 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { RESERVE_BOOKING_DATA } from '@/utils/constanta'
+import { PropertyDetail } from '@/types/property'
 
 interface BookingSummaryProps {
+  property: PropertyDetail
   pricePerNight: number
   checkInDate: string
   checkOutDate: string
@@ -12,6 +16,7 @@ interface BookingSummaryProps {
 }
 
 const BookingSummary: React.FC<BookingSummaryProps> = ({
+  property,
   pricePerNight,
   checkInDate,
   checkOutDate,
@@ -20,7 +25,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
   roomId,
 }) => {
   const calculateNights = (checkIn: string, checkOut: string): number => {
-    const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
+    const oneDay = 24 * 60 * 60 * 1000
     const checkInDate = new Date(checkIn)
     const checkOutDate = new Date(checkOut)
     const nights = Math.round(
@@ -29,14 +34,30 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
     return nights
   }
   const router = useRouter()
-
+  const session = useSession()
   const nights = calculateNights(checkInDate, checkOutDate)
   const total = pricePerNight * nights
+
+  const handleReserveBooking = () => {
+    const reserveBooking = {
+      property: property,
+      pricePerNight: pricePerNight,
+      checkInDate: checkInDate,
+      checkOutDate: checkOutDate,
+      guests: guests,
+      roomType: roomType,
+      roomId: roomId,
+      totalNights: nights,
+      userId: session.data?.user.id,
+    }
+    localStorage.setItem(RESERVE_BOOKING_DATA, JSON.stringify(reserveBooking))
+    router.push(`/${roomId}/booking-summary`)
+  }
 
   return (
     <div className='w-80 p-4 bg-white rounded-xl border-secondary shadow-md'>
       <h2 className='text-2xl font-bold mb-4'>
-        ${pricePerNight.toLocaleString()}{' '}
+        Rp {pricePerNight.toLocaleString()}{' '}
         <span className='text-base font-normal'>night</span>
       </h2>
 
@@ -66,9 +87,8 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
       <Button
         className='w-full rounded-lg mb-4'
         type='button'
-        onClick={() => {
-          router.push(`/${roomId}/booking-summary`)
-        }}
+        onClick={handleReserveBooking}
+        disabled={roomId === 0}
       >
         Reserve
       </Button>
@@ -79,15 +99,15 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
 
       <div className='flex justify-between mb-2'>
         <span>
-          ${pricePerNight.toLocaleString()} x {nights} night
+          Rp {pricePerNight.toLocaleString()} x {nights} night
           {nights > 1 ? 's' : ''}
         </span>
-        <span>${total.toLocaleString()}</span>
+        <span>Rp {total.toLocaleString()}</span>
       </div>
 
       <div className='flex justify-between font-bold pt-2 border-t border-grey-text'>
         <span>Total</span>
-        <span>${total.toLocaleString()}</span>
+        <span>Rp {total.toLocaleString()}</span>
       </div>
     </div>
   )

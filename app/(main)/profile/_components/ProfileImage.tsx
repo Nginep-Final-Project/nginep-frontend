@@ -114,7 +114,7 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
           alt='Profile-image'
           width={128}
           height={128}
-          style={{ height: 'auto', width: 'auto', objectFit: 'cover' }}
+          style={{ height: '128px', width: '128px', objectFit: 'cover' }}
           className='h-32 w-32 rounded-full shadow-2xl border border-secondary'
         />
         <Button
