@@ -19,3 +19,20 @@ export interface EarningsByPropertyDto {
   propertyName: string;
   earnings: number;
 }
+
+export interface PropertyAvailabilityDto {
+  propertyId: number;
+  propertyName: string;
+  rooms: RoomAvailabilityDto[];
+}
+
+export interface RoomAvailabilityDto {
+  roomId: number;
+  roomName: string;
+  unavailableDates: UnavailableDateRangeDto[];
+}
+
+export interface UnavailableDateRangeDto {
+  startDate: string;
+  endDate: string;
+}
