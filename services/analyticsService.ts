@@ -2,6 +2,7 @@ import {
   EarningsByPropertyDto,
   EarningsByTransactionDto,
   OverviewReportDto,
+  PropertyAvailabilityDto,
 } from "@/types/analytics";
 import axios from "axios";
 import { format } from "date-fns";
@@ -57,6 +58,25 @@ export const getEarningsByProperty = async (
     return response.data.data;
   } catch (error) {
     console.error("Error fetching earnings by property:", error);
+    throw error;
+  }
+};
+
+export const getPropertyAvailability = async (
+  tenantId: number,
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    const response = await axios.get<{ data: PropertyAvailabilityDto[] }>(
+      `${hostnameApi}/${prefixApi}/analytics/property-availability/${tenantId}`,
+      {
+        params: { startDate, endDate },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching property availability:", error);
     throw error;
   }
 };

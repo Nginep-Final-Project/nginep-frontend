@@ -3,6 +3,7 @@ import {
   getEarningsByProperty,
   getEarningsByTransaction,
   getOverviewReport,
+  getPropertyAvailability,
 } from "@/services/analyticsService";
 import { EarningsByTransactionDto, OverviewReportDto } from "@/types/analytics";
 
@@ -30,5 +31,16 @@ export const useEarningsByProperty = (tenantId: number) => {
   return useQuery({
     queryKey: ["earningsByProperty", tenantId],
     queryFn: () => getEarningsByProperty(tenantId),
+  });
+};
+
+export const usePropertyAvailability = (
+  tenantId: number,
+  startDate: string,
+  endDate: string
+) => {
+  return useQuery({
+    queryKey: ["propertyAvailability", tenantId, startDate, endDate],
+    queryFn: () => getPropertyAvailability(tenantId, startDate, endDate),
   });
 };

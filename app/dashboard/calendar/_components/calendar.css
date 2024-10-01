@@ -1,0 +1,83 @@
+.calendar-container {
+  position: relative;
+}
+
+.fc .fc-button-primary {
+  background-color: #FF385C;
+  border-color: #FF385C;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #D70466;
+  border-color: #D70466;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #D70466;
+  border-color: #D70466;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #46FF64;
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number {
+  color: #484848;
+}
+
+.fc .fc-daygrid-event {
+  background-color: #FF385C;
+  border-color: #FF385C;
+  color: white;
+}
+
+.fc-toolbar-title {
+  font-size: 1.5em !important;
+}
+
+.fc-toolbar-title span:first-child {
+  font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+  .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .fc .fc-toolbar-title {
+    margin-bottom: 0.5em;
+  }
+
+  .fc .fc-toolbar-chunk {
+    margin-bottom: 0.5em;
+  }
+}
+
+@media (max-width: 640px) {
+  .fc .fc-toolbar-title {
+    font-size: 1.2em !important;
+  }
+
+  .fc .fc-button {
+    padding: 0.3em 0.5em;
+    font-size: 0.9em;
+  }
+
+  .fc .fc-button-group {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .fc .fc-button-group > .fc-button {
+    margin: 0.2em;
+  }
+
+  .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+}
