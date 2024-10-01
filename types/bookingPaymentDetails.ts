@@ -14,6 +14,7 @@ export enum PaymentType {
 export interface BookingPaymentDetails {
   bookingId: number;
   roomId: number;
+  paymentId: number;
   finalPrice: number;
   paymentStatus: PaymentStatus;
   expiryTime: string;

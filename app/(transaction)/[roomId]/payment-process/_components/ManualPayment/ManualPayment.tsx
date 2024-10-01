@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Upload, AlertCircle } from "lucide-react";
 import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
 import Button from "../../../_components/Button/Button";
+import { useUploadProof } from "@/hooks/payment/useUploadProof";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
 interface ManualPaymentProps {
   bookingDetails: BookingPaymentDetails;
@@ -11,6 +14,9 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const router = useRouter();
+  const uploadMutation = useUploadProof();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,10 +56,33 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (file) {
-      // Implement file upload logic here
-      console.log("Uploading file:", file);
+      try {
+        await uploadMutation.mutateAsync({
+          proofOfPayment: file,
+          paymentId: bookingDetails.paymentId,
+        });
+
+        toast({
+          title: "Success",
+          description:
+            "Proof of payment uploaded successfully. Redirecting to bookings in 5 seconds...",
+          duration: 5000,
+        });
+
+        setIsRedirecting(true);
+
+        setTimeout(() => {
+          router.push("/user/bookings");
+        }, 5000);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to upload proof of payment. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -120,6 +149,11 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
           <li>Keep the original proof of payment for your records</li>
         </ul>
       </div>
+      {isRedirecting && (
+        <div className="mt-4 text-center text-gray-600">
+          Redirecting to bookings page...
+        </div>
+      )}
     </div>
   );
 };
