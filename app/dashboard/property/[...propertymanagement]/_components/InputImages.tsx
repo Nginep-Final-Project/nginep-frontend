@@ -44,7 +44,7 @@ const InputImages: React.FC<InputImagesProps> = ({
       preview: image.preview,
       path: response?.data.url!,
       publicKey: response?.data.publicId!,
-      isThumbnail: index === 0 && selectedImages.length === 0,
+      isThumbnail: index === 0,
     }
   }
 
@@ -53,7 +53,7 @@ const InputImages: React.FC<InputImagesProps> = ({
       const newImages = acceptedFiles.map((file, index) => ({
         file,
         preview: URL.createObjectURL(file),
-        isThumbnail: index === 0 && selectedImages.length === 0,
+        isThumbnail: index === 0,
       }))
       setSelectedImages((prev) => [...prev, ...newImages])
     },

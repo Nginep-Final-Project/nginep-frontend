@@ -22,7 +22,6 @@ import { ACCEPTED_IMAGE_TYPES, createRoomSchema } from '@/utils/schema'
 import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
 import useUploadImage from '@/hooks/useUploadImage'
-import { toast } from '@/components/ui/use-toast'
 
 export type RoomFormValues = z.infer<typeof createRoomSchema>
 
@@ -39,15 +38,9 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
   onSave,
   initialRoom,
 }) => {
+  const { handleUploadImage, loading } = useUploadImage()
   const form = useForm<RoomFormValues>({
     resolver: zodResolver(createRoomSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      maxGuests: 1,
-      basePrice: '1',
-      totalRoom: 1,
-    },
   })
 
   useEffect(() => {
@@ -60,10 +53,12 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
         maxGuests: 1,
         basePrice: '1',
         totalRoom: 1,
-        notAvailabilityDates: {
-          from: undefined,
-          to: undefined,
-        },
+        notAvailabilityDates: [
+          {
+            from: undefined,
+            to: undefined,
+          },
+        ],
       })
     }
   }, [initialRoom, form])
@@ -172,7 +167,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
 
             <FormField
               control={form.control}
-              name='roomImage'
+              name='roomPicture'
               render={({ field: { onChange, value, ...rest } }) => (
                 <FormItem>
                   <FormLabel>Room Image</FormLabel>
@@ -181,10 +176,15 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                       type='file'
                       accept={ACCEPTED_IMAGE_TYPES.join(',')}
                       placeholder='Room Image'
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const file = e.target.files?.[0]
                         if (file) {
-                          onChange(file)
+                          const uploadImage = await handleUploadImage(file)
+                          onChange(uploadImage?.data.url)
+                          form.setValue(
+                            'roomPictureId',
+                            uploadImage?.data.publicId
+                          )
                         }
                       }}
                       {...rest}
@@ -205,7 +205,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                     <DatePicker
                       mode='range'
                       value={field.value as DateRange}
-                      onChange={(value) => field.onChange(value)}
+                      onChange={(value) => field.onChange([value])}
                       placeholder='Select dates'
                     />
                   </FormControl>

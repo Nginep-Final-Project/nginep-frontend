@@ -10,7 +10,11 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import RoomDialog, { RoomFormValues } from './RoomDialog'
 import { PropertyCreateRoomSchema } from '@/utils/schema'
 import { Progress } from '@/components/ui/progress'
-import { CREATE_PROPERTY_STEP_TWO } from '@/utils/constanta'
+import {
+  CREATE_PROPERTY_STEP_ONE,
+  CREATE_PROPERTY_STEP_TWO,
+} from '@/utils/constanta'
+import { toast } from '@/components/ui/use-toast'
 
 const StepTwo: React.FC<{
   currentStep: number
@@ -18,6 +22,7 @@ const StepTwo: React.FC<{
 }> = ({ currentStep, setCurrentStep }) => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
   const [editingRoom, setEditingRoom] = useState<RoomFormValues | null>(null)
+  const [propertyType, setPropertyType] = useState<string>('')
   const {
     handleSubmit,
     formState: { errors },
@@ -35,6 +40,15 @@ const StepTwo: React.FC<{
         const parseData = JSON.parse(storageData)
         console.log(parseData)
         reset(parseData)
+      }
+      const GeneralInfoProperty = sessionStorage.getItem(
+        CREATE_PROPERTY_STEP_ONE
+      )
+      if (GeneralInfoProperty) {
+        const parseData = JSON.parse(GeneralInfoProperty)
+        console.log(parseData)
+        console.log('propertyType', parseData.guestPlaceType)
+        setPropertyType(parseData.guestPlaceType)
       }
     }
   }, [currentStep, reset])
@@ -81,29 +95,46 @@ const StepTwo: React.FC<{
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <div className='flex gap-x-4 items-center'>
-            <h3 className='text-sm font-medium'>Property room</h3>
-            <Button type='button' onClick={() => setIsRoomDialogOpen(true)}>
+        <div className='min-h-96'>
+          <div className='flex gap-x-4 items-center mb-4'>
+            <h3 className='font-medium'>Property room</h3>
+            <Button
+              type='button'
+              onClick={() => {
+                if (
+                  propertyType === 'entire_place' &&
+                  watch('rooms').length >= 1
+                ) {
+                  return
+                }
+                setIsRoomDialogOpen(true)
+              }}
+            >
               Add Room
             </Button>
           </div>
 
-          {errors.rooms && (
-            <p className='text-red-500 mt-1'>{errors.rooms.message}</p>
+          {propertyType === 'entire_place' && (
+            <p className='my-4'>
+              Property with type entire place can only have 1 room
+            </p>
           )}
-          <div className='mt-1 mb-4 space-y-4'>
+
+          {errors.rooms && (
+            <p className='text-error mt-1'>{errors.rooms.message}</p>
+          )}
+          <div className='mt-1 mb-4 flex overflow-x-auto max-w-screen-lg'>
             {watch('rooms')?.map((room) => (
               <Card
                 key={room.id}
                 className={`flex-shrink-0 w-44 ml-4 lg:ml-0 lg:mr-4 `}
               >
-                <CardContent className='p-4 flex flex-col justify-center'>
-                  {!room.roomImage ? (
+                <CardContent className='p-4 flex flex-col justify-between'>
+                  {!room.roomPicture ? (
                     <div>Loading...</div>
                   ) : (
                     <Image
-                      src={URL.createObjectURL(room.roomImage)}
+                      src={room.roomPicture}
                       alt={room.name}
                       height={150}
                       width={150}
@@ -128,12 +159,14 @@ const StepTwo: React.FC<{
                       variant='cancel'
                       onClick={() => handleDeleteRoom(room.id!)}
                       className='font-semibold text-primary '
+                      type='button'
                     >
                       Delete
                     </Button>
                     <Button
                       onClick={() => handleEditRoom(room)}
                       className='font-semibold '
+                      type='button'
                     >
                       Edit
                     </Button>

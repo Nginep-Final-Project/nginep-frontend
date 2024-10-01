@@ -47,7 +47,6 @@ const StepOne: React.FC<{
         reset(parseData)
       }
     }
-    console.log(watch('propertyImages'))
   }, [currentStep, reset])
 
   const onSubmit = (data: z.infer<typeof PropertyGeneralInfoSchema>) => {

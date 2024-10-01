@@ -7,7 +7,12 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PropertyCreatePeakSeasonSchema } from '@/utils/schema'
 import { Progress } from '@/components/ui/progress'
-import { CREATE_PROPERTY_STEP_FOUR } from '@/utils/constanta'
+import {
+  CREATE_PROPERTY_STEP_FOUR,
+  CREATE_PROPERTY_STEP_ONE,
+  CREATE_PROPERTY_STEP_THREE,
+  CREATE_PROPERTY_STEP_TWO,
+} from '@/utils/constanta'
 
 const StepFour: React.FC<{
   currentStep: number
@@ -28,10 +33,23 @@ const StepFour: React.FC<{
 
   useEffect(() => {
     if (currentStep === 4) {
+      const stepOneStorage = sessionStorage.getItem(CREATE_PROPERTY_STEP_ONE)
+      const stepTwoStorage = sessionStorage.getItem(CREATE_PROPERTY_STEP_TWO)
+      const stepThreeStorage = sessionStorage.getItem(
+        CREATE_PROPERTY_STEP_THREE
+      )
       const storageData = sessionStorage.getItem(CREATE_PROPERTY_STEP_FOUR)
       if (storageData) {
+        const parseDataStepOne = JSON.parse(stepOneStorage!)
+        const parseDataStepTwo = JSON.parse(stepTwoStorage!)
+        const parseDataStepThree = JSON.parse(stepThreeStorage!)
         const parseData = JSON.parse(storageData)
-        console.log(parseData)
+        console.log({
+          ...parseDataStepOne,
+          ...parseDataStepTwo,
+          ...parseDataStepThree,
+          ...parseData,
+        })
         reset(parseData)
       }
     }
@@ -87,7 +105,7 @@ const StepFour: React.FC<{
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
+        <div className='min-h-96'>
           <div className='flex gap-x-4 items-center'>
             <h3 className='text-sm font-medium'>Peak Season Rate Management</h3>
             <Button

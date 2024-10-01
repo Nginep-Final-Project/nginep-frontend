@@ -34,25 +34,28 @@ export const createRoomSchema = z.object({
     .min(1, 'Property price is required')
     .regex(/^[0-9]+$/, 'Only numbers are allowed'),
   totalRoom: z.number().min(1, 'Total room must be a positive number'),
-  roomImage: z
-    .custom<File>((val) => val instanceof File, {
-      message: 'Image is required',
-    })
-    .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 1MB.`)
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-      'Only .jpg, .jpeg, .png and .webp formats are supported.'
-    )
-    .refine(
-      async (file) => await validateImageDimensions(file),
-      'Image dimensions must not exceed 500x500 pixels.'
-    ),
-  roomImageId: z.string().optional(),
+  // roomImage: z
+  //   .custom<File>((val) => val instanceof File, {
+  //     message: 'Image is required',
+  //   })
+  //   .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 1MB.`)
+  //   .refine(
+  //     (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+  //     'Only .jpg, .jpeg, .png and .webp formats are supported.'
+  //   )
+  //   .refine(
+  //     async (file) => await validateImageDimensions(file),
+  //     'Image dimensions must not exceed 500x500 pixels.'
+  //   )
+  roomPicture: z.string(),
+  roomPictureId: z.string().optional(),
   notAvailabilityDates: z
-    .object({
-      from: z.date().optional(),
-      to: z.date().optional(),
-    })
+    .array(
+      z.object({
+        from: z.date().optional(),
+        to: z.date().optional(),
+      })
+    )
     .optional(),
 })
 

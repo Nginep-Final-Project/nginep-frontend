@@ -47,6 +47,7 @@ const StepThree: React.FC<{
         const parseData = JSON.parse(storageData)
         console.log(parseData)
         reset(parseData)
+        setPosition([parseData.propertyLatitude, parseData.propertyLongitude])
       }
     }
   }, [currentStep, reset])
