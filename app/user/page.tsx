@@ -1,4 +1,5 @@
-const User = () => {
-  return <div>User</div>;
-};
-export default User;
+import { redirect } from "next/navigation";
+
+export default function UserPage() {
+  redirect("/user/bookings");
+}

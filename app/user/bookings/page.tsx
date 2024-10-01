@@ -8,7 +8,6 @@ import { useUserBookings } from "@/hooks/booking/user/useUserBookings";
 import { useSession } from "next-auth/react";
 
 const Bookings: React.FC = () => {
-
   const { data: session } = useSession();
   const userIdString = session?.user?.id;
   const userId = userIdString ? parseInt(userIdString, 10) : undefined;
