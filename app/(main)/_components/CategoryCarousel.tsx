@@ -13,9 +13,14 @@ import React, { Dispatch, SetStateAction, useState } from 'react'
 interface CategoryProps {
   categories: Category[]
   setCtg: Dispatch<SetStateAction<string>>
+  selectedCategory: string
 }
 
-const CategoryCarousel: React.FC<CategoryProps> = ({ categories, setCtg }) => {
+const CategoryCarousel: React.FC<CategoryProps> = ({
+  categories,
+  setCtg,
+  selectedCategory,
+}) => {
   const [category, setCategory] = useState<string>('')
 
   return (
@@ -31,6 +36,11 @@ const CategoryCarousel: React.FC<CategoryProps> = ({ categories, setCtg }) => {
                   : 'text-grey-text'
               } w-full`}
               onClick={() => {
+                if (selectedCategory === c.value) {
+                  setCategory('')
+                  setCtg('')
+                  return
+                }
                 setCategory(c.value)
                 setCtg(c.value)
               }}

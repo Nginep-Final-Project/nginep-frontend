@@ -6,9 +6,16 @@ import SkeletonSection from "./_components/SkeletonSection";
 import { BookingStatus } from "@/types/tenantBookings";
 import { useTenantBookings } from "@/hooks/booking/tenant/useTenantBookings";
 import { PaymentStatus, PaymentType } from "@/types/bookingPaymentDetails";
+import { useSession } from "next-auth/react";
 
 const BookingList: React.FC = () => {
-  const tenantId = 10;
+  const { data: session } = useSession();
+  const tenantIdString = session?.user?.id;
+  const tenantId = tenantIdString ? parseInt(tenantIdString, 10) : undefined;
+
+  if (tenantId === undefined || isNaN(tenantId)) {
+    return <div>Please log in to manage your reservations</div>;
+  }
 
   const { isLoading, error, data: bookings } = useTenantBookings(tenantId);
 

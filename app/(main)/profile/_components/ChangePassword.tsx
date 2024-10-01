@@ -35,7 +35,6 @@ const ChangePassword = () => {
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     if (data.password !== data.confirmPass) {
       toast({
         variant: 'destructive',

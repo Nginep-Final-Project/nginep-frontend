@@ -51,7 +51,6 @@ const EmailVerification: React.FC<{
     const storedData = sessionStorage.getItem(SIGN_UP)
     if (storedData) {
       const parseStoredData = JSON.parse(storedData)
-      console.log(parseStoredData)
       setSignUpData(parseStoredData)
     }
   }, [isEmailVerification])

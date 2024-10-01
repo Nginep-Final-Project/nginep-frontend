@@ -59,7 +59,7 @@ const BookingCard: React.FC<UserBookings> = ({
           <p className="text-sm text-gray-600 mt-4">Hosted by {hostName}</p>
         </div>
         <div className="relative w-full sm:w-1/2 h-48 sm:h-auto">
-          <Link href={`/property/${roomId}`}>
+          <Link href={`/${roomId}/payment-process`}>
             <Image
               src={propertyCoverImage}
               alt={`${propertyName} image`}

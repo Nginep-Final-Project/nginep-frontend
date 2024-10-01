@@ -13,9 +13,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useSession } from "next-auth/react";
 
 const UserReviews: React.FC = () => {
-  const userId = 37;
+  const { data: session } = useSession();
+  const userIdString = session?.user?.id;
+  const userId = userIdString ? parseInt(userIdString, 10) : undefined;
+
+  if (userId === undefined || isNaN(userId)) {
+    return <div>Please log in to see your reviews</div>;
+  }
+  
   const { data: reviews, isLoading, error, refetch } = useUserReviews(userId);
   const { data: unreviewedBookings, isLoading: isLoadingBookings } =
     useUnreviewedBookings(userId);

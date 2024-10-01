@@ -78,6 +78,8 @@ export interface PropertyImage {
 
 export interface Room {
   id: number
+  roomPicture: string
+  roomPictureId: string | null
   name: string
   description: string
   maxGuests: number
@@ -232,6 +234,8 @@ export const initialPropertyDetail: PropertyDetail = {
   rooms: [
     {
       id: 0,
+      roomPicture: '',
+      roomPictureId: '',
       name: '',
       description: '',
       maxGuests: 0,

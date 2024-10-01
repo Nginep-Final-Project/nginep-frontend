@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import globalEventEmitter from "@/utils/events";
 
 const useWarningModal = () => {
@@ -16,9 +16,15 @@ const useWarningModal = () => {
     };
   }, []);
 
-  const closeWarning = () => setShowWarning(false);
+  const openWarning = useCallback(() => {
+    setShowWarning(true);
+  }, []);
 
-  return { showWarning, closeWarning };
+  const closeWarning = useCallback(() => {
+    setShowWarning(false);
+  }, []);
+
+  return { showWarning, openWarning, closeWarning };
 };
 
 export default useWarningModal;

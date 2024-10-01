@@ -35,7 +35,6 @@ const ForgotPassword: React.FC<{
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log(data)
     const result = await handleSendEmailForgotPassword(data.email)
     if (!result?.success) {
       toast({

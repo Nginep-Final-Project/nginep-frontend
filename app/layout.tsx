@@ -24,7 +24,7 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={poppins.className}>
-        <SessionProvider session={session}>
+        <SessionProvider session={session} refetchInterval={5}>
           <QueryClientProvider>{children}</QueryClientProvider>
         </SessionProvider>
       </body>
