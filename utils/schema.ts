@@ -49,12 +49,14 @@ export const createRoomSchema = z.object({
   //   )
   roomPicture: z.string(),
   roomPictureId: z.string().optional(),
-  notAvailabilityDates: z
+  notAvailableDates: z
     .array(
-      z.object({
-        from: z.date().optional(),
-        to: z.date().optional(),
-      })
+      z
+        .object({
+          from: z.string().optional(),
+          to: z.string().optional(),
+        })
+        .optional()
     )
     .optional(),
 })
@@ -88,7 +90,7 @@ export const PropertyGeneralInfoSchema = z.object({
     )
     .min(1, 'Select at least one facility'),
   guestPlaceType: z.string().min(1, 'Property type is required'),
-  propertyImages: z
+  propertyImage: z
     .array(
       z.object({
         preview: z.string(),
@@ -114,7 +116,7 @@ export const PropertyAddressSchema = z.object({
 })
 
 export const PropertyCreatePeakSeasonSchema = z.object({
-  peakSeasonRate: z.array(createPeakSeasonRates).optional(),
+  peakSeasonRates: z.array(createPeakSeasonRates).optional(),
 })
 
 export const createPropertySchema = z.object({
@@ -145,6 +147,6 @@ export const createPropertySchema = z.object({
   propertyLatitude: z.string(),
   propertyLongitude: z.string(),
   rooms: z.array(createRoomSchema).min(1, 'Property at least have 1 room'),
-  peakSeasonRate: z.array(createPeakSeasonRates).optional(),
+  peakSeasonRates: z.array(createPeakSeasonRates).optional(),
   tenantId: z.number({ required_error: 'Tenant id is required' }),
 })

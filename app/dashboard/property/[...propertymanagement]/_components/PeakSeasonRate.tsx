@@ -134,7 +134,10 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
               <Button
                 variant='outline'
                 type='button'
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  onOpenChange(false)
+                  form.reset()
+                }}
               >
                 Cancel
               </Button>

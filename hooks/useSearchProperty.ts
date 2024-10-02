@@ -70,7 +70,6 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
 
       setData((prevData) => {
         if (append && prevData) {
-          console.log('viewmore')
           return {
             ...result.data,
             content: [...prevData.content, ...result.data.content],

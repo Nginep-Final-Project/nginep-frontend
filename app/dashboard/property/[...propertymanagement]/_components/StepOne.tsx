@@ -35,7 +35,7 @@ const StepOne: React.FC<{
       propertyDescription: '',
       propertyFacilities: [],
       guestPlaceType: '',
-      propertyImages: [],
+      propertyImage: [],
     },
   })
 
@@ -129,7 +129,7 @@ const StepOne: React.FC<{
           )}
         />
         <Controller
-          name='propertyImages'
+          name='propertyImage'
           control={control}
           render={({ field }) => (
             <RenderField
@@ -140,7 +140,7 @@ const StepOne: React.FC<{
                   initialImages={field.value}
                 />
               }
-              error={errors.propertyImages?.message}
+              error={errors.propertyImage?.message}
             />
           )}
         />

@@ -22,6 +22,9 @@ import { ACCEPTED_IMAGE_TYPES, createRoomSchema } from '@/utils/schema'
 import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
 import useUploadImage from '@/hooks/useUploadImage'
+import DatePeakSeasonPicker from './DatePeakSeasonPicker'
+import { watch } from 'fs'
+import { NotAvailableDates } from '@/types/createProperty'
 
 export type RoomFormValues = z.infer<typeof createRoomSchema>
 
@@ -41,6 +44,9 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
   const { handleUploadImage, loading } = useUploadImage()
   const form = useForm<RoomFormValues>({
     resolver: zodResolver(createRoomSchema),
+    defaultValues: {
+      notAvailableDates: [],
+    },
   })
 
   useEffect(() => {
@@ -53,12 +59,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
         maxGuests: 1,
         basePrice: '1',
         totalRoom: 1,
-        notAvailabilityDates: [
-          {
-            from: undefined,
-            to: undefined,
-          },
-        ],
+        notAvailableDates: [],
       })
     }
   }, [initialRoom, form])
@@ -71,7 +72,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-[425px] bg-white'>
+      <DialogContent className='sm:max-w-[425px] bg-white overflow-y-auto max-h-screen'>
         <DialogHeader>
           <DialogTitle>{initialRoom ? 'Edit Room' : 'Add Room'}</DialogTitle>
         </DialogHeader>
@@ -175,7 +176,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                     <Input
                       type='file'
                       accept={ACCEPTED_IMAGE_TYPES.join(',')}
-                      placeholder='Room Image'
+                      placeholder={'Room Image'}
                       onChange={async (e) => {
                         const file = e.target.files?.[0]
                         if (file) {
@@ -197,16 +198,14 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
 
             <FormField
               control={form.control}
-              name='notAvailabilityDates'
+              name='notAvailableDates'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Not Available Date</FormLabel>
                   <FormControl>
-                    <DatePicker
-                      mode='range'
-                      value={field.value as DateRange}
-                      onChange={(value) => field.onChange([value])}
-                      placeholder='Select dates'
+                    <DatePeakSeasonPicker
+                      value={field.value as NotAvailableDates[]}
+                      onChange={(newValue) => field.onChange(newValue)}
                     />
                   </FormControl>
                   <FormMessage />
@@ -218,7 +217,17 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
               <Button
                 variant='outline'
                 type='button'
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  onOpenChange(false)
+                  form.reset({
+                    name: '',
+                    description: '',
+                    maxGuests: 1,
+                    basePrice: '1',
+                    totalRoom: 1,
+                    notAvailableDates: [],
+                  })
+                }}
               >
                 Cancel
               </Button>

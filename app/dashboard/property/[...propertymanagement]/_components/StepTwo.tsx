@@ -31,6 +31,9 @@ const StepTwo: React.FC<{
     reset,
   } = useForm<z.infer<typeof PropertyCreateRoomSchema>>({
     resolver: zodResolver(PropertyCreateRoomSchema),
+    defaultValues: {
+      rooms: [],
+    },
   })
 
   useEffect(() => {
@@ -51,6 +54,7 @@ const StepTwo: React.FC<{
         setPropertyType(parseData.guestPlaceType)
       }
     }
+    console.log(watch('rooms'))
   }, [currentStep, reset])
 
   const handleSaveRoom = (room: RoomFormValues) => {
