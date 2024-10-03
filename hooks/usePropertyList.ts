@@ -1,11 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toast } from '@/components/ui/use-toast'
-import { emptyPropertyData, Properties, Property } from '@/types/property'
-import { response } from '@/types/response'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Properties, emptyPropertyData } from '@/types/property'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
-interface SearchResponse {
+interface PropertyListResponse {
   statusCode: number
   message: string
   success: boolean
@@ -13,21 +12,11 @@ interface SearchResponse {
 }
 
 interface QueryParams {
-  propertyName?: string
-  propertyCategory?: string
-  propertyCity?: string
-  checkinDate?: string
-  checkoutDate?: string
-  totalGuests?: number
-  sortBy?: string
-  sortDirection?: string
   page?: number
   size?: number
-
-  [key: string]: string | number | undefined
 }
 
-const useSearchProperty = (initialParams: QueryParams = {}) => {
+const usePropertyList = (initialParams: QueryParams = {}) => {
   const [data, setData] = useState<Properties>(emptyPropertyData.properties)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<Error | unknown>()
@@ -42,7 +31,7 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
 
     const filteredParams = Object.entries(params).reduce(
       (acc, [key, value]) => {
-        if (value !== '' && value !== undefined) {
+        if (value !== undefined) {
           acc[key] = value.toString()
         }
         return acc
@@ -54,10 +43,11 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property?${queryString}`
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property/list?${queryString}`,
+        { credentials: 'include' }
       )
 
-      const result: SearchResponse = await response.json()
+      const result: PropertyListResponse = await response.json()
 
       if (!result.success) {
         toast({
@@ -102,7 +92,7 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
 
       const filteredParams = Object.entries(combinedParams).reduce<QueryParams>(
         (acc, [key, value]) => {
-          if (value !== '' && value !== undefined) {
+          if (value !== undefined) {
             acc[key as keyof QueryParams] = value
           }
           return acc
@@ -115,6 +105,6 @@ const useSearchProperty = (initialParams: QueryParams = {}) => {
     [searchParams, initialParams]
   )
 
-  return { data, loading, error, refetch }
+  return { data, setData, loading, error, refetch }
 }
-export default useSearchProperty
+export default usePropertyList

@@ -26,96 +26,25 @@ import dynamic from 'next/dynamic'
 import { LatLngExpression } from 'leaflet'
 import { useDebounce } from 'use-debounce'
 import { toast } from '@/components/ui/use-toast'
+import { createPropertySchema } from '@/utils/schema'
+import moment from 'moment'
+import { Card, CardContent } from '@/components/ui/card'
+import Image from 'next/image'
+import StepTwo from './_components/StepTwo'
+import StepOne from './_components/StepOne'
+import StepThree from './_components/StepThree'
+import StepFour from './_components/StepFour'
 
 const MapWithNoSSR = dynamic(() => import('@/components/MapLeaflet'), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 })
-const roomSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, 'Room name is required'),
-  description: z.string().min(1, 'Room description is required'),
-  guests: z
-    .number()
-    .min(1, 'At least 1 guest is required')
-    .max(10, 'Maximum 10 guests allowed'),
-  price: z.number().min(0, 'Price must be a positive number'),
-})
-
-const schema = z.object({
-  propertyName: z.string().min(1, 'Property name is required'),
-  propertyCategory: z.string({
-    required_error: 'Property category is required',
-  }),
-  propertyDescription: z
-    .string()
-    .min(10, 'Description must be at least 10 characters'),
-  propertyFacilities: z
-    .array(
-      z.string({
-        required_error: 'Property category is required',
-      })
-    )
-    .min(1, 'Select at least one facility'),
-  propertyPrice: z
-    .string()
-    .min(1, 'Property price is required')
-    .regex(/^[0-9]+$/, 'Only numbers are allowed')
-    .optional(),
-  guestPlaceType: z.string({
-    required_error: 'Property type is required',
-  }),
-  propertyImages: z
-    .array(z.instanceof(File))
-    .min(1, 'At least one image is required'),
-  propertyAddress: z.string().min(1, 'Property address is required'),
-  propertyCity: z.string().min(1, 'Property city is required'),
-  propertyProvince: z.string().min(1, 'Property province is required'),
-  propertyPostalCode: z.string().min(1, 'Property postal code is required'),
-  propertyLatitude: z.string(),
-  propertyLongitude: z.string(),
-  notAvailabilityDates: z
-    .object({
-      from: z.date().optional(),
-      to: z.date().optional(),
-    })
-    .optional(),
-  peakSeasonDates: z
-    .object({
-      from: z.date().optional(),
-      to: z.date().optional(),
-    })
-    .optional(),
-  rooms: z.array(roomSchema).optional(),
-  peakSeasonRate: z
-    .object({
-      incrementType: z.string(),
-      amount: z.number().min(0, 'Price must be a positive number'),
-    })
-    .optional(),
-})
-// .refine(
-//   (data) => {
-//     if (
-//       data.guestPlaceType === 'private_room' &&
-//       (!data.rooms || data.rooms.length === 0)
-//     ) {
-//       return false
-//     }
-//     return true
-//   },
-//   {
-//     message:
-//       'At least one room is required for private room type, and peak season rate is required when peak season dates are filled.',
-//     path: ['rooms'],
-//   }
-// )
-
-type FormData = z.infer<typeof schema>
 
 const PropertyManagement = () => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
   const [editingRoom, setEditingRoom] = useState<RoomFormValues | null>(null)
+  const [editingPeakSeason, setEditingPeakSeason] =
+    useState<PeakSeasonRateFormValues | null>(null)
   const [isPeakSeasonPriceOpen, setIsPeakSeasonPriceOpen] = useState(false)
   const [position, setPosition] = useState<LatLngExpression>([51.505, -0.09])
   const [addressSuggestions, setAddressSuggestions] = useState<
@@ -130,16 +59,15 @@ const PropertyManagement = () => {
     watch,
     setValue,
     control,
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
+  } = useForm<z.infer<typeof createPropertySchema>>({
+    resolver: zodResolver(createPropertySchema),
   })
   const addressWatch = watch('propertyAddress')
   const [debouncedAddress] = useDebounce(addressWatch, 1000)
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: z.infer<typeof createPropertySchema>) => {
     console.log('submit')
     console.log(data)
-    // reset()
   }
 
   const handleSaveRoom = (room: RoomFormValues) => {
@@ -177,8 +105,42 @@ const PropertyManagement = () => {
   const handleSavePeakSeasonRate = (
     peakSeasonRate: PeakSeasonRateFormValues
   ) => {
-    setValue('peakSeasonRate', peakSeasonRate)
+    const currentPeakSeasonRates = watch('peakSeasonRate') || []
+    if (editingPeakSeason) {
+      setValue(
+        'peakSeasonRate',
+        currentPeakSeasonRates.map((p) =>
+          p.id === editingPeakSeason.id
+            ? {
+                ...peakSeasonRate,
+                id: editingPeakSeason.id,
+              }
+            : p
+        )
+      )
+    } else {
+      setValue('peakSeasonRate', [
+        ...currentPeakSeasonRates,
+        { ...peakSeasonRate, id: Date.now().toString() },
+      ])
+    }
+    setEditingPeakSeason(null)
     setIsPeakSeasonPriceOpen(false)
+  }
+
+  const handleEditPeakSeasonRate = (
+    peakSeasonRate: PeakSeasonRateFormValues
+  ) => {
+    setEditingPeakSeason(peakSeasonRate)
+    setIsPeakSeasonPriceOpen(true)
+  }
+
+  const handleDeletePeakSeason = (id: string) => {
+    const currentPeakSeason = watch('peakSeasonRate') || []
+    setValue(
+      'peakSeasonRate',
+      currentPeakSeason.filter((peakSeasonRate) => peakSeasonRate.id !== id)
+    )
   }
 
   const fetchAddressSuggestions = async (query: string | undefined) => {
@@ -209,10 +171,27 @@ const PropertyManagement = () => {
   useEffect(() => {
     fetchAddressSuggestions(debouncedAddress)
   }, [debouncedAddress])
+
+  const [currentStep, setCurrentStep] = useState<number>(1)
+
   return (
     <div className='p-4 lg:px-32 '>
-      <div>
-        <h2 className='font-semibold md:text-2xl mb-4'>Add Property</h2>
+      <h2 className='font-semibold md:text-2xl mb-4'>Create Property</h2>
+      {currentStep === 1 && (
+        <StepOne currentStep={currentStep} setCurrentStep={setCurrentStep} />
+      )}
+      {currentStep === 2 && (
+        <StepTwo currentStep={currentStep} setCurrentStep={setCurrentStep} />
+      )}
+      {currentStep === 3 && (
+        <StepThree currentStep={currentStep} setCurrentStep={setCurrentStep} />
+      )}
+      {currentStep === 4 && (
+        <StepFour currentStep={currentStep} setCurrentStep={setCurrentStep} />
+      )}
+
+      {/* <div>
+     
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             name='propertyName'
@@ -295,67 +274,69 @@ const PropertyManagement = () => {
               />
             )}
           />
-          {watch('guestPlaceType') === 'entire_place' && (
-            <Input
-              name='propertyPrice'
-              label='Property price'
-              type='text'
-              register={register}
-              errors={errors}
-            />
-          )}
-          {watch('guestPlaceType') === 'private_room' && (
-            <div>
-              <div className='flex gap-x-4 items-center'>
-                <h3 className='text-sm font-medium'>Property room</h3>
-                <Button type='button' onClick={() => setIsRoomDialogOpen(true)}>
-                  Add Room
-                </Button>
-              </div>
 
-              {errors.rooms && (
-                <p className='text-red-500 mt-1'>{errors.rooms.message}</p>
-              )}
-              <div className='mt-1 mb-4 space-y-4'>
-                {watch('rooms')?.map((room) => (
-                  <div
-                    key={room.id}
-                    className='grid grid-cols-4 border rounded'
-                  >
-                    <div className='border-r p-4'>
-                      <h4 className='font-medium'>{room.name}</h4>
-                      <p className='text-sm'>{room.description}</p>
-                    </div>
-                    <div className='border-r p-4'>
-                      <h4 className='font-medium'>Guests</h4>
-                      <p className='text-sm'>{room.guests}</p>
-                    </div>
+          <div>
+            <div className='flex gap-x-4 items-center'>
+              <h3 className='text-sm font-medium'>Property room</h3>
+              <Button type='button' onClick={() => setIsRoomDialogOpen(true)}>
+                Add Room
+              </Button>
+            </div>
 
-                    <div className='border-r p-4'>
-                      <h4 className='font-medium'>Price</h4>
-                      <p className='text-sm'>Rp{room.price} /night</p>
-                    </div>
-                    <div className='flex flex-col items-start px-4'>
+            {errors.rooms && (
+              <p className='text-red-500 mt-1'>{errors.rooms.message}</p>
+            )}
+            <div className='mt-1 mb-4 space-y-4'>
+              {watch('rooms')?.map((room) => (
+                <Card
+                  key={room.id}
+                  className={`flex-shrink-0 w-44 ml-4 lg:ml-0 lg:mr-4 `}
+                >
+                  <CardContent className='p-4 flex flex-col justify-center'>
+                    {!room.roomImage ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <Image
+                        src={URL.createObjectURL(room.roomImage)}
+                        alt={room.name}
+                        height={150}
+                        width={150}
+                        style={{ height: '150px', width: '150px' }}
+                        className='h-[150px] w-[150px] object-cover rounded-md mb-2'
+                      />
+                    )}
+
+                    <h3 className='font-semibold'>{room.name}</h3>
+                    <p className='text-sm text-grey-text whitespace-pre-wrap break-words line-clamp-2'>
+                      {room.description}
+                    </p>
+
+                    <p className='font-bold mt-2'>
+                      Rp {room.basePrice.toLocaleString()} / night
+                    </p>
+                    <p className='text-xs text-grey-text'>
+                      Max guests: {room.maxGuests}
+                    </p>
+                    <div className='flex justify-between mt-4'>
                       <Button
-                        variant='link'
-                        onClick={() => handleEditRoom(room)}
-                        className='font-semibold p-0'
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant='link'
+                        variant='cancel'
                         onClick={() => handleDeleteRoom(room.id!)}
-                        className='font-semibold text-primary p-0'
+                        className='font-semibold text-primary '
                       >
                         Delete
                       </Button>
+                      <Button
+                        onClick={() => handleEditRoom(room)}
+                        className='font-semibold '
+                      >
+                        Edit
+                      </Button>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          )}
+          </div>
 
           <Input
             name='propertyCity'
@@ -408,60 +389,73 @@ const PropertyManagement = () => {
             </div>
           </div>
 
-          <Controller
-            name='notAvailabilityDates'
-            control={control}
-            render={({ field }) => (
-              <RenderField
-                label='Property not availability datess'
-                render={
-                  <DatePicker
-                    mode='range'
-                    value={field.value as DateRange}
-                    onChange={(value) => field.onChange(value)}
-                    placeholder='Select not availability dates'
-                  />
-                }
-                error={errors.notAvailabilityDates?.message}
-              />
-            )}
-          />
-          <Controller
-            name='peakSeasonDates'
-            control={control}
-            render={({ field }) => (
-              <RenderField
-                label='Property peak season dates'
-                render={
-                  <DatePicker
-                    mode='range'
-                    value={field.value as DateRange}
-                    onChange={(value) => field.onChange(value)}
-                    placeholder='Select not availability dates'
-                  />
-                }
-                error={errors.peakSeasonDates?.message}
-              />
-            )}
-          />
-          {watch('peakSeasonDates') && (
+          <div>
             <div className='flex gap-x-4 items-center'>
+              <h3 className='text-sm font-medium'>
+                Peak Season Rate Management
+              </h3>
               <Button
                 type='button'
                 onClick={() => setIsPeakSeasonPriceOpen(true)}
               >
-                Set Peak Season Price
+                Add Peak Season
               </Button>
-              <h3>
-                Property and room price increase{' '}
-                {watch('peakSeasonRate')?.amount}{' '}
-                {watch('peakSeasonRate')?.incrementType === 'percentage'
-                  ? '%'
-                  : ''}
-              </h3>
-              {errors.peakSeasonRate?.message}
             </div>
-          )}
+
+            {errors.peakSeasonRate && (
+              <p className='text-red-500 mt-1'>
+                {errors.peakSeasonRate.message}
+              </p>
+            )}
+            <div className='mt-1 mb-4 space-y-4'>
+              {watch('peakSeasonRate')?.map((peakSeason) => (
+                <div
+                  key={peakSeason.id}
+                  className='grid grid-cols-4 border rounded'
+                >
+                  <div className='border-r p-4'>
+                    <h4 className='font-medium'>Date: </h4>
+                    <p className='text-sm'>
+                      from:{' '}
+                      {moment(peakSeason.peakSeasonDates?.from).format(
+                        'YYYY-MM-DD'
+                      )}
+                      <br />
+                      to:{' '}
+                      {moment(peakSeason.peakSeasonDates?.to).format(
+                        'YYYY-MM-DD'
+                      )}
+                    </p>
+                  </div>
+
+                  <div className='border-r p-4'>
+                    <h4 className='font-medium'>Rate value</h4>
+                    {peakSeason.rateType === 'PERCENTAGE' ? (
+                      <p className='text-sm'>{peakSeason.rateValue}% /night</p>
+                    ) : (
+                      <p className='text-sm'>Rp{peakSeason.rateValue} /night</p>
+                    )}
+                  </div>
+                  <div className='flex flex-col items-start px-4'>
+                    <Button
+                      variant='link'
+                      onClick={() => handleEditPeakSeasonRate(peakSeason)}
+                      className='font-semibold p-0'
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant='link'
+                      onClick={() => handleDeletePeakSeason(peakSeason.id!)}
+                      className='font-semibold text-primary p-0'
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <div className='mt-6 flex justify-end space-x-4'>
             <Button
@@ -481,13 +475,14 @@ const PropertyManagement = () => {
         open={isPeakSeasonPriceOpen}
         onOpenChange={setIsPeakSeasonPriceOpen}
         onSave={handleSavePeakSeasonRate}
+        initialPeakSeason={editingPeakSeason}
       />
       <RoomDialog
         open={isRoomDialogOpen}
         onOpenChange={setIsRoomDialogOpen}
         onSave={handleSaveRoom}
         initialRoom={editingRoom}
-      />
+      /> */}
     </div>
   )
 }

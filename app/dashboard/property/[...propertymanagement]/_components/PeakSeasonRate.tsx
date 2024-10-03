@@ -15,40 +15,52 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import Select from '@/components/Select'
 import { incrementType } from '@/utils/dummy'
+import { createPeakSeasonRates } from '@/utils/schema'
+import DatePicker from '@/components/DatePicker'
+import { DateRange } from 'react-day-picker'
 
-const PeakSeasonRateSchema = z.object({
-  incrementType: z.string({
-    required_error: 'Increment type is required',
-  }),
-  amount: z.number().min(0, 'Price must be a positive number'),
-})
-
-export type PeakSeasonRateFormValues = z.infer<typeof PeakSeasonRateSchema>
+export type PeakSeasonRateFormValues = z.infer<typeof createPeakSeasonRates>
 
 interface PeakSeasonRateProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSave: (room: PeakSeasonRateFormValues) => void
+  initialPeakSeason: PeakSeasonRateFormValues | null
 }
 
 const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
   open,
   onOpenChange,
   onSave,
+  initialPeakSeason,
 }) => {
   const form = useForm<PeakSeasonRateFormValues>({
-    resolver: zodResolver(PeakSeasonRateSchema),
+    resolver: zodResolver(createPeakSeasonRates),
     defaultValues: {
-      incrementType: '',
-      amount: 0,
+      rateType: '',
+      rateValue: '1',
     },
   })
 
+  useEffect(() => {
+    if (initialPeakSeason) {
+      form.reset(initialPeakSeason)
+    } else {
+      form.reset({
+        peakSeasonDates: { from: undefined, to: undefined },
+        rateType: '',
+        rateValue: '1',
+      })
+    }
+  }, [initialPeakSeason, form])
+
   const onSubmit = (data: PeakSeasonRateFormValues) => {
+    console.log(data)
     onSave(data)
     form.reset()
   }
@@ -63,14 +75,18 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name='incrementType'
+              name='peakSeasonDates'
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Select Peak Season Rate Date</FormLabel>
                   <FormControl>
-                    <Select
-                      options={incrementType}
-                      placeholder='Select increment type'
-                      onSelect={field.onChange}
+                    <DatePicker
+                      mode='range'
+                      value={field.value as DateRange}
+                      onChange={(value) => {
+                        field.onChange(value)
+                      }}
+                      placeholder='Select dates'
                     />
                   </FormControl>
                   <FormMessage />
@@ -79,18 +95,35 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
             />
             <FormField
               control={form.control}
-              name='amount'
+              name='rateType'
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Select Rate Type</FormLabel>
+                  <FormControl>
+                    <Select
+                      options={incrementType}
+                      placeholder='Select rate type'
+                      onSelect={field.onChange}
+                      initialValue={field.value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='rateValue'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rate Amount</FormLabel>
                   <FormControl>
                     <Input
-                      type='number'
-                      placeholder='Total amount for increment'
+                      type='text'
+                      placeholder='Rate amount for increment'
                       {...field}
-                      value={field.value || 0}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value) || 0)
-                      }
+                      value={field.value || '1'}
+                      onChange={(e) => field.onChange(e.target.value || '1')}
                     />
                   </FormControl>
                   <FormMessage />
@@ -101,7 +134,10 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
               <Button
                 variant='outline'
                 type='button'
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  onOpenChange(false)
+                  form.reset()
+                }}
               >
                 Cancel
               </Button>

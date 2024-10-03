@@ -1,12 +1,13 @@
+'use client'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface PropertyCardProps {
   name: string
   location: string
   rooms: string[]
-  imageUrl: string
+  imageUrl: string[]
   onEdit: () => void
   onDelete: () => void
 }
@@ -19,6 +20,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const [imgSrc, setImgSrc] = useState<string>(imageUrl[0])
+
   return (
     <div className='flex flex-col-reverse md:flex-row border border-secondary rounded-lg p-4 mb-4 w-full'>
       <div className='md:w-2/3 flex flex-col justify-between'>
@@ -53,15 +56,26 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       </div>
 
       <div className='md:w-1/3 relative'>
-        <Image
-          src={imageUrl}
-          alt={name}
-          width={300}
-          height={200}
-          style={{ height: 'auto', width: 'auto' }}
-          className='h-[200px] w-[300px] rounded-md object-cover'
-          layout='responsive'
-        />
+        {!imageUrl ? (
+          <div>Loading...</div>
+        ) : imageUrl.length === 0 ? (
+          <div>No images available</div>
+        ) : (
+          <Image
+            src={imgSrc}
+            alt={name}
+            width={300}
+            height={200}
+            style={{ height: '200px', width: '200px' }}
+            className='h-[200px] w-[300px] rounded-md object-cover'
+            layout='responsive'
+            onError={() => {
+              setImgSrc(
+                'https://res.cloudinary.com/dhbg53ncx/image/upload/v1727888100/awip3lporwjjt3cewu4o.jpg'
+              )
+            }}
+          />
+        )}
       </div>
     </div>
   )

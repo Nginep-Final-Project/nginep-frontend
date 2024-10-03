@@ -1,68 +1,76 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import PropertyCard from '../_component/PropertyCard'
+import usePropertyList from '@/hooks/usePropertyList'
+import Error from '@/components/Error'
+import Loading from '@/components/Loading'
+import usePropertyManagement from '@/hooks/usePropertyManagement'
 
-const properties = [
-  {
-    name: 'JW Marriott Hotel Medan',
-    location: 'Medan Merdeka, Medan, Indonesia',
-    rooms: ['Standard', 'Deluxe king', 'Deluxe double'],
-    imageUrl:
-      'https://res.cloudinary.com/dhbg53ncx/image/upload/v1721305269/sle663d3qhq2qllid8kd.jpg',
-  },
-  {
-    name: 'Hilton Bali Resort',
-    location: 'Bali, Indonesia',
-    rooms: ['Suite', 'Ocean View', 'Garden View'],
-    imageUrl:
-      'https://res.cloudinary.com/dhbg53ncx/image/upload/v1721305269/sle663d3qhq2qllid8kd.jpg',
-  },
-  {
-    name: 'Four Seasons Hotel Tokyo',
-    location: 'Tokyo, Japan',
-    rooms: ['Superior', 'Deluxe', 'Executive Suite'],
-    imageUrl:
-      'https://res.cloudinary.com/dhbg53ncx/image/upload/v1721305269/sle663d3qhq2qllid8kd.jpg',
-  },
-  {
-    name: 'The Ritz-Carlton Hong Kong',
-    location: 'Hong Kong, China',
-    rooms: ['Club Room', 'Harbor View', 'Executive Suite'],
-    imageUrl:
-      'https://res.cloudinary.com/dhbg53ncx/image/upload/v1721305269/sle663d3qhq2qllid8kd.jpg',
-  },
-  {
-    name: 'Mandarin Oriental Bangkok',
-    location: 'Bangkok, Thailand',
-    rooms: ['Garden Suite', 'River View', 'Premier Room'],
-    imageUrl:
-      'https://res.cloudinary.com/dhbg53ncx/image/upload/v1721305269/sle663d3qhq2qllid8kd.jpg',
-  },
-]
+const initialParams = {
+  page: 0,
+  size: 12,
+}
 
 const PropertyList = () => {
-  const handleEdit = (hotelName: string) => {
-    console.log(`Edit button clicked for ${hotelName}`)
+  const { data, setData, loading, error, refetch } =
+    usePropertyList(initialParams)
+  const { handleDeleteProperty, loading: loadingDelete } =
+    usePropertyManagement()
+
+  const handleEdit = (propertyId: number) => {
+    console.log(`Edit button clicked for ${propertyId}`)
   }
 
-  const handleDelete = (hotelName: string) => {
-    console.log(`Delete button clicked for ${hotelName}`)
+  const handleDelete = async (propertyId: number) => {
+    const result = await handleDeleteProperty(propertyId)
+    if (result?.success) {
+      const newData = data.content.filter((e) => e.id !== propertyId)
+      setData((prevData) => {
+        return {
+          ...prevData,
+          content: newData,
+        }
+      })
+    }
+    console.log(`Delete button clicked for ${propertyId}`)
   }
+
+  const handleViewMore = () => {
+    if (data) {
+      refetch({ page: (data.pageable.pageNumber || 0) + 1 }, true)
+    }
+  }
+
+  if (error) {
+    return <Error />
+  }
+
   return (
-    <div className='p-8 flex flex-col items-center'>
-      {properties.map((hotel, index) => (
-        <PropertyCard
-          key={index}
-          name={hotel.name}
-          location={hotel.location}
-          rooms={hotel.rooms}
-          imageUrl={hotel.imageUrl}
-          onEdit={() => handleEdit(hotel.name)}
-          onDelete={() => handleDelete(hotel.name)}
-        />
-      ))}
-      <Button>Load More</Button>
-    </div>
+    <>
+      <div className='p-8 flex flex-col items-center'>
+        {data.content.map((property) => (
+          <PropertyCard
+            key={property.id}
+            name={property.propertyName}
+            location={`${property.propertyCity}, ${property.propertyProvince}`}
+            rooms={property.rooms.map((e) => e.name)}
+            imageUrl={property.propertyImage.map((e) => e.path)}
+            onEdit={() => handleEdit(property.id)}
+            onDelete={() => handleDelete(property.id)}
+          />
+        ))}
+        {data.last === false && (
+          <Button
+            className='bg-black text-white rounded-3xl mt-4 mb-16 md:mt-8 lg:mb-36'
+            onClick={handleViewMore}
+            disabled={loading}
+          >
+            {loading ? 'Loading...' : 'Show more'}
+          </Button>
+        )}
+      </div>
+      {(loading || loadingDelete) && <Loading />}
+    </>
   )
 }
 export default PropertyList
