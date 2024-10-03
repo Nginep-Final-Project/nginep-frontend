@@ -1,10 +1,16 @@
 import axios from "axios";
-import { PropertyResponseDto } from "@/types/property";
+import { Property } from "@/types/property";
 
-export const getUserProperties = async (tenantId: number): Promise<PropertyResponseDto[]> => {
+const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
+const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
+
+
+export const getUserProperties = async (
+  tenantId: number
+): Promise<Property[]> => {
   try {
-    const response = await axios.get<{ data: PropertyResponseDto[] }>(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/property/tenant/${tenantId}`
+    const response = await axios.get<{ data: Property[] }>(
+      `${hostnameApi}/${prefixApi}/property/tenant/${tenantId}`
     );
     return response.data.data;
   } catch (error) {

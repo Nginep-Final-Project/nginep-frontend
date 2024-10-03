@@ -39,6 +39,13 @@ export async function middleware(request: NextRequest) {
         new URL('/?error=unauthorized_guest', request.url)
       )
     }
+
+    if (pathname.startsWith('/user') && session.user.role !== 'guest') {
+      return NextResponse.redirect(
+        new URL('/?error=unauthorized_guest', request.url)
+      )
+    }
+  
   }
 
   return NextResponse.next()

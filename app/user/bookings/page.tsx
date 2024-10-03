@@ -5,9 +5,16 @@ import BookingSection from "./_components/BookingSection";
 import SkeletonSection from "./_components/SkeletonSection";
 import Link from "next/link";
 import { useUserBookings } from "@/hooks/booking/user/useUserBookings";
+import { useSession } from "next-auth/react";
 
 const Bookings: React.FC = () => {
-  const userId = 11;
+  const { data: session } = useSession();
+  const userIdString = session?.user?.id;
+  const userId = userIdString ? parseInt(userIdString, 10) : undefined;
+
+  if (userId === undefined || isNaN(userId)) {
+    return <div>Please log in to see your current reservations</div>;
+  }
 
   const {
     isLoading,

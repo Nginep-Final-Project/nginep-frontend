@@ -1,69 +1,53 @@
-import { GuestQuantity } from "./GuestQuantity/GuestQuantity";
-import { MessageToHost } from "./MessageToHost/MessageToHost";
-import Dates from "./Dates/Dates";
-import WarningModal from "../../../_components/Modal/WarningModal";
-import ValidatedNavigation from "../../../_components/Navigation/ValidatedNavigation";
-import Button from "../../../_components/Button/Button";
-import useBookingData from "@/hooks/booking/useBookingData";
-import useWarningModal from "@/hooks/common/useWarningModal";
+import React, { useState, useEffect } from "react";
+import { RESERVE_BOOKING_DATA } from "@/utils/constanta";
+import MessageToHost from "./MessageToHost";
 
-const InformationSummary = ({ roomId }: { roomId: string }) => {
-  const { bookingData, updateBookingData } = useBookingData(roomId);
-  const { showWarning, closeWarning } = useWarningModal();
+interface InformationSummaryProps {
+  roomId: string;
+}
 
-  const handleGuestChange = (newCount: number) => {
-    updateBookingData("guestCount", newCount);
-  };
+const InformationSummary: React.FC<InformationSummaryProps> = ({ roomId }) => {
+  const [message, setMessage] = useState("");
 
-  const handleDatesChange = (newCheckIn: string, newCheckOut: string) => {
-    updateBookingData("checkIn", newCheckIn);
-    updateBookingData("checkOut", newCheckOut);
-  };
+  useEffect(() => {
+    const storedData = localStorage.getItem(RESERVE_BOOKING_DATA);
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      setMessage(parsedData.userMessage || "");
+    }
+  }, []);
 
   const handleMessageChange = (newMessage: string) => {
-    updateBookingData("message", newMessage);
+    setMessage(newMessage);
+    updateLocalStorage(newMessage);
   };
 
   const handleClearMessage = () => {
-    updateBookingData("message", "");
+    setMessage("");
+    updateLocalStorage("");
+  };
+
+  const updateLocalStorage = (newMessage: string) => {
+    const storedData = localStorage.getItem(RESERVE_BOOKING_DATA);
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const updatedData = { ...parsedData, userMessage: newMessage };
+      localStorage.setItem(RESERVE_BOOKING_DATA, JSON.stringify(updatedData));
+    }
   };
 
   return (
     <div className="w-full lg:w-2/3">
       <div className="p-6">
         <div className="space-y-8">
-          <GuestQuantity
-            value={bookingData.guestCount || 1}
-            onChange={handleGuestChange}
-            maxGuests={8}
-          />
-          <Dates
-            checkIn={bookingData.checkIn}
-            checkOut={bookingData.checkOut}
-            onChange={handleDatesChange}
-          />
           <MessageToHost
-            value={bookingData.message}
+            value={message}
             onChange={handleMessageChange}
             onClear={handleClearMessage}
             maxLength={500}
           />
-          <ValidatedNavigation
-            to="/payment-method"
-            requiredFields={["checkIn", "checkOut"]}
-            useRoomId={true}
-          >
-            <Button>Choose Payment Method</Button>
-          </ValidatedNavigation>
         </div>
       </div>
-
-      <WarningModal
-        isOpen={showWarning}
-        onClose={closeWarning}
-        title="Check Inputs"
-        message="Please ensure to fill-out the number of guests, check-in and check-out dates before proceeding"
-      />
     </div>
   );
 };

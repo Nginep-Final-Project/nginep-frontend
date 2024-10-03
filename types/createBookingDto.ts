@@ -6,4 +6,5 @@ export interface CreateBookingDto {
   numGuests: number;
   paymentMethod: string;
   userMessage?: string;
+  bank?: string;
 }
