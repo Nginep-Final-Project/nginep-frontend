@@ -1,12 +1,15 @@
 import { UploadProofOfPaymentDto } from "@/types/payment";
 import axios from "axios";
 
+const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
+const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
+
 export const confirmManualPayment = async (
   paymentId: number
 ): Promise<void> => {
   try {
     const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/payments/${paymentId}/confirm-manual`
+      `${hostnameApi}/${prefixApi}/payments/${paymentId}/confirm-manual`
     );
     return response.data;
   } catch (error) {
@@ -18,7 +21,7 @@ export const confirmManualPayment = async (
 export const rejectManualPayment = async (paymentId: number): Promise<void> => {
   try {
     const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/payments/${paymentId}/reject`
+      `${hostnameApi}/${prefixApi}/payments/${paymentId}/reject`
     );
     return response.data;
   } catch (error) {
@@ -36,7 +39,7 @@ export const uploadProofOfManualPayment = async (
 
   try {
     const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/payments/upload-proof`,
+      `${hostnameApi}/${prefixApi}/payments/upload-proof`,
       formData,
       {
         headers: {

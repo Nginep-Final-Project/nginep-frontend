@@ -5,12 +5,15 @@ import { CreateBookingDto } from "@/types/createBookingDto";
 import { TenantBookings } from "@/types/tenantBookings";
 import { UnreviewedBookingDto } from "@/types/unreviewedBookingDto";
 
+const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
+const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
+
 export const createBooking = async (
   bookingData: CreateBookingDto
 ): Promise<number> => {
   try {
     const response = await axios.post<{ data: { bookingId: number } }>(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/create`,
+      `${hostnameApi}/${prefixApi}/bookings/create`,
       bookingData
     );
     return response.data.data.bookingId;
@@ -26,7 +29,7 @@ export const checkExistingPendingBooking = async (
 ): Promise<number | null> => {
   try {
     const response = await axios.get<{ data: number | null }>(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/check-existing-pending-booking`,
+      `${hostnameApi}/${prefixApi}/bookings/check-existing-pending-booking`,
       { params: { userId, roomId } }
     );
     return response.data.data;
@@ -41,7 +44,7 @@ export const getUserBookings = async (
 ): Promise<UserBookings[]> => {
   try {
     const response = await axios.get<{ data: UserBookings[] }>(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/user/${userId}`
+      `${hostnameApi}/${prefixApi}/bookings/user/${userId}`
     );
     return response.data.data;
   } catch (error) {
@@ -55,7 +58,7 @@ export const getBookingPaymentDetails = async (
 ): Promise<BookingPaymentDetails> => {
   try {
     const response = await axios.get<{ data: BookingPaymentDetails }>(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/${bookingId}/payment-details`
+      `${hostnameApi}/${prefixApi}/bookings/${bookingId}/payment-details`
     );
     return response.data.data;
   } catch (error) {
@@ -69,7 +72,7 @@ export const cancelBookingByTenant = async (
 ): Promise<void> => {
   try {
     const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/${bookingId}/cancel/tenant`
+      `${hostnameApi}/${prefixApi}/bookings/${bookingId}/cancel/tenant`
     );
     return response.data;
   } catch (error) {
@@ -81,7 +84,7 @@ export const cancelBookingByTenant = async (
 export const cancelBookingByUser = async (bookingId: number): Promise<void> => {
   try {
     const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/${bookingId}/cancel/user`
+      `${hostnameApi}/${prefixApi}/bookings/${bookingId}/cancel/user`
     );
     return response.data;
   } catch (error) {
@@ -95,7 +98,7 @@ export const getTenantBookings = async (
 ): Promise<TenantBookings[]> => {
   try {
     const response = await axios.get<{ data: TenantBookings[] }>(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/tenant/${tenantId}`
+      `${hostnameApi}/${prefixApi}/bookings/tenant/${tenantId}`
     );
     return response.data.data;
   } catch (error) {
@@ -107,7 +110,7 @@ export const getTenantBookings = async (
 export const confirmBooking = async (bookingId: number): Promise<void> => {
   try {
     const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/${bookingId}/confirm`
+      `${hostnameApi}/${prefixApi}/bookings/${bookingId}/confirm`
     );
     return response.data;
   } catch (error) {
@@ -121,7 +124,7 @@ export const getUnreviewedBookings = async (
 ): Promise<UnreviewedBookingDto[]> => {
   try {
     const response = await axios.get<{ data: UnreviewedBookingDto[] }>(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/bookings/user/${userId}/unreviewed`
+      `${hostnameApi}/${prefixApi}/bookings/user/${userId}/unreviewed`
     );
     return response.data.data;
   } catch (error) {

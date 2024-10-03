@@ -126,7 +126,7 @@ const BookingSummary: React.FC = () => {
         checkInDate: reserveBooking.checkInDate,
         checkOutDate: reserveBooking.checkOutDate,
         numGuests: reserveBooking.guests,
-        paymentMethod: paymentMethod,
+        paymentMethod: reserveBooking.paymentMethod,
         userMessage: reserveBooking.userMessage,
         bank:
           paymentMethod === PaymentType.AUTOMATIC_PAYMENT
