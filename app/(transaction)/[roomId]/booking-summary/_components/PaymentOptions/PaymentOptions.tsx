@@ -2,7 +2,7 @@ import React from "react";
 import { CreditCard, Wallet } from "lucide-react";
 import AutomaticPaymentOptions from "./AutomaticPaymentOptions";
 import BookingNavigationButton from "../../../_components/Navigation/BookingNavigationButton";
-import { PaymentType } from "@/types/bookingPaymentDetails";
+import { PaymentType } from "@/types/payment";
 import PaymentInformation from "./PaymentInformation";
 
 const paymentMethods = [

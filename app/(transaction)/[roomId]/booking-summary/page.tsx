@@ -6,7 +6,7 @@ import InformationSummary from "./_components/InformationSummary/InformationSumm
 import { useCheckExistingPendingBooking, useCreateBooking } from "@/hooks";
 import { RESERVE_BOOKING_DATA } from "@/utils/constanta";
 import { SelectedRoom } from "@/app/(main)/property/[propertyId]/_components/DetailProperty";
-import { PaymentType } from "@/types/bookingPaymentDetails";
+import { PaymentType } from "@/types/payment";
 import TransactionLayout from "../_components/TransactionLayout/TransactionLayout";
 import PaymentOptions from "./_components/PaymentOptions/PaymentOptions";
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
@@ -18,6 +18,7 @@ interface ExtendedSelectedRoom extends SelectedRoom {
   paymentMethod: PaymentType;
   userMessage?: string;
   bank?: string;
+  totalNights: number;
 }
 
 const BookingSummary: React.FC = () => {
@@ -34,17 +35,7 @@ const BookingSummary: React.FC = () => {
   const [isCreatingBooking, setIsCreatingBooking] = useState(false);
   const { showWarning, closeWarning, openWarning } = useWarningModal();
 
-  const { data: session } = useSession();
-
-  const userIdString = session?.user?.id;
-  const userId = userIdString ? parseInt(userIdString, 10) : undefined;
-
-  if (userId === undefined || isNaN(userId)) {
-    return <div>Please log in to make a reservation</div>;
-  }
-
   const { data: existingBookingId, isLoading } = useCheckExistingPendingBooking(
-    userId,
     parseInt(roomId)
   );
 
@@ -122,7 +113,6 @@ const BookingSummary: React.FC = () => {
     try {
       const bookingData = {
         roomId: parseInt(roomId),
-        userId: userId,
         checkInDate: reserveBooking.checkInDate,
         checkOutDate: reserveBooking.checkOutDate,
         numGuests: reserveBooking.guests,
@@ -150,27 +140,28 @@ const BookingSummary: React.FC = () => {
 
   return (
     <TransactionLayout title="Booking Summary & Payment">
-      <div className="flex flex-col lg:flex-row">
-        <div className="w-full lg:w-2/3">
-          <InformationSummary roomId={roomId} />
-          <PaymentOptions
-            selectedMethod={paymentMethod}
-            selectedSpecificMethod={specificPaymentMethod}
-            onMethodSelect={handleMethodSelect}
-            onCreateBooking={handleCreateBooking}
-            isCreatingBooking={isCreatingBooking}
-          />
-        </div>
-        <PriceSummary
-          roomId={roomId}
-          propertyName={reserveBooking.property.propertyName}
-          roomName={reserveBooking.roomType}
-          city={reserveBooking.property.propertyCity}
-          province={reserveBooking.property.propertyProvince}
-          basePrice={reserveBooking.pricePerNight}
-          coverImage={reserveBooking.property.propertyImage[0]?.path || ""}
+      <div className="w-full lg:w-2/3">
+        <InformationSummary roomId={roomId} />
+        <PaymentOptions
+          selectedMethod={paymentMethod}
+          selectedSpecificMethod={specificPaymentMethod}
+          onMethodSelect={handleMethodSelect}
+          onCreateBooking={handleCreateBooking}
+          isCreatingBooking={isCreatingBooking}
         />
       </div>
+      <PriceSummary
+        propertyName={reserveBooking.property.propertyName}
+        roomName={reserveBooking.roomType}
+        city={reserveBooking.property.propertyCity}
+        province={reserveBooking.property.propertyProvince}
+        pricePerNight={reserveBooking.pricePerNight}
+        totalNights={reserveBooking.totalNights}
+        coverImage={reserveBooking.property.propertyImage[0]?.path || ""}
+        numberOfGuest={reserveBooking.guests}
+        checkInDate={reserveBooking.checkInDate}
+        checkOutDate={reserveBooking.checkOutDate}
+      />
       <WarningModal
         isOpen={showWarning}
         onClose={closeWarning}

@@ -32,7 +32,7 @@ const CalendarPage: React.FC = () => {
   const { data: properties, isLoading: isLoadingProperties } =
     useUserProperties(tenantId);
   const { data: availability, isLoading: isLoadingAvailability } =
-    usePropertyAvailability(tenantId, startDate, endDate);
+    usePropertyAvailability(startDate, endDate);
 
   useEffect(() => {
     if (properties && properties.length > 0 && !selectedPropertyId) {
@@ -81,7 +81,7 @@ const CalendarPage: React.FC = () => {
         <div className="mt-4 flex flex-col gap-2">
           <div className="flex items-center justify-start gap-4">
             <div className="bg-[#46FF64] rounded-full p-3"></div>
-            <div>Today's date</div>
+            <div>Today&apos;s date</div>
           </div>
           <div className="flex items-center justify-start gap-4">
             <div className="bg-[#FF385C] rounded-full p-3"></div>

@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createReview, createReviewReply, getReviewsByPropertyId, getUserReviews } from "@/services/reviewService";
+import {
+  createReview,
+  createReviewReply,
+  getReviewsByPropertyId,
+  getUserReviews,
+} from "@/services/reviewService";
 import { toast } from "@/components/ui/use-toast";
 
 export const useCreateReview = () => {
@@ -11,24 +16,23 @@ export const useCreateReview = () => {
       queryClient.invalidateQueries({ queryKey: ["reviewDto"] });
       toast({
         title: "Review Created",
-        description:
-          "The review has been created and submitted.",
+        description: "The review has been created and submitted.",
       });
     },
     onError: () => {
-        toast({
-          title: "Error",
-          description: "Failed to create the review. Please try again.",
-          variant: "destructive",
-        });
-      },
+      toast({
+        title: "Error",
+        description: "Failed to create the review. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 };
 
-export const useUserReviews = (userId: number) => {
+export const useUserReviews = () => {
   return useQuery({
-    queryKey: ["reviewDto", userId],
-    queryFn: () => getUserReviews(userId),
+    queryKey: ["reviewDto"],
+    queryFn: () => getUserReviews(),
   });
 };
 

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { AlertCircle, CreditCard, Wallet } from "lucide-react";
-import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
+import { BookingPaymentDetails } from "@/types/booking";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 interface AutomaticPaymentProps {
   bookingDetails: BookingPaymentDetails;

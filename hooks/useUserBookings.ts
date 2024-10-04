@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUserBookings } from "../services/bookingService";
-import { UserBookings, BookingStatus } from "@/types/userBookings";
+import { UserBookings, BookingStatus } from "@/types/booking";
 
 const isSameDay = (date1: Date, date2: Date) =>
   date1.toDateString() === date2.toDateString();
@@ -11,10 +11,10 @@ const getTomorrowDate = () => {
   return tomorrow;
 };
 
-export const useUserBookings = (userId: number) => {
+export const useUserBookings = () => {
   const query = useQuery({
-    queryKey: ["userBookings", userId],
-    queryFn: () => getUserBookings(userId),
+    queryKey: ["userBookings"],
+    queryFn: () => getUserBookings(),
   });
 
   const filterBookings = (

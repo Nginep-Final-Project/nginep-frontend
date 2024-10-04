@@ -1,9 +1,9 @@
 import axios from "axios";
-import { UserBookings } from "@/types/userBookings";
-import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
-import { CreateBookingDto } from "@/types/createBookingDto";
-import { TenantBookings } from "@/types/tenantBookings";
-import { UnreviewedBookingDto } from "@/types/unreviewedBookingDto";
+import { UserBookings } from "@/types/booking";
+import { BookingPaymentDetails } from "@/types/booking";
+import { CreateBookingDto } from "@/types/booking";
+import { TenantBookings } from "@/types/booking";
+import { UnreviewedBookingDto } from "@/types/booking";
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
@@ -14,7 +14,10 @@ export const createBooking = async (
   try {
     const response = await axios.post<{ data: { bookingId: number } }>(
       `${hostnameApi}/${prefixApi}/bookings/create`,
-      bookingData
+      bookingData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data.bookingId;
   } catch (error) {
@@ -24,13 +27,12 @@ export const createBooking = async (
 };
 
 export const checkExistingPendingBooking = async (
-  userId: number,
   roomId: number
 ): Promise<number | null> => {
   try {
     const response = await axios.get<{ data: number | null }>(
       `${hostnameApi}/${prefixApi}/bookings/check-existing-pending-booking`,
-      { params: { userId, roomId } }
+      { params: { roomId }, withCredentials: true }
     );
     return response.data.data;
   } catch (error) {
@@ -39,12 +41,13 @@ export const checkExistingPendingBooking = async (
   }
 };
 
-export const getUserBookings = async (
-  userId: number
-): Promise<UserBookings[]> => {
+export const getUserBookings = async (): Promise<UserBookings[]> => {
   try {
     const response = await axios.get<{ data: UserBookings[] }>(
-      `${hostnameApi}/${prefixApi}/bookings/user/${userId}`
+      `${hostnameApi}/${prefixApi}/bookings/user`,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data;
   } catch (error) {
@@ -93,12 +96,13 @@ export const cancelBookingByUser = async (bookingId: number): Promise<void> => {
   }
 };
 
-export const getTenantBookings = async (
-  tenantId: number
-): Promise<TenantBookings[]> => {
+export const getTenantBookings = async (): Promise<TenantBookings[]> => {
   try {
     const response = await axios.get<{ data: TenantBookings[] }>(
-      `${hostnameApi}/${prefixApi}/bookings/tenant/${tenantId}`
+      `${hostnameApi}/${prefixApi}/bookings/tenant`,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data;
   } catch (error) {
@@ -119,12 +123,15 @@ export const confirmBooking = async (bookingId: number): Promise<void> => {
   }
 };
 
-export const getUnreviewedBookings = async (
-  userId: number
-): Promise<UnreviewedBookingDto[]> => {
+export const getUnreviewedBookings = async (): Promise<
+  UnreviewedBookingDto[]
+> => {
   try {
     const response = await axios.get<{ data: UnreviewedBookingDto[] }>(
-      `${hostnameApi}/${prefixApi}/bookings/user/${userId}/unreviewed`
+      `${hostnameApi}/${prefixApi}/bookings/user/unreviewed`,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data;
   } catch (error) {

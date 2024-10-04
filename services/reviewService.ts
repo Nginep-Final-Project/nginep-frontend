@@ -1,5 +1,10 @@
 import axios from "axios";
-import { CreateReviewDto, CreateReviewReplyDto, ReviewDto, ReviewReplyDto } from "@/types/review";
+import {
+  CreateReviewDto,
+  CreateReviewReplyDto,
+  ReviewDto,
+  ReviewReplyDto,
+} from "@/types/review";
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
@@ -9,7 +14,7 @@ export const createReview = async (
 ): Promise<ReviewDto> => {
   try {
     const response = await axios.post<{ data: ReviewDto }>(
-      `${hostnameApi}/${prefixApi}/reviews`,
+      `${hostnameApi}/${prefixApi}/reviews/create`,
       reviewData
     );
     return response.data.data;
@@ -19,10 +24,13 @@ export const createReview = async (
   }
 };
 
-export const getUserReviews = async (userId: number): Promise<ReviewDto[]> => {
+export const getUserReviews = async (): Promise<ReviewDto[]> => {
   try {
     const response = await axios.get<{ data: ReviewDto[] }>(
-      `${hostnameApi}/${prefixApi}/reviews/user/${userId}`
+      `${hostnameApi}/${prefixApi}/reviews/user`,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data;
   } catch (error) {
@@ -31,7 +39,9 @@ export const getUserReviews = async (userId: number): Promise<ReviewDto[]> => {
   }
 };
 
-export const getReviewsByPropertyId = async (propertyId: number): Promise<ReviewDto[]> => {
+export const getReviewsByPropertyId = async (
+  propertyId: number
+): Promise<ReviewDto[]> => {
   try {
     const response = await axios.get<{ data: ReviewDto[] }>(
       `${hostnameApi}/${prefixApi}/reviews/property/${propertyId}`
@@ -43,11 +53,16 @@ export const getReviewsByPropertyId = async (propertyId: number): Promise<Review
   }
 };
 
-export const createReviewReply = async (replyData: CreateReviewReplyDto): Promise<ReviewReplyDto> => {
+export const createReviewReply = async (
+  replyData: CreateReviewReplyDto
+): Promise<ReviewReplyDto> => {
   try {
     const response = await axios.post<{ data: ReviewReplyDto }>(
-      `${hostnameApi}/${prefixApi}/review-replies`,
-      replyData
+      `${hostnameApi}/${prefixApi}/review-replies/create`,
+      replyData,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data;
   } catch (error) {

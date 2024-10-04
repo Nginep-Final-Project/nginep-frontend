@@ -10,12 +10,13 @@ import { format } from "date-fns";
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
 
-export const getOverviewReport = async (
-  tenantId: number
-): Promise<OverviewReportDto> => {
+export const getOverviewReport = async (): Promise<OverviewReportDto> => {
   try {
     const response = await axios.get<{ data: OverviewReportDto }>(
-      `${hostnameApi}/${prefixApi}/analytics/overview/${tenantId}`
+      `${hostnameApi}/${prefixApi}/analytics/overview`,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data;
   } catch (error) {
@@ -25,20 +26,20 @@ export const getOverviewReport = async (
 };
 
 export const getEarningsByTransaction = async (
-  tenantId: number,
   interval: string,
   startDate: Date,
   endDate: Date
 ): Promise<EarningsByTransactionDto> => {
   try {
     const response = await axios.get(
-      `${hostnameApi}/${prefixApi}/analytics/earnings/transaction/${tenantId}`,
+      `${hostnameApi}/${prefixApi}/analytics/earnings/transaction`,
       {
         params: {
           interval,
           startDate: format(startDate, "yyyy-MM-dd"),
           endDate: format(endDate, "yyyy-MM-dd"),
         },
+        withCredentials: true,
       }
     );
     return response.data.data;
@@ -48,12 +49,15 @@ export const getEarningsByTransaction = async (
   }
 };
 
-export const getEarningsByProperty = async (
-  tenantId: number
-): Promise<EarningsByPropertyDto[]> => {
+export const getEarningsByProperty = async (): Promise<
+  EarningsByPropertyDto[]
+> => {
   try {
     const response = await axios.get<{ data: EarningsByPropertyDto[] }>(
-      `${hostnameApi}/${prefixApi}/analytics/earnings/property/${tenantId}`
+      `${hostnameApi}/${prefixApi}/analytics/earnings/property`,
+      {
+        withCredentials: true,
+      }
     );
     return response.data.data;
   } catch (error) {
@@ -63,15 +67,15 @@ export const getEarningsByProperty = async (
 };
 
 export const getPropertyAvailability = async (
-  tenantId: number,
   startDate: string,
   endDate: string
 ) => {
   try {
     const response = await axios.get<{ data: PropertyAvailabilityDto[] }>(
-      `${hostnameApi}/${prefixApi}/analytics/property-availability/${tenantId}`,
+      `${hostnameApi}/${prefixApi}/analytics/property-availability`,
       {
         params: { startDate, endDate },
+        withCredentials: true,
       }
     );
     return response.data.data;

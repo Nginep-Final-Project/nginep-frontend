@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Upload, AlertCircle } from "lucide-react";
-import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
+import { BookingPaymentDetails } from "@/types/booking";
 import Button from "../../../_components/Button/Button";
 import { useUploadProof } from "@/hooks/payment/useUploadProof";
 import { useRouter } from "next/navigation";

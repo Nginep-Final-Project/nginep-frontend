@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ClientValidatedNavigationWrapper from "./[roomId]/_components/Navigation/ClientValidatedNavigationWrapper";
+// import ClientValidatedNavigationWrapper from "./[roomId]/_components/Navigation/ClientValidatedNavigationWrapper";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 
@@ -16,11 +16,11 @@ export default function Transaction({
 }) {
   return (
     <section>
-      <ClientValidatedNavigationWrapper>
+      {/* <ClientValidatedNavigationWrapper> */}
         <Navbar />
         {children}
         <Footer />
-      </ClientValidatedNavigationWrapper>
+      {/* </ClientValidatedNavigationWrapper> */}
     </section>
   );
 }
