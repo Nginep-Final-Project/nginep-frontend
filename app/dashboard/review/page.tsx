@@ -31,7 +31,9 @@ const Review: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6">Manage Property Reviews</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">
+        Manage Property Reviews
+      </h1>
       <div className="mb-10">
         <Select onValueChange={(value) => setSelectedPropertyId(Number(value))}>
           <SelectTrigger className="w-[220px] sm:w-[400px]">

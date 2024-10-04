@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { TenantBookings } from "@/types/tenantBookings";
+import { TenantBookings } from "@/types/booking";
 import { useConfirmBooking } from "@/hooks/booking/tenant/useConfirmBooking";
 import { useConfirmPayment } from "@/hooks/payment/useConfirmPayment";
 import { useCancelBooking } from "@/hooks/booking/tenant/useCancelBooking";
@@ -113,8 +113,10 @@ const BookingCard: React.FC<BookingCardProps> = ({
           </p>
           {type === "confirmation" && (
             <div className="flex flex-col items-start space-y-2 mb-4">
-              <Button onClick={() => openConfirmationModal("confirmBooking")}
-                className="w-60 bg-green-700 hover:bg-green-500">
+              <Button
+                onClick={() => openConfirmationModal("confirmBooking")}
+                className="w-60 bg-green-700 hover:bg-green-500"
+              >
                 Confirm Reservation
               </Button>
             </div>

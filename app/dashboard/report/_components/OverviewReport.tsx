@@ -16,8 +16,8 @@ const OverviewReport: React.FC = () => {
     return (
       <>
         <div>
-          You currently have no reports or anything in your account. Let&apos;s rent
-          your properties!
+          You currently have no reports or anything in your account. Let&apos;s
+          turn your properties into a rental for others!
         </div>
       </>
     );

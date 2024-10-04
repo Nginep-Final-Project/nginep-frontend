@@ -7,13 +7,11 @@ import { Button } from "@/components/ui/button";
 
 interface ReviewCardProps {
   review: ReviewDto;
-  tenantId: number;
   showReplyForm?: boolean;
 }
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
   review,
-  tenantId,
   showReplyForm = false,
 }) => {
   const [isReplyFormVisible, setIsReplyFormVisible] = useState(false);
@@ -68,7 +66,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
             {isReplyFormVisible ? (
               <ReviewReplyForm
                 reviewId={review.id}
-                tenantId={tenantId}
                 onSuccess={() => setIsReplyFormVisible(false)}
               />
             ) : (
