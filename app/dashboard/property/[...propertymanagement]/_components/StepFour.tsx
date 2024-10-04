@@ -19,9 +19,10 @@ import { toast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 
 const StepFour: React.FC<{
+  isEditingMode: boolean
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
-}> = ({ currentStep, setCurrentStep }) => {
+}> = ({ isEditingMode, currentStep, setCurrentStep }) => {
   const [editingPeakSeason, setEditingPeakSeason] =
     useState<PeakSeasonRateFormValues | null>(null)
   const [isPeakSeasonPriceOpen, setIsPeakSeasonPriceOpen] = useState(false)
@@ -220,7 +221,9 @@ const StepFour: React.FC<{
             Back
           </Button>
           <Progress value={(4 / 4) * 100} className='flex-grow h-2' />
-          <Button type='submit'>Save</Button>
+          <Button type='submit' disabled={loading}>
+            {loading ? 'Loading...' : isEditingMode ? 'Update' : 'Save'}
+          </Button>
         </div>
       </form>
       <PeakSeasonRate

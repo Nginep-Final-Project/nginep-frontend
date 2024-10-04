@@ -119,7 +119,7 @@ const Navbar = () => {
                   <DropdownMenuItem
                     className='font-semibold'
                     onClick={() => {
-                      router.push('/')
+                      router.push('/user/bookings')
                     }}
                   >
                     Trips
