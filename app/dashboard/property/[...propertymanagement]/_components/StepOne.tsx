@@ -13,11 +13,13 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { CREATE_PROPERTY_STEP_ONE } from '@/utils/constanta'
+import { PropertyDetail } from '@/types/property'
 
 const StepOne: React.FC<{
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
-}> = ({ currentStep, setCurrentStep }) => {
+  propertyData: PropertyDetail
+}> = ({ currentStep, setCurrentStep, propertyData }) => {
   const { result: resultFacility, loading: loadingFacility } = useFacility()
   const { result: resultCategory, loading: loadingCategory } = useCategory()
   const {
@@ -45,9 +47,23 @@ const StepOne: React.FC<{
       if (storageData) {
         const parseData = JSON.parse(storageData)
         reset(parseData)
+        return
+      }
+
+      if (propertyData) {
+        reset({
+          propertyName: propertyData.propertyName,
+          propertyCategory: propertyData.propertyCategory,
+          propertyDescription: propertyData.propertyDescription,
+          propertyFacilities: propertyData.propertyFacilities.map(
+            (e) => e.value
+          ),
+          guestPlaceType: propertyData.guestPlaceType,
+          propertyImage: propertyData.propertyImage,
+        })
       }
     }
-  }, [currentStep, reset])
+  }, [currentStep, propertyData, reset])
 
   const onSubmit = (data: z.infer<typeof PropertyGeneralInfoSchema>) => {
     console.log('submit')

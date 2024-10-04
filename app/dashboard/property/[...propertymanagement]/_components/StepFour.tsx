@@ -17,12 +17,14 @@ import usePropertyManagement from '@/hooks/usePropertyManagement'
 import { CreateProperty, emptyCreateProperty } from '@/types/createProperty'
 import { toast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
+import { PropertyDetail } from '@/types/property'
 
 const StepFour: React.FC<{
   isEditingMode: boolean
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
-}> = ({ isEditingMode, currentStep, setCurrentStep }) => {
+  propertyData: PropertyDetail
+}> = ({ isEditingMode, currentStep, setCurrentStep, propertyData }) => {
   const [editingPeakSeason, setEditingPeakSeason] =
     useState<PeakSeasonRateFormValues | null>(null)
   const [isPeakSeasonPriceOpen, setIsPeakSeasonPriceOpen] = useState(false)
@@ -48,9 +50,15 @@ const StepFour: React.FC<{
       if (storageData) {
         const parseData = JSON.parse(storageData)
         reset(parseData)
+        return
+      }
+      if (propertyData.peakSeasonRate.length > 0) {
+        reset({
+          peakSeasonRates: propertyData.peakSeasonRate,
+        })
       }
     }
-  }, [currentStep, reset])
+  }, [currentStep, propertyData, reset])
 
   const handleSavePeakSeasonRate = (
     peakSeasonRate: PeakSeasonRateFormValues
@@ -71,7 +79,7 @@ const StepFour: React.FC<{
     } else {
       setValue('peakSeasonRates', [
         ...currentPeakSeasonRates,
-        { ...peakSeasonRate, id: Date.now().toString() },
+        { ...peakSeasonRate, id: Math.floor(Math.random() * 1000000) },
       ])
     }
     setEditingPeakSeason(null)
@@ -85,7 +93,7 @@ const StepFour: React.FC<{
     setIsPeakSeasonPriceOpen(true)
   }
 
-  const handleDeletePeakSeason = (id: string) => {
+  const handleDeletePeakSeason = (id: number) => {
     const currentPeakSeason = watch('peakSeasonRates') || []
     setValue(
       'peakSeasonRates',
