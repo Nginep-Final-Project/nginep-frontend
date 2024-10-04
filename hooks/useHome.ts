@@ -33,7 +33,7 @@ const useHome = () => {
         return data
       } catch (err) {
         setError(err)
-        console.error('Get category error:', error)
+        console.error('Home error:', error)
       }
       setLoading(false)
     }
