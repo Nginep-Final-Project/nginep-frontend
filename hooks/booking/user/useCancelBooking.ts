@@ -15,6 +15,8 @@ export const useCancelBooking = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+      queryClient.invalidateQueries({ queryKey: ["existingBooking"] });
+      queryClient.invalidateQueries({ queryKey: ["bookingPaymentDetails"] });
       toast({
         title: "Success",
         description: "Success on booking cancellation",

@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import { RESERVE_BOOKING_DATA } from "@/utils/constanta";
 import MessageToHost from "./MessageToHost";
 
-interface InformationSummaryProps {
-  roomId: string;
-}
-
-const InformationSummary: React.FC<InformationSummaryProps> = ({ roomId }) => {
+const InformationSummary: React.FC = () => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {

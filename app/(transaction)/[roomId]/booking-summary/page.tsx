@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import InformationSummary from "./_components/InformationSummary/InformationSummary";
-import { useCheckExistingPendingBooking, useCreateBooking } from "@/hooks";
 import { RESERVE_BOOKING_DATA } from "@/utils/constanta";
 import { SelectedRoom } from "@/app/(main)/property/[propertyId]/_components/DetailProperty";
 import { PaymentType } from "@/types/payment";
@@ -12,7 +11,9 @@ import PaymentOptions from "./_components/PaymentOptions/PaymentOptions";
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
 import WarningModal from "../_components/Modal/WarningModal";
 import useWarningModal from "@/hooks/common/useWarningModal";
-import { useSession } from "next-auth/react";
+import { useCheckExistingPendingBooking } from "@/hooks/booking/useCheckExistingPendingBooking";
+import { useCreateBooking } from "@/hooks/booking/useCreateBooking";
+import Link from "next/link";
 
 interface ExtendedSelectedRoom extends SelectedRoom {
   paymentMethod: PaymentType;
@@ -135,13 +136,26 @@ const BookingSummary: React.FC = () => {
   };
 
   if (!reserveBooking) {
-    return <div>Loading...</div>;
+    return (
+      <TransactionLayout title="You currently have no reservation">
+        <div>
+          You currently don&apos;t have a data reservation. Please return to the
+          property details and its room page to find the suitable date.{" "}
+          <Link
+            href="/"
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            <p>Go to the home page</p>
+          </Link>
+        </div>
+      </TransactionLayout>
+    );
   }
 
   return (
     <TransactionLayout title="Booking Summary & Payment">
       <div className="w-full lg:w-2/3">
-        <InformationSummary roomId={roomId} />
+        <InformationSummary />
         <PaymentOptions
           selectedMethod={paymentMethod}
           selectedSpecificMethod={specificPaymentMethod}

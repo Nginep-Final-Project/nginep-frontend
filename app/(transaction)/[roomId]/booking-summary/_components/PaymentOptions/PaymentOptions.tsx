@@ -1,9 +1,9 @@
 import React from "react";
-import { CreditCard, Wallet } from "lucide-react";
+import { CreditCard, Wallet, Loader2 } from "lucide-react";
 import AutomaticPaymentOptions from "./AutomaticPaymentOptions";
-import BookingNavigationButton from "../../../_components/Navigation/BookingNavigationButton";
 import { PaymentType } from "@/types/payment";
 import PaymentInformation from "./PaymentInformation";
+import Button from "../../../_components/Button/Button";
 
 const paymentMethods = [
   { id: PaymentType.MANUAL_PAYMENT, name: "Manual Transfer", icon: Wallet },
@@ -30,7 +30,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   selectedSpecificMethod,
   onMethodSelect,
   onCreateBooking,
-  isCreatingBooking,
+  isCreatingBooking = false,
 }) => {
   return (
     <div className="w-full lg:w-2/3">
@@ -64,12 +64,20 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
           />
         )}
 
-        <BookingNavigationButton
+        <Button
           onClick={onCreateBooking}
-          isLoading={isCreatingBooking}
+          disabled={isCreatingBooking}
+          className="w-full mt-6"
         >
-          Create Your Booking and Proceed to Payment
-        </BookingNavigationButton>
+          {isCreatingBooking ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin inline-block" />
+              Processing...
+            </>
+          ) : (
+            "Create Your Booking and Proceed to Payment"
+          )}
+        </Button>
       </div>
     </div>
   );

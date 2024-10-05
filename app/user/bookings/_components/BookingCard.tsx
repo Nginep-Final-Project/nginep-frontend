@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import Link from "next/link";
-import { UserBookings } from "@/types/userBookings";
+import { UserBookings } from "@/types/booking";
 import { mapBookingStatus } from "@/utils/bookingStatusMapper";
 import CancelConfirmationModal from "./CancelConfirmationModal";
 import { useCancelBooking } from "@/hooks/booking/user/useCancelBooking";
