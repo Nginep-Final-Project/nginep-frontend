@@ -1,17 +1,17 @@
 import { toast } from '@/components/ui/use-toast'
-import { CreateProperty, EditProperty } from '@/types/createProperty'
+import { PropertyImage } from '@/types/createProperty'
 import { response } from '@/types/response'
 import { useState } from 'react'
 
-const usePropertyManagement = () => {
+const usePropertyImage = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
 
-  const handleCreateProperty = async (request: CreateProperty) => {
+  const handleCreatePropertyImage = async (request: PropertyImage) => {
     setLoading(true)
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property-image`,
         {
           method: 'POST',
           headers: {
@@ -27,16 +27,16 @@ const usePropertyManagement = () => {
       return data
     } catch (error) {
       setError(error)
-      console.error('Create property error:', error)
+      console.error('Create property image error:', error)
     }
     setLoading(false)
   }
 
-  const handleDeleteProperty = async (propertyId: number) => {
+  const handleDeletePropertyImage = async (propertyImageId: number) => {
     setLoading(true)
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property/${propertyId}`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property-image/${propertyImageId}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -60,18 +60,21 @@ const usePropertyManagement = () => {
       setError(error)
       toast({
         variant: 'destructive',
-        title: 'Delete property failed',
+        title: 'Delete property image failed',
       })
-      console.error('Delete property error:', error)
+      console.error('Delete property image error:', error)
     }
     setLoading(false)
   }
 
-  const handleUpdateProperty = async (request: EditProperty) => {
+  const handleSetThumbnail = async (request: {
+    publicKey: string
+    propertyId: number
+  }) => {
     setLoading(true)
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property`,
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property-image`,
         {
           method: 'PUT',
           headers: {
@@ -84,20 +87,35 @@ const usePropertyManagement = () => {
 
       const data: response = await response.json()
       setLoading(false)
+      if (!data.success) {
+        toast({
+          variant: 'destructive',
+          title: data.message,
+        })
+        return
+      }
+      setLoading(false)
+      toast({
+        title: data.message,
+      })
       return data
     } catch (error) {
       setError(error)
-      console.error('Edit property error:', error)
+      console.error('Set property image error:', error)
+      toast({
+        variant: 'destructive',
+        title: 'Set property image failed',
+      })
     }
     setLoading(false)
   }
 
   return {
-    handleCreateProperty,
-    handleDeleteProperty,
-    handleUpdateProperty,
+    handleCreatePropertyImage,
+    handleDeletePropertyImage,
+    handleSetThumbnail,
     loading,
     error,
   }
 }
-export default usePropertyManagement
+export default usePropertyImage

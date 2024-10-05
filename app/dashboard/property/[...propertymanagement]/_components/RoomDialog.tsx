@@ -221,14 +221,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                 type='button'
                 onClick={() => {
                   onOpenChange(false)
-                  form.reset({
-                    name: '',
-                    description: '',
-                    maxGuests: 1,
-                    basePrice: 1,
-                    totalRoom: 1,
-                    notAvailableDates: [],
-                  })
+                  form.reset()
                 }}
               >
                 Cancel

@@ -77,8 +77,8 @@ const DatePeakSeasonPicker: React.FC<DateRangeCalendarProps> = ({
           <ul className='list-disc pl-5'>
             {value.map((range, index) => (
               <li key={index}>
-                {format(range.from, 'yyyy-MM-dd')} -{' '}
-                {format(range.to, 'yyyy-MM-dd')}
+                {range.from ?? range.checkInDate} -{' '}
+                {range.to ?? range.checkOutDate}
               </li>
             ))}
           </ul>
