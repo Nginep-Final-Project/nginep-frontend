@@ -4,23 +4,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import EarningsIcon from "@/public/icons/earningsIcon.png";
 import BookingsIcon from "@/public/icons/bookingsIcon.png";
 import PropertiesIcon from "@/public/icons/propertiesIcon.png";
-import PeakSeasonIcon from "@/public/icons/peakSeasonIcon.png"; 
+import PeakSeasonIcon from "@/public/icons/peakSeasonIcon.png";
 import Image from "next/image";
 
-interface OverviewReportProps {
-  tenantId: number;
-}
-
-const OverviewReport: React.FC<OverviewReportProps> = ({ tenantId }) => {
-  const { data: report, isLoading, error } = useOverviewReport(tenantId);
+const OverviewReport: React.FC = () => {
+  const { data: report, isLoading, error } = useOverviewReport();
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading overview report</div>;
-  if (!report) return (
-    <>
-    <div>You currently have no reports or anything in your account. Let's rent your properties!</div>
-    </>
-  );
+  if (!report)
+    return (
+      <>
+        <div>
+          You currently have no reports or anything in your account. Let&apos;s
+          turn your properties into a rental for others!
+        </div>
+      </>
+    );
 
   return (
     <>

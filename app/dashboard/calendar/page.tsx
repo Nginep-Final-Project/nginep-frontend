@@ -12,17 +12,8 @@ import {
 import { format, addMonths } from "date-fns";
 import { usePropertyAvailability } from "@/hooks/analytics/useAnalytics";
 import { useUserProperties } from "@/hooks/property/useProperties.ts";
-import { useSession } from "next-auth/react";
 
 const CalendarPage: React.FC = () => {
-  const { data: session } = useSession();
-  const tenantIdString = session?.user?.id;
-  const tenantId = tenantIdString ? parseInt(tenantIdString, 10) : undefined;
-
-  if (tenantId === undefined || isNaN(tenantId)) {
-    return <div>Please log in to observe your property availability</div>;
-  }
-
   const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
     null
   );
@@ -30,9 +21,9 @@ const CalendarPage: React.FC = () => {
   const endDate = format(addMonths(new Date(), 1), "yyyy-MM-dd");
 
   const { data: properties, isLoading: isLoadingProperties } =
-    useUserProperties(tenantId);
+    useUserProperties();
   const { data: availability, isLoading: isLoadingAvailability } =
-    usePropertyAvailability(tenantId, startDate, endDate);
+    usePropertyAvailability(startDate, endDate);
 
   useEffect(() => {
     if (properties && properties.length > 0 && !selectedPropertyId) {
@@ -81,7 +72,7 @@ const CalendarPage: React.FC = () => {
         <div className="mt-4 flex flex-col gap-2">
           <div className="flex items-center justify-start gap-4">
             <div className="bg-[#46FF64] rounded-full p-3"></div>
-            <div>Today's date</div>
+            <div>Today&apos;s date</div>
           </div>
           <div className="flex items-center justify-start gap-4">
             <div className="bg-[#FF385C] rounded-full p-3"></div>

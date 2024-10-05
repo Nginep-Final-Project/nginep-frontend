@@ -20,8 +20,7 @@ import {
 import { useEarningsByProperty } from "@/hooks/analytics/useAnalytics";
 
 const EarningsByProperty: React.FC = () => {
-  const tenantId = 16;
-  const { data, isLoading, error } = useEarningsByProperty(tenantId);
+  const { data, isLoading, error } = useEarningsByProperty();
   const [sortOrder, setSortOrder] = useState<"highest" | "lowest">("highest");
   const [yAxisWidth, setYAxisWidth] = useState(150);
   const [charLimit, setCharLimit] = useState(20);
@@ -45,8 +44,8 @@ const EarningsByProperty: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error fetching data</div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error fetching data</div>;
   if (!data) return null;
 
   const sortedData = [...data].sort((a, b) =>

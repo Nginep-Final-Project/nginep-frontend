@@ -3,21 +3,12 @@
 import React from "react";
 import BookingSection from "./_components/BookingSection";
 import SkeletonSection from "./_components/SkeletonSection";
-import { BookingStatus } from "@/types/tenantBookings";
+import { BookingStatus } from "@/types/booking";
 import { useTenantBookings } from "@/hooks/booking/tenant/useTenantBookings";
-import { PaymentStatus, PaymentType } from "@/types/bookingPaymentDetails";
-import { useSession } from "next-auth/react";
+import { PaymentStatus, PaymentType } from "@/types/payment";
 
 const BookingList: React.FC = () => {
-  const { data: session } = useSession();
-  const tenantIdString = session?.user?.id;
-  const tenantId = tenantIdString ? parseInt(tenantIdString, 10) : undefined;
-
-  if (tenantId === undefined || isNaN(tenantId)) {
-    return <div>Please log in to manage your reservations</div>;
-  }
-
-  const { isLoading, error, data: bookings } = useTenantBookings(tenantId);
+  const { isLoading, error, data: bookings } = useTenantBookings();
 
   if (error) {
     return <div>Error loading bookings. Please try again later.</div>;
@@ -33,7 +24,7 @@ const BookingList: React.FC = () => {
         <div className="text-center py-10">
           <h2 className="text-2xl font-semibold mb-4">No Pending Bookings</h2>
           <p className="text-gray-600 mb-6">
-            You don't have any bookings that require your attention at the
+            You don&apos;t have any bookings that require your attention at the
             moment.
           </p>
         </div>
