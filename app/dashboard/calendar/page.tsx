@@ -12,17 +12,8 @@ import {
 import { format, addMonths } from "date-fns";
 import { usePropertyAvailability } from "@/hooks/analytics/useAnalytics";
 import { useUserProperties } from "@/hooks/property/useProperties.ts";
-import { useSession } from "next-auth/react";
 
 const CalendarPage: React.FC = () => {
-  const { data: session } = useSession();
-  const tenantIdString = session?.user?.id;
-  const tenantId = tenantIdString ? parseInt(tenantIdString, 10) : undefined;
-
-  if (tenantId === undefined || isNaN(tenantId)) {
-    return <div>Please log in to observe your property availability</div>;
-  }
-
   const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
     null
   );
@@ -30,7 +21,7 @@ const CalendarPage: React.FC = () => {
   const endDate = format(addMonths(new Date(), 1), "yyyy-MM-dd");
 
   const { data: properties, isLoading: isLoadingProperties } =
-    useUserProperties(tenantId);
+    useUserProperties();
   const { data: availability, isLoading: isLoadingAvailability } =
     usePropertyAvailability(startDate, endDate);
 
