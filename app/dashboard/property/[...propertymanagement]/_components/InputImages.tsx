@@ -10,7 +10,7 @@ import { init } from 'next/dist/compiled/webpack/webpack'
 
 interface UploadedImage {
   file?: File
-  preview: string
+  preview?: string
   path?: string
   publicKey?: string
   isThumbnail: boolean
@@ -27,7 +27,7 @@ const InputImages: React.FC<InputImagesProps> = ({
 }) => {
   const [selectedImages, setSelectedImages] = useState<UploadedImage[]>([])
   const [uploading, setUploading] = useState(false)
-  const { handleUploadImage, loading } = useUploadImage()
+  const { handleUploadImage } = useUploadImage()
 
   useEffect(() => {
     if (initialImages && initialImages.length > 0) {
@@ -126,7 +126,7 @@ const InputImages: React.FC<InputImagesProps> = ({
             return (
               <div key={index} className='relative group'>
                 <Image
-                  src={image.path ?? image.preview}
+                  src={image.path ?? image.preview!}
                   alt=''
                   width={160}
                   height={240}
@@ -161,10 +161,10 @@ const InputImages: React.FC<InputImagesProps> = ({
           <Button
             onClick={handleUpload}
             className='px-4 py-2 mt-8 text-base font-bold'
-            disabled={loading}
+            disabled={uploading}
             type='button'
           >
-            {loading ? 'loading...' : 'Upload'}
+            {uploading ? 'loading...' : 'Upload'}
           </Button>
         </div>
       )}

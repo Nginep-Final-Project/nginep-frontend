@@ -5,6 +5,7 @@ import usePropertyList from '@/hooks/usePropertyList'
 import Error from '@/components/Error'
 import Loading from '@/components/Loading'
 import usePropertyManagement from '@/hooks/usePropertyManagement'
+import { useRouter } from 'next/navigation'
 
 const initialParams = {
   page: 0,
@@ -16,8 +17,10 @@ const PropertyList = () => {
     usePropertyList(initialParams)
   const { handleDeleteProperty, loading: loadingDelete } =
     usePropertyManagement()
+  const router = useRouter()
 
   const handleEdit = (propertyId: number) => {
+    router.push(`property/edit/${propertyId}`)
     console.log(`Edit button clicked for ${propertyId}`)
   }
 
@@ -51,6 +54,7 @@ const PropertyList = () => {
         {data.content.map((property) => (
           <PropertyCard
             key={property.id}
+            propertyId={property.id}
             name={property.propertyName}
             location={`${property.propertyCity}, ${property.propertyProvince}`}
             rooms={property.rooms.map((e) => e.name)}

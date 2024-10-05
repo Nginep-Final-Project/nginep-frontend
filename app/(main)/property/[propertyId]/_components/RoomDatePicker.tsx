@@ -54,20 +54,29 @@ const RoomDatePicker: React.FC<DateRangePickerProps> = ({
     return datePricing
   }
 
+  const convertPriceToK = (value: number) => {
+    if (value < 1000) {
+      return value.toFixed(0)
+    }
+
+    const kValue = value / 1000
+    return `${kValue.toFixed(0)}k`.replace('.0k', 'k')
+  }
+
   const renderDayContent = (day: Date) => {
     const dateKey = format(day, 'yyyy-MM-dd')
     const pricingData = generateDatePricing(peakSeasonRate)
     const price = pricingData[dateKey]
     return (
-      <div className='flex flex-col items-center'>
+      <div className='flex flex-col items-center mx-4'>
         <div>{format(day, 'd')}</div>
         {day > new Date() &&
           (price !== undefined ? (
             <div className='text-xs bg-error bg-opacity-30 rounded-full'>
-              {price.toFixed(0)}
+              {convertPriceToK(price)}
             </div>
           ) : (
-            <div className='text-xs '>{basePrice.toFixed(0)}</div>
+            <div className='text-xs '>{convertPriceToK(basePrice)}</div>
           ))}
       </div>
     )

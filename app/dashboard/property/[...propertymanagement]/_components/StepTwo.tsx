@@ -15,11 +15,13 @@ import {
   CREATE_PROPERTY_STEP_TWO,
 } from '@/utils/constanta'
 import { toast } from '@/components/ui/use-toast'
+import { PropertyDetail, Room } from '@/types/property'
 
 const StepTwo: React.FC<{
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
-}> = ({ currentStep, setCurrentStep }) => {
+  propertyData: PropertyDetail
+}> = ({ currentStep, setCurrentStep, propertyData }) => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
   const [editingRoom, setEditingRoom] = useState<RoomFormValues | null>(null)
   const [propertyType, setPropertyType] = useState<string>('')
@@ -53,9 +55,15 @@ const StepTwo: React.FC<{
         console.log('propertyType', parseData.guestPlaceType)
         setPropertyType(parseData.guestPlaceType)
       }
+
+      if (propertyData.rooms.length > 0) {
+        reset({
+          rooms: propertyData.rooms,
+        })
+      }
     }
     console.log(watch('rooms'))
-  }, [currentStep, reset])
+  }, [currentStep, propertyData, reset, watch])
 
   const handleSaveRoom = (room: RoomFormValues) => {
     const currentRooms = watch('rooms') || []
@@ -69,7 +77,7 @@ const StepTwo: React.FC<{
     } else {
       setValue('rooms', [
         ...currentRooms,
-        { ...room, id: Date.now().toString() },
+        { ...room, id: Math.floor(Math.random() * 1000000) },
       ])
     }
     setEditingRoom(null)
@@ -81,7 +89,7 @@ const StepTwo: React.FC<{
     setIsRoomDialogOpen(true)
   }
 
-  const handleDeleteRoom = (id: string) => {
+  const handleDeleteRoom = (id: number) => {
     const currentRooms = watch('rooms') || []
     setValue(
       'rooms',

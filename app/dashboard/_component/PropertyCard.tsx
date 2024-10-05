@@ -1,9 +1,11 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 
 interface PropertyCardProps {
+  propertyId: number
   name: string
   location: string
   rooms: string[]
@@ -13,6 +15,7 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
+  propertyId,
   name,
   location,
   rooms,
@@ -21,11 +24,16 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   onDelete,
 }) => {
   const [imgSrc, setImgSrc] = useState<string>(imageUrl[0])
+  const router = useRouter()
 
   return (
     <div className='flex flex-col-reverse md:flex-row border border-secondary rounded-lg p-4 mb-4 w-full'>
       <div className='md:w-2/3 flex flex-col justify-between'>
-        <div>
+        <div
+          onClick={() => {
+            router.push(`/property/${propertyId}`)
+          }}
+        >
           <h2 className='md:text-2xl font-semibold line-clamp-2'>{name}</h2>
           <p className='text-sm text-blue-600 underline cursor-pointer'>
             {location}

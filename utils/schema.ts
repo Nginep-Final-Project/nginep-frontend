@@ -20,7 +20,7 @@ const validateImageDimensions = (file: File): Promise<boolean> => {
 }
 
 export const createRoomSchema = z.object({
-  id: z.string().optional(),
+  id: z.number().optional(),
   name: z.string().min(5, 'Room name at least have 5 characters'),
   description: z
     .string()
@@ -29,10 +29,7 @@ export const createRoomSchema = z.object({
     .number()
     .min(1, 'At least 1 guest is required')
     .max(10, 'Maximum 10 guests allowed'),
-  basePrice: z
-    .string()
-    .min(1, 'Property price is required')
-    .regex(/^[0-9]+$/, 'Only numbers are allowed'),
+  basePrice: z.number().min(1, 'Property price is required'),
   totalRoom: z.number().min(1, 'Total room must be a positive number'),
   // roomImage: z
   //   .custom<File>((val) => val instanceof File, {
@@ -48,7 +45,7 @@ export const createRoomSchema = z.object({
   //     'Image dimensions must not exceed 500x500 pixels.'
   //   )
   roomPicture: z.string(),
-  roomPictureId: z.string().optional(),
+  roomPictureId: z.string().nullable().optional(),
   notAvailableDates: z
     .array(
       z
@@ -62,18 +59,15 @@ export const createRoomSchema = z.object({
 })
 
 export const createPeakSeasonRates = z.object({
-  id: z.string().optional(),
+  id: z.number().optional(),
   peakSeasonDates: z
     .object({
-      from: z.date().optional(),
-      to: z.date().optional(),
+      from: z.string().optional(),
+      to: z.string().optional(),
     })
     .optional(),
   rateType: z.string(),
-  rateValue: z
-    .string()
-    .min(1, 'Property price is required')
-    .regex(/^[0-9]+$/, 'Only numbers are allowed'),
+  rateValue: z.number().min(1, 'Property price is required'),
 })
 
 export const PropertyGeneralInfoSchema = z.object({
@@ -93,7 +87,7 @@ export const PropertyGeneralInfoSchema = z.object({
   propertyImage: z
     .array(
       z.object({
-        preview: z.string(),
+        preview: z.string().optional(),
         path: z.string(),
         publicKey: z.string(),
         isThumbnail: z.boolean(),

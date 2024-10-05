@@ -11,16 +11,19 @@ import { PropertyAddressSchema } from '@/utils/schema'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { CREATE_PROPERTY_STEP_THREE } from '@/utils/constanta'
+import Searching from '@/components/Searching'
+import { PropertyDetail } from '@/types/property'
 
 const MapWithNoSSR = dynamic(() => import('@/components/MapLeaflet'), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <Searching />,
   ssr: false,
 })
 
 const StepThree: React.FC<{
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
-}> = ({ currentStep, setCurrentStep }) => {
+  propertyData: PropertyDetail
+}> = ({ currentStep, setCurrentStep, propertyData }) => {
   const {
     register,
     handleSubmit,
@@ -28,7 +31,6 @@ const StepThree: React.FC<{
     reset,
     watch,
     setValue,
-    control,
   } = useForm<z.infer<typeof PropertyAddressSchema>>({
     resolver: zodResolver(PropertyAddressSchema),
   })
@@ -48,9 +50,24 @@ const StepThree: React.FC<{
         console.log(parseData)
         reset(parseData)
         setPosition([parseData.propertyLatitude, parseData.propertyLongitude])
+        return
+      }
+      if (propertyData) {
+        reset({
+          propertyAddress: propertyData.propertyAddress,
+          propertyCity: propertyData.propertyCity,
+          propertyProvince: propertyData.propertyProvince,
+          propertyPostalCode: propertyData.propertyPostalCode,
+          propertyLatitude: propertyData.propertyLatitude.toString(),
+          propertyLongitude: propertyData.propertyLongitude.toString(),
+        })
+        setPosition([
+          propertyData.propertyLatitude,
+          propertyData.propertyLongitude,
+        ])
       }
     }
-  }, [currentStep, reset])
+  }, [currentStep, propertyData, reset])
 
   const fetchAddressSuggestions = async (query: string | undefined) => {
     setLoading(true)
@@ -120,7 +137,9 @@ const StepThree: React.FC<{
           errors={errors}
         />
         {loading ? (
-          <div>loading...</div>
+          <div className='border border-secondary rounded-md z-10 p-4'>
+            <Searching />
+          </div>
         ) : (
           addressSuggestions.length > 0 && (
             <AddressSuggestion

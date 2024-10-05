@@ -23,6 +23,8 @@ import { incrementType } from '@/utils/dummy'
 import { createPeakSeasonRates } from '@/utils/schema'
 import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
+import DatePeakSeasonPicker from './DatePeakSeasonPicker'
+import { NotAvailableDates } from '@/types/createProperty'
 
 export type PeakSeasonRateFormValues = z.infer<typeof createPeakSeasonRates>
 
@@ -43,7 +45,7 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
     resolver: zodResolver(createPeakSeasonRates),
     defaultValues: {
       rateType: '',
-      rateValue: '1',
+      rateValue: 1,
     },
   })
 
@@ -54,7 +56,7 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
       form.reset({
         peakSeasonDates: { from: undefined, to: undefined },
         rateType: '',
-        rateValue: '1',
+        rateValue: 1,
       })
     }
   }, [initialPeakSeason, form])
@@ -122,8 +124,10 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
                       type='text'
                       placeholder='Rate amount for increment'
                       {...field}
-                      value={field.value || '1'}
-                      onChange={(e) => field.onChange(e.target.value || '1')}
+                      value={field.value || 1}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 1)
+                      }
                     />
                   </FormControl>
                   <FormMessage />

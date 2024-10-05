@@ -57,7 +57,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
         name: '',
         description: '',
         maxGuests: 1,
-        basePrice: '1',
+        basePrice: 1,
         totalRoom: 1,
         notAvailableDates: [],
       })
@@ -135,8 +135,10 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                       type='number'
                       placeholder='Room price'
                       {...field}
-                      value={field.value || '1'}
-                      onChange={(e) => field.onChange(e.target.value || '1')}
+                      value={field.value || 1}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 1)
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -149,7 +151,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
               name='totalRoom'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Room Total Room</FormLabel>
+                  <FormLabel>Total Room</FormLabel>
                   <FormControl>
                     <Input
                       type='number'
@@ -223,7 +225,7 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                     name: '',
                     description: '',
                     maxGuests: 1,
-                    basePrice: '1',
+                    basePrice: 1,
                     totalRoom: 1,
                     notAvailableDates: [],
                   })
