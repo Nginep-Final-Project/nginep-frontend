@@ -5,11 +5,13 @@ import { useCreateReviewReply } from "@/hooks/review/useReviews";
 
 interface ReviewReplyFormProps {
   reviewId: number;
-  tenantId: number;
   onSuccess: () => void;
 }
 
-const ReviewReplyForm: React.FC<ReviewReplyFormProps> = ({ reviewId, tenantId, onSuccess }) => {
+const ReviewReplyForm: React.FC<ReviewReplyFormProps> = ({
+  reviewId,
+  onSuccess,
+}) => {
   const [reply, setReply] = useState("");
   const createReplyMutation = useCreateReviewReply();
 
@@ -18,7 +20,6 @@ const ReviewReplyForm: React.FC<ReviewReplyFormProps> = ({ reviewId, tenantId, o
     try {
       await createReplyMutation.mutateAsync({
         reviewId,
-        tenantId,
         reply,
       });
       setReply("");

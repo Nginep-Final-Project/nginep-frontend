@@ -1,6 +1,6 @@
 import React from "react";
 import BookingCard from "./BookingCard";
-import { TenantBookings } from "@/types/tenantBookings";
+import { TenantBookings } from "@/types/booking";
 
 interface BookingSectionProps {
   title: string;

@@ -4,13 +4,10 @@ import { Property } from "@/types/property";
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
 
-
-export const getUserProperties = async (
-  tenantId: number
-): Promise<Property[]> => {
+export const getUserProperties = async (): Promise<Property[]> => {
   try {
     const response = await axios.get<{ data: Property[] }>(
-      `${hostnameApi}/${prefixApi}/property/tenant/${tenantId}`
+      `${hostnameApi}/${prefixApi}/property/tenant`
     );
     return response.data.data;
   } catch (error) {

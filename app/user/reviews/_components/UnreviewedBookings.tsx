@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { format } from "date-fns";
-import { UnreviewedBookingDto } from "@/types/unreviewedBookingDto";
+import { UnreviewedBookingDto } from "@/types/booking";
 
 interface UnreviewedBookingsProps {
   bookings: UnreviewedBookingDto[];

@@ -29,7 +29,6 @@ export interface ReviewDto {
 export interface ReviewReplyDto {
   id: number;
   reviewId: number;
-  tenantId: number;
   tenantName: string;
   reply: string;
   createdAt: string;
@@ -37,6 +36,5 @@ export interface ReviewReplyDto {
 
 export interface CreateReviewReplyDto {
   reviewId: number;
-  tenantId: number;
   reply: string;
 }

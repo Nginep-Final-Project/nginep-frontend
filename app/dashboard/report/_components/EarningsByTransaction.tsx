@@ -26,14 +26,12 @@ import { DatePicker } from "./DatePicker";
 import { useEarningsByTransaction } from "@/hooks/analytics/useAnalytics";
 
 const EarningsByTransaction: React.FC = () => {
-  const tenantId = 16;
   const [interval, setInterval] = useState<"daily" | "monthly">("monthly");
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [startDate, setStartDate] = useState(startOfYear(new Date(year, 0)));
   const [endDate, setEndDate] = useState(endOfYear(new Date(year, 0)));
   const { data, isLoading, error } = useEarningsByTransaction(
-    tenantId,
     interval,
     startDate,
     endDate
@@ -64,8 +62,8 @@ const EarningsByTransaction: React.FC = () => {
     setEndDate(endOfMonth(new Date(year, newMonth)));
   };
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error fetching data</div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error fetching data</div>;
 
   return (
     <div className="py-4 mt-10">

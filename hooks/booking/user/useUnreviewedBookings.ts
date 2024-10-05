@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUnreviewedBookings } from "@/services/bookingService";
 
-export const useUnreviewedBookings = (userId: number) => {
+export const useUnreviewedBookings = () => {
   return useQuery({
-    queryKey: ["unreviewedBookings", userId],
-    queryFn: () => getUnreviewedBookings(userId),
+    queryKey: ["unreviewedBookings"],
+    queryFn: () => getUnreviewedBookings(),
   });
 };

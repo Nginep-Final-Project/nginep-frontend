@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Upload, AlertCircle } from "lucide-react";
-import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
-import Button from "../../../_components/Button/Button";
+import { BookingPaymentDetails } from "@/types/booking";
+import Button from "../../_components/Button/Button";
 import { useUploadProof } from "@/hooks/payment/useUploadProof";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
+import CancelBookingButton from "./CancelBookingButton";
 
 interface ManualPaymentProps {
   bookingDetails: BookingPaymentDetails;
@@ -154,6 +155,9 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
           Redirecting to bookings page...
         </div>
       )}
+      <div>
+        <CancelBookingButton bookingId={bookingDetails.bookingId} />
+      </div>
     </div>
   );
 };

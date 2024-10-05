@@ -1,41 +1,59 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import ManualPayment from "./_components/ManualPayment/ManualPayment";
-import AutomaticPayment from "./_components/AutomaticPayment/AutomaticPayment";
+import { useEffect, useMemo, useState } from "react";
+import ManualPayment from "./_components/ManualPayment";
+import AutomaticPayment from "./_components/AutomaticPayment";
 import PriceSummary from "../_components/PriceSummary/PriceSummary";
 import TransactionLayout from "../_components/TransactionLayout/TransactionLayout";
-import {
-  useBookingPaymentDetails,
-  useCheckExistingPendingBooking,
-} from "@/hooks";
-import { useSession } from "next-auth/react";
+import { differenceInDays } from "date-fns";
+import { useCheckExistingPendingBooking } from "@/hooks/booking/useCheckExistingPendingBooking";
+import { useBookingPaymentDetails } from "@/hooks/booking/useBookingPaymentDetails";
+import Link from "next/link";
 
 const PaymentProcess = () => {
   const params = useParams();
-  const router = useRouter();
   const roomId = params.roomId as string;
   const [paymentType, setPaymentType] = useState<
     "MANUAL_PAYMENT" | "AUTOMATIC_PAYMENT" | null
   >(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  const { data: session } = useSession();
+  const {
+    data: existingBookingId,
+    isLoading: isCheckingBooking,
+    refetch: refetchExistingBooking,
+  } = useCheckExistingPendingBooking(parseInt(roomId));
 
-  const userIdString = session?.user?.id;
-  const userId = userIdString ? parseInt(userIdString, 10) : undefined;
-
-  if (userId === undefined || isNaN(userId)) {
-    return <div>Please log in to see your payment details</div>;
-  }
-
-  const { data: existingBookingId, isLoading: isCheckingBooking } =
-    useCheckExistingPendingBooking(userId, parseInt(roomId));
   const {
     data: bookingDetails,
     isLoading: isLoadingDetails,
     error,
   } = useBookingPaymentDetails(existingBookingId);
+
+  useEffect(() => {
+    if (!existingBookingId && !isCheckingBooking && retryCount < 3) {
+      const timer = setTimeout(() => {
+        refetchExistingBooking();
+        setRetryCount((prev) => prev + 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [
+    existingBookingId,
+    isCheckingBooking,
+    retryCount,
+    refetchExistingBooking,
+  ]);
+
+  const totalNights = useMemo(() => {
+    if (bookingDetails) {
+      const checkInDate = new Date(bookingDetails.checkInDate);
+      const checkOutDate = new Date(bookingDetails.checkOutDate);
+      return differenceInDays(checkOutDate, checkInDate);
+    }
+    return 0;
+  }, [bookingDetails]);
 
   useEffect(() => {
     if (bookingDetails) {
@@ -47,11 +65,28 @@ const PaymentProcess = () => {
     }
   }, [bookingDetails]);
 
-  if (isLoadingDetails)
-    return <TransactionLayout title="Loading..."> </TransactionLayout>;
+  if (isCheckingBooking) {
+    return (
+      <TransactionLayout title="Checking Existing Booking">
+        Please wait while we check your current booking.
+      </TransactionLayout>
+    );
+  }
 
   if (!bookingDetails)
-    return <div className="min-h-screen"></div>;
+    return (
+      <TransactionLayout title="You currently have no reservation">
+        <div>
+          Please make a reservation on the property/room page before going here.
+          <Link
+            href="/"
+            className="text-blue-500 hover:text-blue-700 underline"
+          >
+            <p>Go to the home page</p>
+          </Link>
+        </div>
+      </TransactionLayout>
+    );
 
   return (
     <TransactionLayout title="Process Your Payment">
@@ -61,13 +96,16 @@ const PaymentProcess = () => {
         <AutomaticPayment bookingDetails={bookingDetails} />
       ) : null}
       <PriceSummary
-        roomId={roomId}
         propertyName={bookingDetails.propertyName}
         roomName={bookingDetails.roomName}
         city={bookingDetails.propertyCity}
         province={bookingDetails.propertyProvince}
-        basePrice={bookingDetails.finalPrice}
+        pricePerNight={bookingDetails.basePrice}
+        totalNights={totalNights}
         coverImage={bookingDetails.coverImage}
+        numberOfGuest={bookingDetails.numGuests}
+        checkInDate={bookingDetails.checkInDate}
+        checkOutDate={bookingDetails.checkOutDate}
       />
     </TransactionLayout>
   );

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { AlertCircle, CreditCard, Wallet } from "lucide-react";
-import { BookingPaymentDetails } from "@/types/bookingPaymentDetails";
+import { BookingPaymentDetails } from "@/types/booking";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import Button from "../../_components/Button/Button";
+import CancelBookingButton from "./CancelBookingButton";
 
 interface AutomaticPaymentProps {
   bookingDetails: BookingPaymentDetails;
@@ -147,6 +148,12 @@ const AutomaticPayment: React.FC<AutomaticPaymentProps> = ({
           </ul>
         </CardContent>
       </Card>
+      <div>
+        <Button>Cancel the reservation and abort the payment process</Button>
+      </div>
+      <div>
+        <CancelBookingButton bookingId={bookingDetails.bookingId} />
+      </div>
     </div>
   );
 };

@@ -5,17 +5,8 @@ import BookingSection from "./_components/BookingSection";
 import SkeletonSection from "./_components/SkeletonSection";
 import Link from "next/link";
 import { useUserBookings } from "@/hooks/booking/user/useUserBookings";
-import { useSession } from "next-auth/react";
 
 const Bookings: React.FC = () => {
-  const { data: session } = useSession();
-  const userIdString = session?.user?.id;
-  const userId = userIdString ? parseInt(userIdString, 10) : undefined;
-
-  if (userId === undefined || isNaN(userId)) {
-    return <div>Please log in to see your current reservations</div>;
-  }
-
   const {
     isLoading,
     error,
@@ -25,7 +16,7 @@ const Bookings: React.FC = () => {
     getAwaitingConfirmationBookings,
     getAwaitingPaymentBookings,
     getCancelledBookings,
-  } = useUserBookings(userId);
+  } = useUserBookings();
 
   if (error) {
     return <div>Error loading bookings. Please try again later.</div>;
@@ -41,7 +32,7 @@ const Bookings: React.FC = () => {
         <div className="text-center py-10">
           <h2 className="text-2xl font-semibold mb-4">No Reservations Yet</h2>
           <p className="text-gray-600 mb-6">
-            You haven't made any reservations. Ready to plan your next
+            You haven&apos;t made any reservations. Ready to plan your next
             adventure?
           </p>
           <Link

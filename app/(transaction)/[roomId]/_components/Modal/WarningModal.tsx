@@ -22,7 +22,7 @@ const WarningModal: React.FC<WarningModalProps> = ({
         <p className="mb-6 text-justify">{message}</p>
         <button
           onClick={onClose}
-          className="w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors"
+          className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors"
         >
           Close
         </button>
