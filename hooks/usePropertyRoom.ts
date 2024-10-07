@@ -7,7 +7,17 @@ const usePropertyRoom = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
 
-  const handleCreatePropertyRoom = async (request: Room) => {
+  const handleCreatePropertyRoom = async (request: {
+    name: string
+    roomPicture: string
+    roomPictureId: string
+    description: string
+    maxGuests: number
+    basePrice: number
+    totalRoom: number
+    notAvailableDates: any
+    propertyId: number
+  }) => {
     setLoading(true)
     try {
       const response = await fetch(
@@ -67,7 +77,16 @@ const usePropertyRoom = () => {
     setLoading(false)
   }
 
-  const handleUpdatePropertyRoom = async (request: Room) => {
+  const handleUpdatePropertyRoom = async (request: {
+    id: number
+    name: string
+    roomPicture: string
+    roomPictureId: string
+    description: string
+    maxGuests: number
+    basePrice: number
+    totalRoom: number
+  }) => {
     setLoading(true)
     try {
       const response = await fetch(

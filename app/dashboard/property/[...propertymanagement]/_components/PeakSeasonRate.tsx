@@ -23,8 +23,7 @@ import { incrementType } from '@/utils/dummy'
 import { createPeakSeasonRates } from '@/utils/schema'
 import DatePicker from '@/components/DatePicker'
 import { DateRange } from 'react-day-picker'
-import DatePeakSeasonPicker from './DatePeakSeasonPicker'
-import { NotAvailableDates } from '@/types/createProperty'
+import { format } from 'date-fns'
 
 export type PeakSeasonRateFormValues = z.infer<typeof createPeakSeasonRates>
 
@@ -87,6 +86,12 @@ const PeakSeasonRate: React.FC<PeakSeasonRateProps> = ({
                       value={field.value as DateRange}
                       onChange={(value) => {
                         field.onChange(value)
+                        if (value?.from && value.to) {
+                          form.setValue('peakSeasonDates', {
+                            from: format(value?.from!, 'yyyy-MM-dd'),
+                            to: format(value?.to!, 'yyyy-MM-dd'),
+                          })
+                        }
                       }}
                       placeholder='Select dates'
                     />

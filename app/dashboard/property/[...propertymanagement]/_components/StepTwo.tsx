@@ -1,9 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
-import { Controller, useForm } from 'react-hook-form'
-import RenderField from './RenderField'
-import Select from '@/components/Select'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
@@ -14,14 +12,15 @@ import {
   CREATE_PROPERTY_STEP_ONE,
   CREATE_PROPERTY_STEP_TWO,
 } from '@/utils/constanta'
-import { toast } from '@/components/ui/use-toast'
 import { PropertyDetail, Room } from '@/types/property'
+import usePropertyRoom from '@/hooks/usePropertyRoom'
 
 const StepTwo: React.FC<{
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
   propertyData: PropertyDetail
-}> = ({ currentStep, setCurrentStep, propertyData }) => {
+  isEditingMode: boolean
+}> = ({ currentStep, setCurrentStep, propertyData, isEditingMode }) => {
   const [isRoomDialogOpen, setIsRoomDialogOpen] = useState(false)
   const [editingRoom, setEditingRoom] = useState<RoomFormValues | null>(null)
   const [propertyType, setPropertyType] = useState<string>('')
@@ -37,6 +36,8 @@ const StepTwo: React.FC<{
       rooms: [],
     },
   })
+  const { handleDeletePropertyRoom, loading: loadingPropertyRoom } =
+    usePropertyRoom()
 
   useEffect(() => {
     if (currentStep === 2) {
@@ -51,19 +52,16 @@ const StepTwo: React.FC<{
       )
       if (GeneralInfoProperty) {
         const parseData = JSON.parse(GeneralInfoProperty)
-        console.log(parseData)
-        console.log('propertyType', parseData.guestPlaceType)
         setPropertyType(parseData.guestPlaceType)
       }
 
-      if (propertyData.rooms.length > 0) {
+      if (isEditingMode && propertyData.rooms.length > 0) {
         reset({
           rooms: propertyData.rooms,
         })
       }
     }
-    console.log(watch('rooms'))
-  }, [currentStep, propertyData, reset, watch])
+  }, [currentStep, propertyData])
 
   const handleSaveRoom = (room: RoomFormValues) => {
     const currentRooms = watch('rooms') || []
@@ -89,12 +87,27 @@ const StepTwo: React.FC<{
     setIsRoomDialogOpen(true)
   }
 
-  const handleDeleteRoom = (id: number) => {
-    const currentRooms = watch('rooms') || []
-    setValue(
-      'rooms',
-      currentRooms.filter((room) => room.id !== id)
-    )
+  const handleDeleteRoom = async (id: number) => {
+    try {
+      if (isEditingMode === true) {
+        const result = await handleDeletePropertyRoom(id)
+        if (result?.success) {
+          const currentRooms = watch('rooms') || []
+          setValue(
+            'rooms',
+            currentRooms.filter((room) => room.id !== id)
+          )
+        }
+        return
+      }
+      const currentRooms = watch('rooms') || []
+      setValue(
+        'rooms',
+        currentRooms.filter((room) => room.id !== id)
+      )
+    } catch (error) {
+      console.log('Delete room error: ', error)
+    }
   }
 
   const onSubmit = (data: z.infer<typeof PropertyCreateRoomSchema>) => {
@@ -207,6 +220,8 @@ const StepTwo: React.FC<{
         onOpenChange={setIsRoomDialogOpen}
         onSave={handleSaveRoom}
         initialRoom={editingRoom}
+        isEditingMode={isEditingMode}
+        propertyId={propertyData.id}
       />
     </div>
   )

@@ -20,8 +20,11 @@ import { cn } from '@/lib/utils'
 import { Badge } from './ui/badge'
 import Image from 'next/image'
 import Delete from '@/public/delete.svg'
+import usePropertyFacility from '@/hooks/usePropertyFacility'
+import { Facility } from '@/types/property'
 
 interface Option {
+  id?: number
   value: string
   label: string
 }
@@ -35,6 +38,9 @@ interface SelectProps {
   onSelect?: (value: string | string[]) => void
   isMulti?: boolean
   initialValue?: string | string[]
+  isEditingMode?: boolean
+  facilities?: Facility[]
+  propertyId?: number
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -46,11 +52,17 @@ const Select: React.FC<SelectProps> = ({
   onSelect,
   isMulti = false,
   initialValue,
+  facilities,
+  isEditingMode = false,
+  propertyId,
 }) => {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState<string | string[]>(
     initialValue !== undefined ? initialValue : isMulti ? [] : ''
   )
+
+  const { handleCreatePropertyFacility, handleDeletePropertyFacility } =
+    usePropertyFacility()
 
   useEffect(() => {
     if (initialValue !== undefined) {
@@ -79,6 +91,45 @@ const Select: React.FC<SelectProps> = ({
     }
   }
 
+  const handleAddValue = async (value: string) => {
+    try {
+      if (isEditingMode === true) {
+        const result = await handleCreatePropertyFacility({
+          value: value,
+          propertyId: propertyId!,
+        })
+        if (result?.success) {
+          handleSelect(value)
+        }
+        return
+      }
+
+      handleSelect(value)
+    } catch (error) {
+      console.log('Add facility error: ', error)
+    }
+  }
+
+  const handleDeleteValue = async (value: string, option: Option) => {
+    try {
+      if (isEditingMode === true) {
+        const facilityId = facilities?.filter(
+          (e) => e.value === option.value
+        )[0].id
+
+        const result = await handleDeletePropertyFacility(facilityId!)
+        if (result?.success) {
+          handleSelect(value)
+        }
+        return
+      }
+
+      handleSelect(value)
+    } catch (error) {
+      console.log('Delete facility error: ', error)
+    }
+  }
+
   const getDisplayValue = () => {
     if (isMulti) {
       return Array.isArray(value) && value.length > 0
@@ -96,14 +147,16 @@ const Select: React.FC<SelectProps> = ({
                   alt='delete'
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                      handleSelect(option.value)
+                      handleDeleteValue(option.value, option)
                     }
                   }}
                   onMouseDown={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
                   }}
-                  onClick={() => handleSelect(option.value)}
+                  onClick={() => {
+                    handleDeleteValue(option.value, option)
+                  }}
                 />
               </Badge>
             ))
@@ -142,7 +195,9 @@ const Select: React.FC<SelectProps> = ({
                 <CommandItem
                   key={option.value}
                   value={option.value}
-                  onSelect={() => handleSelect(option.value)}
+                  onSelect={() => {
+                    handleAddValue(option.value)
+                  }}
                 >
                   <Check
                     className={cn(

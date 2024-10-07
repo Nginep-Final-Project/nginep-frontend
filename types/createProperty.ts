@@ -34,7 +34,7 @@ interface PeakSeasonRate {
     from: string
     to: string
   }
-  rateType: 'PERCENTAGE' | 'FIXED_AMOUNT'
+  rateType: string
   rateValue: number
   propertyId?: number
 }

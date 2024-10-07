@@ -19,12 +19,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { ACCEPTED_IMAGE_TYPES, createRoomSchema } from '@/utils/schema'
-import DatePicker from '@/components/DatePicker'
-import { DateRange } from 'react-day-picker'
 import useUploadImage from '@/hooks/useUploadImage'
 import DatePeakSeasonPicker from './DatePeakSeasonPicker'
-import { watch } from 'fs'
 import { NotAvailableDates } from '@/types/createProperty'
+import usePropertyRoom from '@/hooks/usePropertyRoom'
 
 export type RoomFormValues = z.infer<typeof createRoomSchema>
 
@@ -33,6 +31,8 @@ interface RoomDialogProps {
   onOpenChange: (open: boolean) => void
   onSave: (room: RoomFormValues) => void
   initialRoom: RoomFormValues | null
+  isEditingMode?: boolean
+  propertyId?: number
 }
 
 const RoomDialog: React.FC<RoomDialogProps> = ({
@@ -40,38 +40,95 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
   onOpenChange,
   onSave,
   initialRoom,
+  isEditingMode = false,
+  propertyId,
 }) => {
-  const { handleUploadImage, loading } = useUploadImage()
+  const { handleUploadImage, handleUpdateImage, loading } = useUploadImage()
+  const {
+    handleCreatePropertyRoom,
+    handleUpdatePropertyRoom,
+    loading: loadingPropertyRoom,
+  } = usePropertyRoom()
   const form = useForm<RoomFormValues>({
     resolver: zodResolver(createRoomSchema),
     defaultValues: {
+      id: undefined,
       notAvailableDates: [],
     },
   })
+
+  const onCancel = () => {
+    form.reset({
+      id: undefined,
+      name: '',
+      description: '',
+      maxGuests: 1,
+      basePrice: 1,
+      totalRoom: 1,
+      notAvailableDates: [],
+    })
+  }
 
   useEffect(() => {
     if (initialRoom) {
       form.reset(initialRoom)
     } else {
-      form.reset({
-        name: '',
-        description: '',
-        maxGuests: 1,
-        basePrice: 1,
-        totalRoom: 1,
-        notAvailableDates: [],
-      })
+      onCancel()
     }
   }, [initialRoom, form])
 
   const onSubmit = async (data: RoomFormValues) => {
     console.log(data)
+    if (isEditingMode && initialRoom) {
+      console.log('edit exists room')
+      const result = await handleUpdatePropertyRoom({
+        id: data.id!,
+        name: data.name,
+        roomPicture: data.roomPicture,
+        roomPictureId: data.roomPictureId!,
+        description: data.description,
+        maxGuests: data.maxGuests,
+        basePrice: data.basePrice,
+        totalRoom: data.totalRoom,
+      })
+      if (result?.success) {
+        onSave(data)
+        form.reset()
+      }
+
+      return
+    }
+    if (isEditingMode) {
+      console.log('add room when edit')
+      const result = await handleCreatePropertyRoom({
+        name: data.name,
+        roomPicture: data.roomPicture,
+        roomPictureId: data.roomPictureId!,
+        description: data.description,
+        maxGuests: data.maxGuests,
+        basePrice: data.basePrice,
+        totalRoom: data.totalRoom,
+        notAvailableDates: data.notAvailableDates!,
+        propertyId: propertyId!,
+      })
+      if (result?.success) {
+        onSave(data)
+        form.reset()
+      }
+      return
+    }
     onSave(data)
     form.reset()
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={() => {
+        onCancel()
+        onOpenChange(false)
+      }}
+    >
       <DialogContent className='sm:max-w-[425px] bg-white overflow-y-auto max-h-screen'>
         <DialogHeader>
           <DialogTitle>{initialRoom ? 'Edit Room' : 'Add Room'}</DialogTitle>
@@ -178,11 +235,19 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                     <Input
                       type='file'
                       accept={ACCEPTED_IMAGE_TYPES.join(',')}
-                      placeholder={'Room Image'}
+                      placeholder={initialRoom?.roomPicture ?? 'Room Image'}
                       onChange={async (e) => {
                         const file = e.target.files?.[0]
                         if (file) {
-                          const uploadImage = await handleUploadImage(file)
+                          let uploadImage
+                          if (isEditingMode === true && initialRoom) {
+                            uploadImage = await handleUpdateImage(
+                              file,
+                              form.watch('roomPictureId')!
+                            )
+                          } else {
+                            uploadImage = await handleUploadImage(file)
+                          }
                           onChange(uploadImage?.data.url)
                           form.setValue(
                             'roomPictureId',
@@ -220,8 +285,8 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                 variant='outline'
                 type='button'
                 onClick={() => {
+                  onCancel()
                   onOpenChange(false)
-                  form.reset()
                 }}
               >
                 Cancel

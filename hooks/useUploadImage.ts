@@ -48,6 +48,36 @@ const useUploadImage = () => {
     setLoading(false)
   }
 
-  return { handleUploadImage, loading, error }
+  const handleUpdateImage = async (file: File, publicId: string) => {
+    setLoading(true)
+    try {
+      const formData = new FormData()
+      formData.append('publicId', publicId)
+      formData.append('file', file)
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/cloudinary/update`,
+        {
+          method: 'PUT',
+          body: formData,
+          credentials: 'include',
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Upload failed')
+      }
+
+      const data: ResponseImageUpload = await response.json()
+      setLoading(false)
+
+      return data
+    } catch (error) {
+      setError(error)
+      console.log('Upload image error:', error)
+    }
+    setLoading(false)
+  }
+
+  return { handleUploadImage, handleUpdateImage, loading, error }
 }
 export default useUploadImage

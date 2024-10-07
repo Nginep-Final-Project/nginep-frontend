@@ -3,12 +3,12 @@ import Image from 'next/image'
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { useDropzone, DropzoneOptions, FileRejection } from 'react-dropzone'
 import Delete from '@/public/delete.svg'
-import { ArrowLeft } from 'lucide-react'
 import Edit from '@/public/pencil.svg'
 import useUploadImage from '@/hooks/useUploadImage'
-import { init } from 'next/dist/compiled/webpack/webpack'
+import usePropertyImage from '@/hooks/usePropertyImage'
 
 interface UploadedImage {
+  id?: number
   file?: File
   preview?: string
   path?: string
@@ -19,15 +19,25 @@ interface UploadedImage {
 interface InputImagesProps {
   onUploadSuccess: (images: UploadedImage[]) => void
   initialImages?: UploadedImage[]
+  propertyId?: number
+  isEditingMode?: boolean
 }
 
 const InputImages: React.FC<InputImagesProps> = ({
   onUploadSuccess,
   initialImages,
+  propertyId,
+  isEditingMode = false,
 }) => {
   const [selectedImages, setSelectedImages] = useState<UploadedImage[]>([])
   const [uploading, setUploading] = useState(false)
   const { handleUploadImage } = useUploadImage()
+  const {
+    handleCreatePropertyImage,
+    handleDeletePropertyImage,
+    handleSetThumbnail,
+    loading,
+  } = usePropertyImage()
 
   useEffect(() => {
     if (initialImages && initialImages.length > 0) {
@@ -48,43 +58,57 @@ const InputImages: React.FC<InputImagesProps> = ({
     }
   }
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const newImages = acceptedFiles.map((file, index) => ({
-        file,
-        preview: URL.createObjectURL(file),
-        isThumbnail: index === 0,
-      }))
-      setSelectedImages((prev) => [...prev, ...newImages])
-    },
-    [selectedImages]
-  )
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const newImages = acceptedFiles.map((file, index) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      isThumbnail: index === 0,
+    }))
+    setSelectedImages((prev) => [...prev, ...newImages])
+  }, [])
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { 'image/*': [] },
   })
 
-  const deleteImage = (index: number) => {
-    setSelectedImages((prev) => {
-      const newImages = prev.filter((_, i) => i !== index)
-      if (index === 0 && newImages.length > 0) {
-        newImages[0].isThumbnail = true
+  const deleteImage = async (index: number, propertyImageId?: number) => {
+    try {
+      if (isEditingMode === true) {
+        await handleDeletePropertyImage(propertyImageId!)
       }
-      return newImages
-    })
+      setSelectedImages((prev) => {
+        const newImages = prev.filter((_, i) => i !== index)
+        if (index === 0 && newImages.length > 0) {
+          newImages[0].isThumbnail = true
+        }
+        return newImages
+      })
+    } catch (error) {
+      console.log('Delete image error: ', error)
+    }
   }
 
-  const moveImageToFront = (index: number) => {
-    setSelectedImages((prev) => {
-      const newImages = [
-        { ...prev[index], isCover: true },
-        ...prev.slice(0, index),
-        ...prev.slice(index + 1),
-      ]
-      newImages[1].isThumbnail = false
-      return newImages
-    })
+  const moveImageToFront = async (index: number, publicKey?: string) => {
+    try {
+      if (isEditingMode === true) {
+        await handleSetThumbnail({
+          publicKey: publicKey!,
+          propertyId: propertyId!,
+        })
+      }
+      setSelectedImages((prev) => {
+        const newImages = [
+          { ...prev[index], isCover: true },
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]
+        newImages[1].isThumbnail = false
+        return newImages
+      })
+    } catch (error) {
+      console.log('Set thumbnail error:', error)
+    }
   }
 
   const handleUpload = async () => {
@@ -94,6 +118,19 @@ const InputImages: React.FC<InputImagesProps> = ({
       const uploadedImages = await Promise.all(
         imagesToUpload.map((image, index) => uploadToCloudinary(image, index))
       )
+
+      if (isEditingMode === true) {
+        await Promise.all(
+          uploadedImages.map((image, index) =>
+            handleCreatePropertyImage({
+              path: image.path!,
+              publicKey: image.publicKey!,
+              isThumbnail: image.isThumbnail,
+              propertyId: propertyId,
+            })
+          )
+        )
+      }
 
       const updatedImages = selectedImages.map((img) => {
         const uploadedImg = uploadedImages.find(
@@ -137,13 +174,13 @@ const InputImages: React.FC<InputImagesProps> = ({
                   <Image
                     src={Delete}
                     alt='delete'
-                    onClick={() => deleteImage(index)}
+                    onClick={() => deleteImage(index, image.id)}
                   />
                   {index !== 0 && (
                     <Image
                       src={Edit}
                       alt='edit'
-                      onClick={() => moveImageToFront(index)}
+                      onClick={() => moveImageToFront(index, image.publicKey!)}
                     />
                   )}
                 </div>
@@ -161,10 +198,10 @@ const InputImages: React.FC<InputImagesProps> = ({
           <Button
             onClick={handleUpload}
             className='px-4 py-2 mt-8 text-base font-bold'
-            disabled={uploading}
+            disabled={uploading || loading}
             type='button'
           >
-            {uploading ? 'loading...' : 'Upload'}
+            {uploading || loading ? 'loading...' : 'Upload'}
           </Button>
         </div>
       )}
