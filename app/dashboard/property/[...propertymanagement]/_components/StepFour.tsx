@@ -14,10 +14,10 @@ import {
   CREATE_PROPERTY_STEP_TWO,
 } from '@/utils/constanta'
 import usePropertyManagement from '@/hooks/usePropertyManagement'
-import { CreateProperty, emptyCreateProperty } from '@/types/createProperty'
 import { toast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 import { PropertyDetail } from '@/types/property'
+import usePeakSeasonRate from '@/hooks/usePeakSeasonRate'
 
 const StepFour: React.FC<{
   isEditingMode: boolean
@@ -42,7 +42,14 @@ const StepFour: React.FC<{
     },
   })
   const router = useRouter()
-  const { handleCreateProperty, loading } = usePropertyManagement()
+  const { handleCreateProperty, handleUpdateProperty, loading } =
+    usePropertyManagement()
+  const {
+    handleDeletePeakSeason,
+    handleUpdatePeakSeason,
+    handleCreatePeakSeason,
+    loading: loadingPeakSeason,
+  } = usePeakSeasonRate()
 
   useEffect(() => {
     if (currentStep === 4) {
@@ -60,45 +67,112 @@ const StepFour: React.FC<{
     }
   }, [currentStep, propertyData, reset])
 
-  const handleSavePeakSeasonRate = (
+  const handleSavePeakSeasonRate = async (
     peakSeasonRate: PeakSeasonRateFormValues
   ) => {
-    const currentPeakSeasonRates = watch('peakSeasonRates') || []
-    if (editingPeakSeason) {
-      setValue(
-        'peakSeasonRates',
-        currentPeakSeasonRates.map((p) =>
-          p.id === editingPeakSeason.id
-            ? {
-                ...peakSeasonRate,
-                id: editingPeakSeason.id,
-              }
-            : p
+    try {
+      const currentPeakSeasonRates = watch('peakSeasonRates') || []
+      if (editingPeakSeason) {
+        console.log('editingPeakSeason', peakSeasonRate)
+        if (isEditingMode === true) {
+          const result = await handleUpdatePeakSeason({
+            id: editingPeakSeason.id!,
+            peakSeasonDates: {
+              from: peakSeasonRate.peakSeasonDates?.from!,
+              to: peakSeasonRate.peakSeasonDates?.to!,
+            },
+            rateType: peakSeasonRate.rateType,
+            rateValue: peakSeasonRate.rateValue,
+          })
+          if (result?.success) {
+            setValue(
+              'peakSeasonRates',
+              currentPeakSeasonRates.map((p) =>
+                p.id === editingPeakSeason.id
+                  ? {
+                      ...peakSeasonRate,
+                      id: editingPeakSeason.id,
+                    }
+                  : p
+              )
+            )
+          }
+          setEditingPeakSeason(null)
+          setIsPeakSeasonPriceOpen(false)
+          return
+        }
+        setValue(
+          'peakSeasonRates',
+          currentPeakSeasonRates.map((p) =>
+            p.id === editingPeakSeason.id
+              ? {
+                  ...peakSeasonRate,
+                  id: editingPeakSeason.id,
+                }
+              : p
+          )
         )
-      )
-    } else {
-      setValue('peakSeasonRates', [
-        ...currentPeakSeasonRates,
-        { ...peakSeasonRate, id: Math.floor(Math.random() * 1000000) },
-      ])
+      } else {
+        if (isEditingMode === true) {
+          const result = await handleCreatePeakSeason({
+            peakSeasonDates: {
+              from: peakSeasonRate.peakSeasonDates?.from!,
+              to: peakSeasonRate.peakSeasonDates?.to!,
+            },
+            rateType: peakSeasonRate.rateType,
+            rateValue: peakSeasonRate.rateValue,
+            propertyId: propertyData.id,
+          })
+          if (result?.success) {
+            setValue('peakSeasonRates', [
+              ...currentPeakSeasonRates,
+              { ...peakSeasonRate, id: result.data.id },
+            ])
+          }
+          setEditingPeakSeason(null)
+          setIsPeakSeasonPriceOpen(false)
+          return
+        }
+        setValue('peakSeasonRates', [
+          ...currentPeakSeasonRates,
+          { ...peakSeasonRate, id: Math.floor(Math.random() * 1000000) },
+        ])
+      }
+      setEditingPeakSeason(null)
+      setIsPeakSeasonPriceOpen(false)
+    } catch (error) {
+      console.log('Save peak season error: ', error)
     }
-    setEditingPeakSeason(null)
-    setIsPeakSeasonPriceOpen(false)
   }
 
-  const handleEditPeakSeasonRate = (
-    peakSeasonRate: PeakSeasonRateFormValues
-  ) => {
+  const handleEdit = (peakSeasonRate: PeakSeasonRateFormValues) => {
     setEditingPeakSeason(peakSeasonRate)
     setIsPeakSeasonPriceOpen(true)
   }
 
-  const handleDeletePeakSeason = (id: number) => {
-    const currentPeakSeason = watch('peakSeasonRates') || []
-    setValue(
-      'peakSeasonRates',
-      currentPeakSeason.filter((peakSeasonRate) => peakSeasonRate.id !== id)
-    )
+  const handleDelete = async (id: number) => {
+    try {
+      if (isEditingMode === true) {
+        const result = await handleDeletePeakSeason(id)
+        if (result?.success) {
+          const currentPeakSeason = watch('peakSeasonRates') || []
+          setValue(
+            'peakSeasonRates',
+            currentPeakSeason.filter(
+              (peakSeasonRate) => peakSeasonRate.id !== id
+            )
+          )
+        }
+        return
+      }
+      const currentPeakSeason = watch('peakSeasonRates') || []
+      setValue(
+        'peakSeasonRates',
+        currentPeakSeason.filter((peakSeasonRate) => peakSeasonRate.id !== id)
+      )
+    } catch (error) {
+      console.log('Delete peak season error: ', error)
+    }
   }
 
   const onSubmit = async (
@@ -123,7 +197,12 @@ const StepFour: React.FC<{
         ...data,
       }
       console.log('request create property>>>>', request)
-      const result = await handleCreateProperty(request)
+      let result
+      if (isEditingMode === true) {
+        result = await handleUpdateProperty({ ...request, id: propertyData.id })
+      } else {
+        result = await handleCreateProperty(request)
+      }
       if (!result?.success) {
         toast({
           variant: 'destructive',
@@ -132,7 +211,7 @@ const StepFour: React.FC<{
         return
       }
       toast({
-        title: 'Create Property Success',
+        title: result.message,
       })
       sessionStorage.removeItem(CREATE_PROPERTY_STEP_ONE)
       sessionStorage.removeItem(CREATE_PROPERTY_STEP_TWO)
@@ -199,7 +278,7 @@ const StepFour: React.FC<{
                 <div className='flex flex-col items-start px-4'>
                   <Button
                     variant='link'
-                    onClick={() => handleEditPeakSeasonRate(peakSeason)}
+                    onClick={() => handleEdit(peakSeason)}
                     className='font-semibold p-0'
                     type='button'
                   >
@@ -207,7 +286,7 @@ const StepFour: React.FC<{
                   </Button>
                   <Button
                     variant='link'
-                    onClick={() => handleDeletePeakSeason(peakSeason.id!)}
+                    onClick={() => handleDelete(peakSeason.id!)}
                     className='font-semibold text-primary p-0'
                     type='button'
                   >

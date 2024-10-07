@@ -27,7 +27,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const router = useRouter()
 
   return (
-    <div className='flex flex-col-reverse md:flex-row border border-secondary rounded-lg p-4 mb-4 w-full'>
+    <div className='flex flex-col-reverse md:flex-row border border-secondary rounded-lg p-4 mb-4 w-full h-56 justify-between'>
       <div className='md:w-2/3 flex flex-col justify-between'>
         <div
           onClick={() => {
@@ -63,7 +63,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </div>
       </div>
 
-      <div className='md:w-1/3 relative'>
+      <div>
         {!imageUrl ? (
           <div>Loading...</div>
         ) : imageUrl.length === 0 ? (
@@ -72,11 +72,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <Image
             src={imgSrc}
             alt={name}
-            width={300}
+            width={200}
             height={200}
-            style={{ height: '200px', width: '200px' }}
-            className='h-[200px] w-[300px] rounded-md object-cover'
-            layout='responsive'
+            style={{ height: '100%', width: '100%' }}
+            className='h-[200px] w-[200px] rounded-md object-contain'
             onError={() => {
               setImgSrc(
                 'https://res.cloudinary.com/dhbg53ncx/image/upload/v1727888100/awip3lporwjjt3cewu4o.jpg'

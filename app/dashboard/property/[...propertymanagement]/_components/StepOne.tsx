@@ -19,7 +19,8 @@ const StepOne: React.FC<{
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
   propertyData: PropertyDetail
-}> = ({ currentStep, setCurrentStep, propertyData }) => {
+  isEditingMode: boolean
+}> = ({ currentStep, setCurrentStep, propertyData, isEditingMode }) => {
   const { result: resultFacility, loading: loadingFacility } = useFacility()
   const { result: resultCategory, loading: loadingCategory } = useCategory()
   const {
@@ -120,6 +121,9 @@ const StepOne: React.FC<{
                   onSelect={field.onChange}
                   isMulti={true}
                   initialValue={field.value}
+                  isEditingMode={isEditingMode}
+                  propertyId={propertyData.id}
+                  facilities={propertyData.propertyFacilities}
                 />
               }
               error={errors.propertyFacilities?.message}
@@ -154,6 +158,8 @@ const StepOne: React.FC<{
                 <InputImages
                   onUploadSuccess={(files) => field.onChange(files)}
                   initialImages={field.value}
+                  isEditingMode={isEditingMode}
+                  propertyId={propertyData.id}
                 />
               }
               error={errors.propertyImage?.message}
