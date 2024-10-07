@@ -29,7 +29,11 @@ const Navbar = () => {
   const [isEmailVerification, setIsEmailVerification] = useState(false)
 
   const router = useRouter()
-  const session = useSession({
+  const {
+    data: session,
+    status,
+    update,
+  } = useSession({
     onUnauthenticated() {
       setIsAuthenticated(false)
     },
@@ -100,7 +104,7 @@ const Navbar = () => {
               <Menu size={40} className='md:hidden px-2' />
             </DropdownMenuTrigger>
             <DropdownMenuContent className='border-secondary bg-white'>
-              {!session.data?.user.accessToken && (
+              {status !== 'authenticated' && (
                 <>
                   <DropdownMenuItem
                     onSelect={() => setIsLogin(!isLogin)}
@@ -114,7 +118,7 @@ const Navbar = () => {
                 </>
               )}
 
-              {session.data?.user.accessToken && (
+              {status === 'authenticated' && (
                 <>
                   <DropdownMenuItem
                     className='font-semibold'

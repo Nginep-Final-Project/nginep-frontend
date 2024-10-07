@@ -73,8 +73,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user, account }) {
       if (user) {
-        token.role = user.role
         token.accessToken = user.token
+        token.role = user.role
         token.name = user.name!
         token.picture = user.image
         token.id = user.id
@@ -118,8 +118,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user && token.role) {
-        session.user.role = token.role
         session.user.accessToken = token.accessToken
+        session.user.role = token.role
         session.user.name = token.name!
         session.user.image = token.picture!
         session.user.id = token.id!
@@ -127,10 +127,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
   },
-  pages: {
-    signIn: '/',
-    signOut: '/',
-  },
+  // pages: {
+  //   signIn: '/',
+  //   signOut: '/',
+  // },
   session: { strategy: 'jwt', maxAge: 24 * 60 * 60 },
   jwt: {
     maxAge: 24 * 60 * 60,
