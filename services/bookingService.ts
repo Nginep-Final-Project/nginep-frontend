@@ -43,10 +43,14 @@ export const checkExistingPendingBooking = async (
 
 export const getUserBookings = async (): Promise<UserBookings[]> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: UserBookings[] }>(
       `${hostnameApi}/${prefixApi}/bookings/user`,
       {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       }
     );
     return response.data.data;
