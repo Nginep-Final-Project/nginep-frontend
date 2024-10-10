@@ -6,6 +6,7 @@ import Error from '@/components/Error'
 import Loading from '@/components/Loading'
 import usePropertyManagement from '@/hooks/usePropertyManagement'
 import { useRouter } from 'next/navigation'
+import PropertyListCardSkeleton from '../_component/PropertyListCardSkeleton'
 
 const initialParams = {
   page: 0,
@@ -46,6 +47,10 @@ const PropertyList = () => {
 
   if (error) {
     return <Error />
+  }
+
+  if (loading || loadingDelete) {
+    return <PropertyListCardSkeleton count={12} />
   }
 
   return (
