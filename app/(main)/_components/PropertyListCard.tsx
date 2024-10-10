@@ -47,6 +47,7 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
                   </div>
 
                   <p className='md:text-lg font-semibold'>
+                    Rp{' '}
                     {property.rooms.length > 0
                       ? property.rooms.sort(
                           (a, b) => a.basePrice - b.basePrice

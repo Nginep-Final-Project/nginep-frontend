@@ -121,6 +121,7 @@ const PersonalData: React.FC<PersonalDataProps> = ({
                         options={gender}
                         placeholder='Select gender'
                         onSelect={field.onChange}
+                        initialValue={field.value}
                       />
                     }
                     error={errors.gender?.message}

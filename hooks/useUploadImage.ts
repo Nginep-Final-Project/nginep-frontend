@@ -24,10 +24,20 @@ const useUploadImage = () => {
     try {
       const formData = new FormData()
       formData.append('file', file)
+
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/cloudinary/upload`,
         {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
           body: formData,
           credentials: 'include',
         }
@@ -54,10 +64,20 @@ const useUploadImage = () => {
       const formData = new FormData()
       formData.append('publicId', publicId)
       formData.append('file', file)
+
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/cloudinary/update`,
         {
           method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
           body: formData,
           credentials: 'include',
         }

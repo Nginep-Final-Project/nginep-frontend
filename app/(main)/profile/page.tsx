@@ -17,7 +17,7 @@ const Profile = () => {
   if (error) {
     return <Error />
   }
-
+  console.log(result)
   return (
     <>
       <div className='grid lg:grid-cols-2 gap-y-10 lg:gap-y-14 px-5 py-14 lg:px-16 lg:py-36'>
