@@ -13,6 +13,7 @@ import useRoom from '@/hooks/useRoom'
 import { SelectedRoom } from './DetailProperty'
 import NoResult from '@/components/NoResult'
 import Searching from '@/components/Searching'
+import { formatRupiah } from '@/utils/RupiahFormatterCurrency'
 
 const Availability: React.FC<{
   property: PropertyDetail
@@ -193,7 +194,8 @@ const Availability: React.FC<{
                       </p>
 
                       <p className='font-bold mt-2'>
-                        Rp {room.basePrice.toLocaleString()} / night
+                        {/* Rp {room.basePrice.toLocaleString()} / night */}
+                        {`${formatRupiah(room.basePrice)} / night`}
                       </p>
                       <p className='text-xs text-grey-text'>
                         Max occupancy: {room.maxGuests} guests

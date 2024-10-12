@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import PropertyCardSkeleton from './PropertyCardSkeleton'
+import { formatRupiah } from '@/utils/RupiahFormatterCurrency'
 
 interface PropertyListCardProps {
   properties: Property[]
@@ -52,12 +53,19 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
                   </div>
 
                   <p className='md:text-lg font-semibold'>
-                    Rp{' '}
+                    {`${formatRupiah(
+                      property.rooms.length > 0
+                        ? property.rooms.sort(
+                            (a, b) => a.basePrice - b.basePrice
+                          )[0].basePrice
+                        : 0
+                    )} / night`}
+                    {/* Rp{' '}
                     {property.rooms.length > 0
                       ? property.rooms.sort(
                           (a, b) => a.basePrice - b.basePrice
                         )[0].basePrice
-                      : 0}
+                      : 0} */}
                     <span className='text-sm text-grey-text'>/ night</span>
                   </p>
                 </div>
