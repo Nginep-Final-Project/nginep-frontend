@@ -8,10 +8,6 @@ import {
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
-const token = document.cookie
-  .split("; ")
-  .find((row) => row.startsWith("sid="))
-  ?.split("=")[1];
 
 export const createReview = async (
   reviewData: CreateReviewDto
@@ -30,6 +26,7 @@ export const createReview = async (
 
 export const getUserReviews = async (): Promise<ReviewDto[]> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: ReviewDto[] }>(
       `${hostnameApi}/${prefixApi}/reviews/user`,
       {
@@ -64,6 +61,7 @@ export const createReviewReply = async (
   replyData: CreateReviewReplyDto
 ): Promise<ReviewReplyDto> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.post<{ data: ReviewReplyDto }>(
       `${hostnameApi}/${prefixApi}/review-replies/create`,
       replyData,

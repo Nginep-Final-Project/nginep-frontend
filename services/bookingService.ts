@@ -7,15 +7,12 @@ import { UnreviewedBookingDto } from "@/types/booking";
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
-const token = document.cookie
-  .split("; ")
-  .find((row) => row.startsWith("sid="))
-  ?.split("=")[1];
 
 export const createBooking = async (
   bookingData: CreateBookingDto
 ): Promise<number> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.post<{ data: { bookingId: number } }>(
       `${hostnameApi}/${prefixApi}/bookings/create`,
       bookingData,
@@ -37,6 +34,7 @@ export const checkExistingPendingBooking = async (
   roomId: number
 ): Promise<number | null> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: number | null }>(
       `${hostnameApi}/${prefixApi}/bookings/check-existing-pending-booking`,
       {
@@ -56,6 +54,7 @@ export const checkExistingPendingBooking = async (
 
 export const getUserBookings = async (): Promise<UserBookings[]> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: UserBookings[] }>(
       `${hostnameApi}/${prefixApi}/bookings/user`,
       {
@@ -114,6 +113,7 @@ export const cancelBookingByUser = async (bookingId: number): Promise<void> => {
 
 export const getTenantBookings = async (): Promise<TenantBookings[]> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: TenantBookings[] }>(
       `${hostnameApi}/${prefixApi}/bookings/tenant`,
       {
@@ -146,6 +146,7 @@ export const getUnreviewedBookings = async (): Promise<
   UnreviewedBookingDto[]
 > => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: UnreviewedBookingDto[] }>(
       `${hostnameApi}/${prefixApi}/bookings/user/unreviewed`,
       {

@@ -9,13 +9,10 @@ import { format } from "date-fns";
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
-const token = document.cookie
-  .split("; ")
-  .find((row) => row.startsWith("sid="))
-  ?.split("=")[1];
 
 export const getOverviewReport = async (): Promise<OverviewReportDto> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: OverviewReportDto }>(
       `${hostnameApi}/${prefixApi}/analytics/overview`,
       {
@@ -38,6 +35,7 @@ export const getEarningsByTransaction = async (
   endDate: Date
 ): Promise<EarningsByTransactionDto> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get(
       `${hostnameApi}/${prefixApi}/analytics/earnings/transaction`,
       {
@@ -63,6 +61,7 @@ export const getEarningsByProperty = async (): Promise<
   EarningsByPropertyDto[]
 > => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: EarningsByPropertyDto[] }>(
       `${hostnameApi}/${prefixApi}/analytics/earnings/property`,
       {
@@ -84,6 +83,7 @@ export const getPropertyAvailability = async (
   endDate: string
 ) => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: PropertyAvailabilityDto[] }>(
       `${hostnameApi}/${prefixApi}/analytics/property-availability`,
       {
