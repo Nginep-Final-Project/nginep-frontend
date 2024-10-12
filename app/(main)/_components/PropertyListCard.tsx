@@ -60,12 +60,6 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
                           )[0].basePrice
                         : 0
                     )} / night`}
-                    {/* Rp{' '}
-                    {property.rooms.length > 0
-                      ? property.rooms.sort(
-                          (a, b) => a.basePrice - b.basePrice
-                        )[0].basePrice
-                      : 0} */}
                     <span className='text-sm text-grey-text'>/ night</span>
                   </p>
                 </div>

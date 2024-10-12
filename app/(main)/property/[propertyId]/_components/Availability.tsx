@@ -194,7 +194,6 @@ const Availability: React.FC<{
                       </p>
 
                       <p className='font-bold mt-2'>
-                        {/* Rp {room.basePrice.toLocaleString()} / night */}
                         {`${formatRupiah(room.basePrice)} / night`}
                       </p>
                       <p className='text-xs text-grey-text'>
