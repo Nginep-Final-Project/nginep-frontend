@@ -12,12 +12,18 @@ const usePropertyFacility = () => {
   }) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property-facility`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',
@@ -37,10 +43,19 @@ const usePropertyFacility = () => {
   const handleDeletePropertyFacility = async (propertyFacilityId: number) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property-facility/${propertyFacilityId}`,
         {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
           credentials: 'include',
         }
       )

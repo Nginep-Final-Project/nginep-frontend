@@ -5,6 +5,8 @@ import { Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import PropertyCardSkeleton from './PropertyCardSkeleton'
+import { formatRupiah } from '@/utils/RupiahFormatterCurrency'
 
 interface PropertyListCardProps {
   properties: Property[]
@@ -14,9 +16,13 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
   properties,
   loading,
 }) => {
+  if (loading) {
+    return <PropertyCardSkeleton count={12} />
+  }
+
   return (
     <>
-      {!loading && properties.length === 0 ? (
+      {properties.length === 0 ? (
         <NoResult message="Sorry, it's like trying to find a unicorn—no luck!" />
       ) : (
         <div className='grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 md:p-11'>
@@ -47,11 +53,13 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
                   </div>
 
                   <p className='md:text-lg font-semibold'>
-                    {property.rooms.length > 0
-                      ? property.rooms.sort(
-                          (a, b) => a.basePrice - b.basePrice
-                        )[0].basePrice
-                      : 0}
+                    {`${formatRupiah(
+                      property.rooms.length > 0
+                        ? property.rooms.sort(
+                            (a, b) => a.basePrice - b.basePrice
+                          )[0].basePrice
+                        : 0
+                    )} / night`}
                     <span className='text-sm text-grey-text'>/ night</span>
                   </p>
                 </div>

@@ -10,12 +10,18 @@ const useNotAvailableDate = () => {
   const handleCreateNotAvailableDate = async (request: NotAvailableDates) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/bookings/not-available-booking`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',
@@ -35,10 +41,19 @@ const useNotAvailableDate = () => {
   const handleDeleteNotAvailableDate = async (bookingId: number) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/bookings/not-available-booking/${bookingId}`,
         {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
           credentials: 'include',
         }
       )

@@ -10,12 +10,18 @@ const usePeakSeasonRate = () => {
   const handleCreatePeakSeason = async (request: PeakSeasonRate) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/peak-season-rates`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',
@@ -35,10 +41,19 @@ const usePeakSeasonRate = () => {
   const handleDeletePeakSeason = async (peakSeasonRatesId: number) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/peak-season-rates/${peakSeasonRatesId}`,
         {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
           credentials: 'include',
         }
       )
@@ -70,12 +85,18 @@ const usePeakSeasonRate = () => {
   const handleUpdatePeakSeason = async (request: PeakSeasonRate) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/peak-season-rates`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',

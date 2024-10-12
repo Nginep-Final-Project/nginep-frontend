@@ -11,9 +11,18 @@ const useCategory = () => {
     const handleGetCategory = async () => {
       setLoading(true)
       try {
+        const token = document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('sid='))
+          ?.split('=')[1]
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/category`,
           {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: ` Bearer ${token}`,
+            },
             credentials: 'include',
           }
         )
@@ -34,12 +43,18 @@ const useCategory = () => {
   const handleAddCategory = async (request: { value: string }) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/category`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',
@@ -59,12 +74,18 @@ const useCategory = () => {
   const handleEditCategory = async (request: { id: number; value: string }) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/category`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',
@@ -84,10 +105,19 @@ const useCategory = () => {
   const handleDeleteCategory = async (categoryId: number) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/category/${categoryId}`,
         {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
           credentials: 'include',
         }
       )

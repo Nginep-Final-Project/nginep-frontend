@@ -75,10 +75,18 @@ const ProfileImage: React.FC<ProfileImageProp> = ({
       }
       formData.append('file', file)
 
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/users/update/profile-picture`,
         {
           method: 'POST',
+          headers: {
+            Authorization: ` Bearer ${token}`,
+          },
           body: formData,
           credentials: 'include',
         }

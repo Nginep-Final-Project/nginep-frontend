@@ -11,10 +11,19 @@ const useFacility = () => {
     const handleGetFacility = async () => {
       setLoading(true)
       try {
+        const token = document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('sid='))
+          ?.split('=')[1]
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/facility`,
           {
             credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: ` Bearer ${token}`,
+            },
           }
         )
         const data: response = await response.json()
@@ -34,12 +43,18 @@ const useFacility = () => {
   const handleAddFacility = async (request: { value: string }) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/facility`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',
@@ -59,12 +74,18 @@ const useFacility = () => {
   const handleEditFacility = async (request: { id: number; value: string }) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/facility`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
           },
           body: JSON.stringify(request),
           credentials: 'include',
@@ -84,10 +105,19 @@ const useFacility = () => {
   const handleDeleteFacility = async (facilityId: number) => {
     setLoading(true)
     try {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sid='))
+        ?.split('=')[1]
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/facility/${facilityId}`,
         {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
           credentials: 'include',
         }
       )
