@@ -7,6 +7,10 @@ import { UnreviewedBookingDto } from "@/types/booking";
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
+const token = document.cookie
+  .split("; ")
+  .find((row) => row.startsWith("sid="))
+  ?.split("=")[1];
 
 export const createBooking = async (
   bookingData: CreateBookingDto
@@ -17,6 +21,9 @@ export const createBooking = async (
       bookingData,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data.bookingId;
@@ -32,7 +39,13 @@ export const checkExistingPendingBooking = async (
   try {
     const response = await axios.get<{ data: number | null }>(
       `${hostnameApi}/${prefixApi}/bookings/check-existing-pending-booking`,
-      { params: { roomId }, withCredentials: true }
+      {
+        params: { roomId },
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return response.data.data;
   } catch (error) {
@@ -43,14 +56,13 @@ export const checkExistingPendingBooking = async (
 
 export const getUserBookings = async (): Promise<UserBookings[]> => {
   try {
-    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: UserBookings[] }>(
       `${hostnameApi}/${prefixApi}/bookings/user`,
       {
         withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -106,6 +118,9 @@ export const getTenantBookings = async (): Promise<TenantBookings[]> => {
       `${hostnameApi}/${prefixApi}/bookings/tenant`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -135,6 +150,9 @@ export const getUnreviewedBookings = async (): Promise<
       `${hostnameApi}/${prefixApi}/bookings/user/unreviewed`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;

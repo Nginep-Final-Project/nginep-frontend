@@ -9,6 +9,10 @@ import { format } from "date-fns";
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
+const token = document.cookie
+  .split("; ")
+  .find((row) => row.startsWith("sid="))
+  ?.split("=")[1];
 
 export const getOverviewReport = async (): Promise<OverviewReportDto> => {
   try {
@@ -16,6 +20,9 @@ export const getOverviewReport = async (): Promise<OverviewReportDto> => {
       `${hostnameApi}/${prefixApi}/analytics/overview`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -40,6 +47,9 @@ export const getEarningsByTransaction = async (
           endDate: format(endDate, "yyyy-MM-dd"),
         },
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -57,6 +67,9 @@ export const getEarningsByProperty = async (): Promise<
       `${hostnameApi}/${prefixApi}/analytics/earnings/property`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -76,6 +89,9 @@ export const getPropertyAvailability = async (
       {
         params: { startDate, endDate },
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;

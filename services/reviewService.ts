@@ -8,6 +8,10 @@ import {
 
 const hostnameApi = process.env.NEXT_PUBLIC_HOSTNAME_API;
 const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
+const token = document.cookie
+  .split("; ")
+  .find((row) => row.startsWith("sid="))
+  ?.split("=")[1];
 
 export const createReview = async (
   reviewData: CreateReviewDto
@@ -30,6 +34,9 @@ export const getUserReviews = async (): Promise<ReviewDto[]> => {
       `${hostnameApi}/${prefixApi}/reviews/user`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -62,6 +69,9 @@ export const createReviewReply = async (
       replyData,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
