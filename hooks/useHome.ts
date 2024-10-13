@@ -20,20 +20,20 @@ const useHome = () => {
           return
         }
 
-        // const token = document.cookie
-        //   .split('; ')
-        //   .find((row) => row.startsWith('sid='))
-        //   ?.split('=')[1]
+        const token = document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('sid='))
+          ?.split('=')[1]
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property/home`
-          // {
-          //   headers: {
-          //     'Content-Type': 'application/json',
-          //     Authorization: ` Bearer ${token}`,
-          //   },
-          //   credentials: 'include',
-          // }
+          `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property/home`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: ` Bearer ${token}`,
+            },
+            credentials: 'include',
+          }
         )
         const data: response = await response.json()
         setLoading(false)
