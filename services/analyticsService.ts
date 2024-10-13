@@ -12,10 +12,14 @@ const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
 
 export const getOverviewReport = async (): Promise<OverviewReportDto> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: OverviewReportDto }>(
       `${hostnameApi}/${prefixApi}/analytics/overview`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -31,6 +35,7 @@ export const getEarningsByTransaction = async (
   endDate: Date
 ): Promise<EarningsByTransactionDto> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get(
       `${hostnameApi}/${prefixApi}/analytics/earnings/transaction`,
       {
@@ -40,6 +45,9 @@ export const getEarningsByTransaction = async (
           endDate: format(endDate, "yyyy-MM-dd"),
         },
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -53,10 +61,14 @@ export const getEarningsByProperty = async (): Promise<
   EarningsByPropertyDto[]
 > => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: EarningsByPropertyDto[] }>(
       `${hostnameApi}/${prefixApi}/analytics/earnings/property`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -71,11 +83,15 @@ export const getPropertyAvailability = async (
   endDate: string
 ) => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: PropertyAvailabilityDto[] }>(
       `${hostnameApi}/${prefixApi}/analytics/property-availability`,
       {
         params: { startDate, endDate },
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;

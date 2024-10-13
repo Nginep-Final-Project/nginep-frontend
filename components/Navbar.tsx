@@ -135,6 +135,24 @@ const Navbar = () => {
                   >
                     Profile
                   </DropdownMenuItem>
+                  {session.data?.user.role === "guest" && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          router.push('/user/bookings')
+                        }}
+                      >
+                        Reservations
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          router.push('/user/reviews')
+                        }}
+                      >
+                        Reviews
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuItem onSelect={logOut}>Log out</DropdownMenuItem>
                 </>
               )}

@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (
-    ['/dashboard', '/profile', '/transaction'].some((route) =>
+    ['/dashboard', '/profile', '/transaction', '/user'].some((route) =>
       pathname.startsWith(route)
     ) ||
     pathname.match(/^\/\d+\/booking-summary$/)
@@ -57,5 +57,6 @@ export const config = {
     '/profile/:path*',
     '/transaction/:path*',
     '/:path*/booking-summary',
+    '/user/:path*',
   ],
 }

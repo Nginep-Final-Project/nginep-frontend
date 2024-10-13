@@ -12,11 +12,15 @@ export const createBooking = async (
   bookingData: CreateBookingDto
 ): Promise<number> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.post<{ data: { bookingId: number } }>(
       `${hostnameApi}/${prefixApi}/bookings/create`,
       bookingData,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data.bookingId;
@@ -30,9 +34,16 @@ export const checkExistingPendingBooking = async (
   roomId: number
 ): Promise<number | null> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: number | null }>(
       `${hostnameApi}/${prefixApi}/bookings/check-existing-pending-booking`,
-      { params: { roomId }, withCredentials: true }
+      {
+        params: { roomId },
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return response.data.data;
   } catch (error) {
@@ -49,8 +60,8 @@ export const getUserBookings = async (): Promise<UserBookings[]> => {
       {
         withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -102,10 +113,14 @@ export const cancelBookingByUser = async (bookingId: number): Promise<void> => {
 
 export const getTenantBookings = async (): Promise<TenantBookings[]> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: TenantBookings[] }>(
       `${hostnameApi}/${prefixApi}/bookings/tenant`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
@@ -131,10 +146,14 @@ export const getUnreviewedBookings = async (): Promise<
   UnreviewedBookingDto[]
 > => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: UnreviewedBookingDto[] }>(
       `${hostnameApi}/${prefixApi}/bookings/user/unreviewed`,
       {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data.data;
