@@ -48,7 +48,7 @@ const useHome = () => {
     }
 
     handleHome()
-  }, [error])
+  }, [])
 
   return {
     result,
