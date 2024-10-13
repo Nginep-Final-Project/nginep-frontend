@@ -34,7 +34,7 @@ export const useUserBookings = () => {
     getUpcomingBookings: () =>
       filterBookings(
         (booking) =>
-          new Date(booking.checkInDate) > new Date() &&
+          new Date(booking.checkInDate) > getTomorrowDate() &&
           booking.status === BookingStatus.CONFIRMED
       ),
     getAwaitingConfirmationBookings: () =>
