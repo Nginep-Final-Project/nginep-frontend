@@ -6,11 +6,12 @@ import BookingsIcon from "@/public/icons/bookingsIcon.png";
 import PropertiesIcon from "@/public/icons/propertiesIcon.png";
 import PeakSeasonIcon from "@/public/icons/peakSeasonIcon.png";
 import Image from "next/image";
+import OverviewReportSkeleton from "./Skeleton/OverviewReportSkeleton";
 
 const OverviewReport: React.FC = () => {
   const { data: report, isLoading, error } = useOverviewReport();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <OverviewReportSkeleton />;
   if (error) return <div>Error loading overview report</div>;
   if (!report)
     return (
