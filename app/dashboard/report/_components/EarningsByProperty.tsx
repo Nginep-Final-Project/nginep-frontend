@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEarningsByProperty } from "@/hooks/analytics/useAnalytics";
+import EarningsByPropertySkeleton from "./Skeleton/EarningsByPropertySkeleton";
 
 const EarningsByProperty: React.FC = () => {
   const { data, isLoading, error } = useEarningsByProperty();
@@ -44,7 +45,7 @@ const EarningsByProperty: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <EarningsByPropertySkeleton />;
   if (error) return <div>Error fetching data</div>;
   if (!data) return null;
 
