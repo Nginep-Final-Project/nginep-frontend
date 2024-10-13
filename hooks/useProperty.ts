@@ -11,20 +11,8 @@ const useProperty = (propertyId: number) => {
     const handleDetailProperty = async (propertyId: number) => {
       setLoading(true)
       try {
-        const token = document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('sid='))
-          ?.split('=')[1]
-
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property/${propertyId}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: ` Bearer ${token}`,
-            },
-            credentials: 'include',
-          }
+          `${process.env.NEXT_PUBLIC_HOSTNAME_API}/${process.env.NEXT_PUBLIC_PREFIX_API}/property/${propertyId}`
         )
 
         const data: response = await response.json()
