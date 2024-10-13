@@ -135,7 +135,7 @@ const Navbar = () => {
                   >
                     Profile
                   </DropdownMenuItem>
-                  {session.data?.user.role === "guest" && (
+                  {session?.user.role === 'guest' && (
                     <>
                       <DropdownMenuItem
                         onClick={() => {
