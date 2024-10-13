@@ -121,14 +121,6 @@ const Navbar = () => {
               {status === 'authenticated' && (
                 <>
                   <DropdownMenuItem
-                    className='font-semibold'
-                    onClick={() => {
-                      router.push('/user/bookings')
-                    }}
-                  >
-                    Trips
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
                     onClick={() => {
                       router.push('/profile')
                     }}
