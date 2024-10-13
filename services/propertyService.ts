@@ -6,8 +6,15 @@ const prefixApi = process.env.NEXT_PUBLIC_PREFIX_API;
 
 export const getUserProperties = async (): Promise<Property[]> => {
   try {
+    const token = document.cookie.split('; ').find(row => row.startsWith('sid='))?.split('=')[1];
     const response = await axios.get<{ data: Property[] }>(
-      `${hostnameApi}/${prefixApi}/property/tenant`
+      `${hostnameApi}/${prefixApi}/property/tenant`,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return response.data.data;
   } catch (error) {

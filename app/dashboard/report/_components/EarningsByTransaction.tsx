@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { DatePicker } from "./DatePicker";
 import { useEarningsByTransaction } from "@/hooks/analytics/useAnalytics";
+import EarningsByTransactionSkeleton from "./Skeleton/EarningsByTransactionSkeleton";
 
 const EarningsByTransaction: React.FC = () => {
   const [interval, setInterval] = useState<"daily" | "monthly">("monthly");
@@ -62,7 +63,7 @@ const EarningsByTransaction: React.FC = () => {
     setEndDate(endOfMonth(new Date(year, newMonth)));
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <EarningsByTransactionSkeleton />;
   if (error) return <div>Error fetching data</div>;
 
   return (
