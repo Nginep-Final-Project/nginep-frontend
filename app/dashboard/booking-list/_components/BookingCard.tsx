@@ -30,7 +30,11 @@ const BookingCard: React.FC<BookingCardProps> = ({
   numGuests,
   roomName,
   finalPrice,
+  status,
+  paymentType,
+  paymentStatus,
   proofOfPayment,
+  propertyCoverImage,
   type,
 }) => {
   const { mutate: confirmBooking } = useConfirmBooking();
@@ -109,7 +113,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <p className="text-sm text-gray-600 mb-1">Guests: {numGuests}</p>
           <p className="text-sm text-gray-600 mb-4">Booked by: {guestName}</p>
           <p className="text-lg font-semibold mb-4">
-            Total: ${finalPrice.toFixed(2)}
+            Total: IDR {finalPrice.toFixed(2)}
           </p>
           {type === "confirmation" && (
             <div className="flex flex-col items-start space-y-2 mb-4">
@@ -163,7 +167,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
         </div>
         <div className="relative w-full sm:w-1/2 h-48 sm:h-auto">
           <Image
-            src={`/api/room-image/${roomId}`}
+            src={propertyCoverImage}
             alt={`${propertyName} image`}
             layout="fill"
             objectFit="cover"

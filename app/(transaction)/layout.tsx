@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Nginep - Reservation Summary",
@@ -18,6 +19,7 @@ export default function Transaction({
       <Navbar />
       {children}
       <Footer />
+      <Toaster />
     </section>
   );
 }

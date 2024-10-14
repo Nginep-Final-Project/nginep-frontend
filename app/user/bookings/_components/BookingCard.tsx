@@ -10,6 +10,7 @@ import { useCancelBooking } from "@/hooks/booking/user/useCancelBooking";
 const BookingCard: React.FC<UserBookings> = ({
   bookingId,
   roomId,
+  propertyId,
   propertyName,
   checkInDate,
   checkOutDate,
@@ -59,7 +60,7 @@ const BookingCard: React.FC<UserBookings> = ({
           <p className="text-sm text-gray-600 mt-4">Hosted by {hostName}</p>
         </div>
         <div className="relative w-full sm:w-1/2 h-48 sm:h-auto">
-          <Link href={`/${roomId}/payment-process`}>
+          <Link href={`/property/${propertyId}`}>
             <Image
               src={propertyCoverImage}
               alt={`${propertyName} image`}
@@ -72,12 +73,19 @@ const BookingCard: React.FC<UserBookings> = ({
             {displayStatus}
           </div>
           {status === "PENDING_PAYMENT" && (
-            <div
-              onClick={handleCancelBooking}
-              className="absolute bottom-3 right-3 px-2 py-1 text-xs font-semibold rounded-full text-white bg-primary cursor-pointer"
-            >
-              Cancel Booking
-            </div>
+            <>
+              <Link href={`/${roomId}/payment-process`}>
+                <div className="absolute bottom-11 right-3 md:bottom-3 md:left-3 md:right-auto px-2 py-1 text-xs font-semibold rounded-full text-black bg-green-300 bg-opacity-80 cursor-pointer">
+                  Check Payment Details
+                </div>
+              </Link>
+              <div
+                onClick={handleCancelBooking}
+                className="absolute bottom-3 right-3 px-2 py-1 text-xs font-semibold rounded-full text-white bg-primary cursor-pointer"
+              >
+                Cancel Booking
+              </div>
+            </>
           )}
         </div>
         <CancelConfirmationModal

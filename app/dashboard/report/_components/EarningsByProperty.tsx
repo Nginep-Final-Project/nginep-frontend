@@ -25,13 +25,16 @@ const EarningsByProperty: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"highest" | "lowest">("highest");
   const [yAxisWidth, setYAxisWidth] = useState(150);
   const [charLimit, setCharLimit] = useState(20);
+  const [isWideScreen, setIsWideScreen] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      const width = window.innerWidth;
+      setIsWideScreen(width > 1024);
+      if (width < 768) {
         setYAxisWidth(50);
         setCharLimit(8);
-      } else if (window.innerWidth < 1280) {
+      } else if (width < 1280) {
         setYAxisWidth(100);
         setCharLimit(15);
       } else {
@@ -101,6 +104,26 @@ const EarningsByProperty: React.FC = () => {
     );
   };
 
+  const formatXAxisTick = (value: number) => {
+    if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `${(value / 1000).toFixed(0)}k`;
+    }
+    return value.toString();
+  };
+
+  const formatXAxisTickLong = (value: number) => {
+    return `${value.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })}`;
+  };
+
+  const chooseFormatter = (value: number) => {
+    return isWideScreen ? formatXAxisTickLong(value) : formatXAxisTick(value);
+  };
+
   return (
     <div className="py-4 mt-10">
       <h2 className="text-2xl font-bold mb-4">Earnings by Property</h2>
@@ -135,7 +158,7 @@ const EarningsByProperty: React.FC = () => {
                 margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number">
+                <XAxis type="number" tickFormatter={chooseFormatter}>
                   <Label value="Earnings in IDR" position="bottom" offset={0} />
                 </XAxis>
                 <YAxis
