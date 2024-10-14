@@ -32,7 +32,9 @@ const BookingList: React.FC = () => {
     }
 
     const awaitingConfirmationBookings = bookings.filter(
-      (booking) => booking.status === BookingStatus.AWAITING_CONFIRMATION
+      (booking) =>
+        booking.status === BookingStatus.AWAITING_CONFIRMATION &&
+        booking.paymentStatus === PaymentStatus.CONFIRMED
     );
 
     const manualPaymentBookings = bookings.filter(
