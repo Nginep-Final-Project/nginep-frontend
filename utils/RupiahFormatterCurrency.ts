@@ -12,5 +12,5 @@ export const formatRupiah = (value: number | string): string => {
     maximumFractionDigits: 0,
   }).format(numValue)
 
-  return formattedNumber.replace('Rp', 'IDR').replace(/\s/g, '')
+  return formattedNumber.replace('Rp', 'IDR')
 }
