@@ -69,6 +69,7 @@ export interface CreateBookingDto {
   export interface UserBookings {
     bookingId: number;
     roomId: number;
+    propertyId: number;
     checkInDate: string;
     checkOutDate: string;
     numGuests: number;
