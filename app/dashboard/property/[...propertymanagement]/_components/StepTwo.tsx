@@ -174,7 +174,7 @@ const StepTwo: React.FC<{
                   </p>
 
                   <p className='font-bold mt-2'>
-                    Rp {room.basePrice.toLocaleString()} / night
+                    IDR{room.basePrice.toLocaleString()} / night
                   </p>
                   <p className='text-xs text-grey-text'>
                     Max guests: {room.maxGuests}

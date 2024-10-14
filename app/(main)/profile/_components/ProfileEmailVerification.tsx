@@ -1,3 +1,4 @@
+import { logOutAuth } from '@/actions/auth'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -13,9 +14,11 @@ import {
 import { toast } from '@/components/ui/use-toast'
 import useAccountVerification from '@/hooks/useAccountVerification'
 import useEmailVerification from '@/hooks/useEmailVerification'
+import useLogout from '@/hooks/useLogout'
 import useProfile from '@/hooks/useProfile'
 import { REGEXP_ONLY_DIGITS } from 'input-otp'
 import { BadgeCheck } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction, useState } from 'react'
 
 const ProfileEmailVerification: React.FC<{
@@ -29,6 +32,8 @@ const ProfileEmailVerification: React.FC<{
   const { handleUpdateEmail, loading: loadingUpdateEmail } = useProfile()
   const { handleEmailVerification, loading: loadingResend } =
     useEmailVerification()
+  const { handleLogOut } = useLogout()
+  const router = useRouter()
 
   const handleResend = async () => {
     const request = {
@@ -51,6 +56,32 @@ const ProfileEmailVerification: React.FC<{
         </div>
       ),
     })
+  }
+
+  const logOut = async () => {
+    const result = await handleLogOut()
+    if (!result?.success) {
+      toast({
+        title: 'Login failed',
+        variant: 'destructive',
+        description: result?.message,
+      })
+      return
+    }
+    logOutAuth()
+      .then(() => {
+        toast({
+          title: result?.message,
+        })
+      })
+      .catch((error) => {
+        toast({
+          title: 'Login failed',
+          variant: 'destructive',
+          description: error,
+        })
+      })
+    router.push('/')
   }
 
   return (
@@ -105,6 +136,7 @@ const ProfileEmailVerification: React.FC<{
                 })
                 setOtp('')
                 setIsEmailVerification(false)
+                logOut()
               }
             }}
             disabled={loading || loadingUpdateEmail}

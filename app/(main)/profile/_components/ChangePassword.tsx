@@ -53,6 +53,9 @@ const ChangePassword = () => {
       })
       return
     }
+    toast({
+      description: result?.message,
+    })
     reset()
   }
   return (
