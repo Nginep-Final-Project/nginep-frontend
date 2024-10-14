@@ -57,7 +57,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
   return (
     <div className='w-80 p-4 bg-white rounded-xl border-secondary shadow-md'>
       <h2 className='text-2xl font-bold mb-4'>
-        Rp {pricePerNight.toLocaleString()}{' '}
+        IDR {pricePerNight.toLocaleString()}{' '}
         <span className='text-base font-normal'>night</span>
       </h2>
 
@@ -99,15 +99,15 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
 
       <div className='flex justify-between mb-2'>
         <span>
-          Rp {pricePerNight.toLocaleString()} x {nights} night
+          IDR {pricePerNight.toLocaleString()} x {nights} night
           {nights > 1 ? 's' : ''}
         </span>
-        <span>Rp {total.toLocaleString()}</span>
+        <span>IDR {total.toLocaleString()}</span>
       </div>
 
       <div className='flex justify-between font-bold pt-2 border-t border-grey-text'>
         <span>Total</span>
-        <span>Rp {total.toLocaleString()}</span>
+        <span>IDR {total.toLocaleString()}</span>
       </div>
     </div>
   )
