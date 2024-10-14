@@ -149,9 +149,6 @@ const AutomaticPayment: React.FC<AutomaticPaymentProps> = ({
         </CardContent>
       </Card>
       <div>
-        <Button>Cancel the reservation and abort the payment process</Button>
-      </div>
-      <div>
         <CancelBookingButton bookingId={bookingDetails.bookingId} />
       </div>
     </div>
