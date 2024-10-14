@@ -59,7 +59,7 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
                             (a, b) => a.basePrice - b.basePrice
                           )[0].basePrice
                         : 0
-                    )} / night`}
+                    )} `}
                     <span className='text-sm text-grey-text'>/ night</span>
                   </p>
                 </div>
