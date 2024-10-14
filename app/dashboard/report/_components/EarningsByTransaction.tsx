@@ -63,6 +63,22 @@ const EarningsByTransaction: React.FC = () => {
     setEndDate(endOfMonth(new Date(year, newMonth)));
   };
 
+  const formatYAxisTick = (value: number) => {
+    if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `${(value / 1000).toFixed(0)}k`;
+    }
+    return value.toString();
+  };
+
+  const formatTooltipValue = (value: number) => {
+    return `IDR ${value.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })}`;
+  };
+
   if (isLoading) return <EarningsByTransactionSkeleton />;
   if (error) return <div>Error fetching data</div>;
 
@@ -148,7 +164,11 @@ const EarningsByTransaction: React.FC = () => {
           <>
             <div className="bg-white rounded-xl p-8">
               <div className="text-xl font-semibold mb-4">
-                Total: IDR {data.totalEarnings.toFixed(2)}
+                Total: IDR{" "}
+                {data.totalEarnings.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </div>
               <div className="h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -166,10 +186,10 @@ const EarningsByTransaction: React.FC = () => {
                         )
                       }
                     />
-                    <YAxis />
+                    <YAxis tickFormatter={formatYAxisTick} />
                     <Tooltip
                       formatter={(value: number) => [
-                        `$${value.toFixed(2)}`,
+                        formatTooltipValue(value),
                         "Earnings",
                       ]}
                       labelFormatter={(label) =>

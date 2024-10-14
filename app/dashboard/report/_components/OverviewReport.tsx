@@ -35,13 +35,16 @@ const OverviewReport: React.FC = () => {
             className="absolute bottom-[70%]"
           />
           <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold mt-20">
+            <CardTitle className="text-lg text-center font-semibold mt-20">
               Total Earnings
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-lg sm:text-xl font-bold bg-white rounded-2xl py-2 px-4 text-center">
-              IDR {report.totalEarnings.toFixed(2)}
+              IDR {report.totalEarnings.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </div>
           </CardContent>
         </Card>
@@ -55,7 +58,7 @@ const OverviewReport: React.FC = () => {
             className="absolute bottom-[70%]"
           />
           <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold mt-20">
+            <CardTitle className="text-lg text-center font-semibold mt-20">
               Total Bookings
             </CardTitle>
           </CardHeader>
@@ -75,7 +78,7 @@ const OverviewReport: React.FC = () => {
             className="absolute bottom-[70%]"
           />
           <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold mt-20">
+            <CardTitle className="text-lg text-center font-semibold mt-20">
               Total Properties
             </CardTitle>
           </CardHeader>
@@ -101,7 +104,10 @@ const OverviewReport: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-lg sm:text-xl font-bold bg-white rounded-2xl py-2 px-4 text-center ">
-              IDR {report.peakSeasonRevenueDifference.toFixed(2)}
+              IDR {report.peakSeasonRevenueDifference.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
             </div>
             <br />
             <p className="text-xs text-muted-foreground text-center">
