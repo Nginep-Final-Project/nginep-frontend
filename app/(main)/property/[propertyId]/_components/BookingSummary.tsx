@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { RESERVE_BOOKING_DATA } from '@/utils/constanta'
 import { PropertyDetail } from '@/types/property'
-import { encodeRoomId } from '@/utils/idEncoder'
 
 interface BookingSummaryProps {
   property: PropertyDetail
@@ -52,7 +51,7 @@ const BookingSummary: React.FC<BookingSummaryProps> = ({
       userId: session.data?.user.id,
     }
     localStorage.setItem(RESERVE_BOOKING_DATA, JSON.stringify(reserveBooking))
-    router.push(`/${encodeRoomId(roomId)}/booking-summary`)
+    router.push(`/${roomId}/booking-summary`)
   }
 
   return (

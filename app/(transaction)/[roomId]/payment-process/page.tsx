@@ -10,12 +10,10 @@ import { differenceInDays } from "date-fns";
 import { useCheckExistingPendingBooking } from "@/hooks/booking/useCheckExistingPendingBooking";
 import { useBookingPaymentDetails } from "@/hooks/booking/useBookingPaymentDetails";
 import Link from "next/link";
-import { decodeRoomId } from "@/utils/idEncoder";
 
 const PaymentProcess = () => {
   const params = useParams();
-  const encodedRoomId = params.roomId as string;
-  const roomId = decodeRoomId(encodedRoomId);
+  const roomId = params.roomId as string;
   const [paymentType, setPaymentType] = useState<
     "MANUAL_PAYMENT" | "AUTOMATIC_PAYMENT" | null
   >(null);
@@ -25,7 +23,7 @@ const PaymentProcess = () => {
     data: existingBookingId,
     isLoading: isCheckingBooking,
     refetch: refetchExistingBooking,
-  } = useCheckExistingPendingBooking(roomId);
+  } = useCheckExistingPendingBooking(parseInt(roomId));
 
   const {
     data: bookingDetails,
