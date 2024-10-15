@@ -14,6 +14,7 @@ import useWarningModal from "@/hooks/common/useWarningModal";
 import { useCheckExistingPendingBooking } from "@/hooks/booking/useCheckExistingPendingBooking";
 import { useCreateBooking } from "@/hooks/booking/useCreateBooking";
 import Link from "next/link";
+import { decodeRoomId } from "@/utils/idEncoder";
 
 interface ExtendedSelectedRoom extends SelectedRoom {
   paymentMethod: PaymentType;
@@ -24,7 +25,8 @@ interface ExtendedSelectedRoom extends SelectedRoom {
 
 const BookingSummary: React.FC = () => {
   const params = useParams();
-  const roomId = params.roomId as string;
+  const encodedRoomId = params.roomId as string;
+  const roomId = decodeRoomId(encodedRoomId);
   const router = useRouter();
   const [reserveBooking, setReserveBooking] = useState<
     ExtendedSelectedRoom | undefined
@@ -37,14 +39,14 @@ const BookingSummary: React.FC = () => {
   const { showWarning, closeWarning, openWarning } = useWarningModal();
 
   const { data: existingBookingId, isLoading } = useCheckExistingPendingBooking(
-    parseInt(roomId)
+    roomId
   );
 
   const createBookingMutation = useCreateBooking();
 
   useEffect(() => {
     if (existingBookingId) {
-      router.push(`/${roomId}/payment-process`);
+      router.push(`/${encodedRoomId}/payment-process`);
     }
     const storedReserveBooking = localStorage.getItem(RESERVE_BOOKING_DATA);
     if (storedReserveBooking) {
@@ -113,7 +115,7 @@ const BookingSummary: React.FC = () => {
     setIsCreatingBooking(true);
     try {
       const bookingData = {
-        roomId: parseInt(roomId),
+        roomId: roomId,
         checkInDate: reserveBooking.checkInDate,
         checkOutDate: reserveBooking.checkOutDate,
         numGuests: reserveBooking.guests,
