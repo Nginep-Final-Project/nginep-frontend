@@ -148,6 +148,13 @@ const AutomaticPayment: React.FC<AutomaticPaymentProps> = ({
           </ul>
         </CardContent>
       </Card>
+      <div className="text-sm text-gray-600">
+        <p>Note if you want to create a new booking for this room:</p>
+        <ul className="list-disc ml-5 text-justify">
+          <li>Finish the current payment process</li>
+          <li>Cancel the booking and abort the payment process</li>
+        </ul>
+      </div>
       <div>
         <CancelBookingButton bookingId={bookingDetails.bookingId} />
       </div>

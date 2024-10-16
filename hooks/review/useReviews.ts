@@ -6,6 +6,8 @@ import {
   getUserReviews,
 } from "@/services/reviewService";
 import { toast } from "@/components/ui/use-toast";
+import { AxiosError } from "axios";
+import { response } from "@/types/response";
 
 export const useCreateReview = () => {
   const queryClient = useQueryClient();
@@ -19,11 +21,19 @@ export const useCreateReview = () => {
         description: "The review has been created and submitted.",
       });
     },
-    onError: () => {
+    onError: (error: AxiosError) => {
+      const getErrorMessage = (error: unknown): string | null => {
+        if (error instanceof AxiosError && error.response) {
+          const apiError = error.response.data as response;
+          return apiError.data || apiError.message;
+        }
+        return "An error occurred while creating the review";
+      };
+
       toast({
-        title: "Error",
-        description: "Failed to create the review. Please try again.",
         variant: "destructive",
+        title: "Error",
+        description: getErrorMessage(error),
       });
     },
   });
@@ -55,12 +65,19 @@ export const useCreateReviewReply = () => {
         description: "Reply submitted successfully",
       });
     },
-    onError: (error) => {
-      console.error("Error submitting reply:", error);
+    onError: (error: AxiosError) => {
+      const getErrorMessage = (error: unknown): string | null => {
+        if (error instanceof AxiosError && error.response) {
+          const apiError = error.response.data as response;
+          return apiError.data || apiError.message;
+        }
+        return "An error occurred while creating the reply for the review";
+      };
+
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to submit reply. Please try again.",
+        description: getErrorMessage(error),
       });
     },
   });

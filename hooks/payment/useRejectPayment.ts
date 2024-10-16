@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
 import { rejectManualPayment } from "@/services/paymentService";
+import { AxiosError } from "axios";
+import { response } from "@/types/response";
 
 export const useRejectPayment = () => {
   const queryClient = useQueryClient();
@@ -15,11 +17,19 @@ export const useRejectPayment = () => {
           "The payment has been rejected.",
       });
     },
-    onError: () => {
+    onError: (error: AxiosError) => {
+      const getErrorMessage = (error: unknown): string | null => {
+        if (error instanceof AxiosError && error.response) {
+          const apiError = error.response.data as response;
+          return apiError.data || apiError.message;
+        }
+        return "An error occurred while rejecting the manual payment";
+      };
+
       toast({
-        title: "Error",
-        description: "Failed to reject the payment. Please try again.",
         variant: "destructive",
+        title: "Error",
+        description: getErrorMessage(error),
       });
     },
   });

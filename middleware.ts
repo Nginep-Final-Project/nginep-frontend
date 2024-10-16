@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
     ['/dashboard', '/profile', '/transaction', '/user'].some((route) =>
       pathname.startsWith(route)
     ) ||
-    pathname.match(/^\/\d+\/booking-summary$/)
+    pathname.match(/^\/[a-zA-Z0-9]+\/booking-summary$/)
   ) {
     if (!session || !session.user) {
       return NextResponse.redirect(
@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
     }
 
     if (
-      pathname.match(/^\/\d+\/booking-summary$/) &&
+      pathname.match(/^\/[a-zA-Z0-9]+\/booking-summary$/) &&
       session.user.role !== 'guest'
     ) {
       return NextResponse.redirect(
