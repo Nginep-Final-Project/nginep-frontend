@@ -272,7 +272,7 @@ const StepFour: React.FC<{
                   {peakSeason.rateType === 'PERCENTAGE' ? (
                     <p className='text-sm'>{peakSeason.rateValue}% /night</p>
                   ) : (
-                    <p className='text-sm'>Rp{peakSeason.rateValue} /night</p>
+                    <p className='text-sm'>IDR{peakSeason.rateValue} /night</p>
                   )}
                 </div>
                 <div className='flex flex-col items-start px-4'>

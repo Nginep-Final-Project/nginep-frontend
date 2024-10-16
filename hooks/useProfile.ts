@@ -17,7 +17,6 @@ const useProfile = () => {
   const [updateResult, setupdateResult] = useState<String>('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
-  const { handleLogOut } = useLogout()
 
   useEffect(() => {
     const handleProfile = async () => {
@@ -104,7 +103,6 @@ const useProfile = () => {
       const data: response = await response.json()
       setLoading(false)
       setupdateResult(data.data)
-      handleLogOut()
       return data
     } catch (err) {
       setError(err)
@@ -135,7 +133,6 @@ const useProfile = () => {
       const data: response = await response.json()
       setLoading(false)
       setupdateResult(data.data)
-      handleLogOut()
       return data
     } catch (err) {
       setError(err)
