@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { confirmBooking } from "@/services/bookingService";
 import { toast } from "@/components/ui/use-toast";
+import { AxiosError } from "axios";
+import { response } from "@/types/response";
 
 export const useConfirmBooking = () => {
   const queryClient = useQueryClient();
@@ -14,11 +16,19 @@ export const useConfirmBooking = () => {
         description: "The reservation has been successfully confirmed.",
       });
     },
-    onError: () => {
+    onError: (error: AxiosError) => {
+      const getErrorMessage = (error: unknown): string | null => {
+        if (error instanceof AxiosError && error.response) {
+          const apiError = error.response.data as response;
+          return apiError.data || apiError.message;
+        }
+        return "An error occurred while confirming the booking";
+      };
+
       toast({
-        title: "Error",
-        description: "Failed to confirm the booking. Please try again.",
         variant: "destructive",
+        title: "Error",
+        description: getErrorMessage(error),
       });
     },
   });

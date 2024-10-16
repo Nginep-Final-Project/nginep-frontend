@@ -33,7 +33,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   isCreatingBooking = false,
 }) => {
   return (
-    <div className="w-full lg:w-2/3">
+    <div className="w-full">
       <div className="p-6">
         <h2 className="text-xl font-semibold mb-4">Payment Options</h2>
         <div className="space-y-4">

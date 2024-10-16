@@ -113,7 +113,11 @@ const BookingCard: React.FC<BookingCardProps> = ({
           <p className="text-sm text-gray-600 mb-1">Guests: {numGuests}</p>
           <p className="text-sm text-gray-600 mb-4">Booked by: {guestName}</p>
           <p className="text-lg font-semibold mb-4">
-            Total: IDR {finalPrice.toFixed(2)}
+            Total: IDR{" "}
+            {finalPrice.toLocaleString("en-US", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
           </p>
           {type === "confirmation" && (
             <div className="flex flex-col items-start space-y-2 mb-4">

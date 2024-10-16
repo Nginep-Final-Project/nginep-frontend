@@ -1,18 +1,14 @@
 import { toast } from "@/components/ui/use-toast";
 import { cancelBookingByUser } from "@/services/bookingService";
+import { response } from "@/types/response";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export const useCancelBooking = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: cancelBookingByUser,
-    onMutate: () => {
-      toast({
-        title: "Cancelling booking",
-        description: "Please wait...",
-      });
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userBookings"] });
       queryClient.invalidateQueries({ queryKey: ["existingBooking"] });
@@ -22,15 +18,19 @@ export const useCancelBooking = () => {
         description: "Success on booking cancellation",
       });
     },
-    onError: (error) => {
-      console.error("Error cancelling booking:", error);
+    onError: (error: AxiosError) => {
+      const getErrorMessage = (error: unknown): string | null => {
+        if (error instanceof AxiosError && error.response) {
+          const apiError = error.response.data as response;
+          return apiError.data || apiError.message;
+        }
+        return "An error occurred while cancelling the booking";
+      };
+
       toast({
         variant: "destructive",
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while cancelling the booking",
+        description: getErrorMessage(error),
       });
     },
   });
