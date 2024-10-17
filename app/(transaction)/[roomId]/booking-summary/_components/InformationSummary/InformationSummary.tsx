@@ -33,7 +33,7 @@ const InformationSummary: React.FC = () => {
   };
 
   return (
-    <div className="w-full lg:w-2/3">
+    <div className="w-full">
       <div className="p-6">
         <div className="space-y-8">
           <MessageToHost

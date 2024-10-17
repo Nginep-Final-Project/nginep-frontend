@@ -166,8 +166,8 @@ const EarningsByTransaction: React.FC = () => {
               <div className="text-xl font-semibold mb-4">
                 Total: IDR{" "}
                 {data.totalEarnings.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
                 })}
               </div>
               <div className="h-[400px]">

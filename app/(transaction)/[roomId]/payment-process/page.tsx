@@ -10,20 +10,24 @@ import { differenceInDays } from "date-fns";
 import { useCheckExistingPendingBooking } from "@/hooks/booking/useCheckExistingPendingBooking";
 import { useBookingPaymentDetails } from "@/hooks/booking/useBookingPaymentDetails";
 import Link from "next/link";
+import { decodeRoomId } from "@/utils/idEncoder";
+import PaymentLoadingScreen from "./_components/PaymentLoadingScreen";
 
 const PaymentProcess = () => {
   const params = useParams();
-  const roomId = params.roomId as string;
+  const encodedRoomId = params.roomId as string;
+  const roomId = decodeRoomId(encodedRoomId);
   const [paymentType, setPaymentType] = useState<
     "MANUAL_PAYMENT" | "AUTOMATIC_PAYMENT" | null
   >(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const {
     data: existingBookingId,
     isLoading: isCheckingBooking,
     refetch: refetchExistingBooking,
-  } = useCheckExistingPendingBooking(parseInt(roomId));
+  } = useCheckExistingPendingBooking(roomId);
 
   const {
     data: bookingDetails,
@@ -46,6 +50,15 @@ const PaymentProcess = () => {
     refetchExistingBooking,
   ]);
 
+  useEffect(() => {
+    if (isInitialLoading) {
+      const timer = setTimeout(() => {
+        setIsInitialLoading(false);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isInitialLoading]);
+
   const totalNights = useMemo(() => {
     if (bookingDetails) {
       const checkInDate = new Date(bookingDetails.checkInDate);
@@ -65,10 +78,12 @@ const PaymentProcess = () => {
     }
   }, [bookingDetails]);
 
-  if (isCheckingBooking) {
+  if (isInitialLoading || isCheckingBooking || isLoadingDetails) {
     return (
-      <TransactionLayout title="Checking Existing Booking">
-        Please wait while we check your current booking.
+      <TransactionLayout title="Processing Payment">
+        <div className="w-full">
+          <PaymentLoadingScreen />
+        </div>
       </TransactionLayout>
     );
   }

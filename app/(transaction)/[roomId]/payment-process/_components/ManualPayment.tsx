@@ -1,23 +1,33 @@
-import React, { useState, useEffect } from 'react'
-import { Upload, AlertCircle } from 'lucide-react'
-import { BookingPaymentDetails } from '@/types/booking'
-import Button from '../../_components/Button/Button'
-import { useUploadProof } from '@/hooks/payment/useUploadProof'
-import { useRouter } from 'next/navigation'
-import { toast } from '@/components/ui/use-toast'
-import CancelBookingButton from './CancelBookingButton'
+import React, { useState, useEffect } from "react";
+import { Upload, AlertCircle } from "lucide-react";
+import { BookingPaymentDetails } from "@/types/booking";
+import Button from "../../_components/Button/Button";
+import { useUploadProof } from "@/hooks/payment/useUploadProof";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
+import CancelBookingButton from "./CancelBookingButton";
+import UploadProofModal from "./UploadProofModal";
+import { Axios, AxiosError } from "axios";
+import { response } from "@/types/response";
 
 interface ManualPaymentProps {
   bookingDetails: BookingPaymentDetails
 }
 
 const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
-  const [timeRemaining, setTimeRemaining] = useState<number>(0)
-  const [file, setFile] = useState<File | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [isRedirecting, setIsRedirecting] = useState(false)
-  const router = useRouter()
-  const uploadMutation = useUploadProof()
+  const [timeRemaining, setTimeRemaining] = useState<number>(0);
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
+  const {
+    mutate: uploadMutation,
+    isPending: isUploading,
+    isSuccess: isUploadSuccess,
+    isError: isUploadError,
+    error: uploadError,
+  } = useUploadProof();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,34 +67,31 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
     }
   }
 
-  const handleUpload = async () => {
+  const handleUpload = () => {
     if (file) {
-      try {
-        await uploadMutation.mutateAsync({
-          proofOfPayment: file,
-          paymentId: bookingDetails.paymentId,
-        })
-
-        toast({
-          title: 'Success',
-          description:
-            'Proof of payment uploaded successfully. Redirecting to bookings in 5 seconds...',
-          duration: 5000,
-        })
-
-        setIsRedirecting(true)
-
-        setTimeout(() => {
-          router.push('/user/bookings')
-        }, 5000)
-      } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'Failed to upload proof of payment. Please try again.',
-          variant: 'destructive',
-        })
-      }
+      setIsUploadModalOpen(true);
+      uploadMutation({
+        proofOfPayment: file,
+        paymentId: bookingDetails.paymentId,
+      });
     }
+  }
+
+  useEffect(() => {
+    if (isUploadSuccess) {
+      const timer = setTimeout(() => {
+        router.push("/user/bookings");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isUploadSuccess, router]);
+
+  const getErrorMessage = (error: unknown): string | null => {
+    if (error instanceof AxiosError && error.response) {
+      const apiError = error.response.data as response;
+      return apiError.data || apiError.message;
+    }
+    return null;
   }
 
   return (
@@ -137,24 +144,42 @@ const ManualPayment: React.FC<ManualPaymentProps> = ({ bookingDetails }) => {
         {error && <p className='text-red-500 mt-2'>{error}</p>}
       </div>
 
-      <Button onClick={handleUpload} disabled={!file || timeRemaining <= 0}>
-        <Upload className='inline-block mr-2 h-4 w-4' /> Upload Proof of Payment
+      <Button
+        onClick={handleUpload}
+        disabled={!file || timeRemaining <= 0 || isUploading || isUploadSuccess}
+      >
+        <Upload className="inline-block mr-2 h-4 w-4" /> Upload Proof of Payment
       </Button>
 
       <div className='text-sm text-gray-600'>
         <p>Please ensure:</p>
-        <ul className='list-disc list-inside'>
+        <ul className="list-disc ml-5 text-justify">
           <li>The transfer amount matches the total amount to pay</li>
           <li>The transfer is made to the correct bank account</li>
           <li>The proof of payment image is clear and readable</li>
           <li>Keep the original proof of payment for your records</li>
         </ul>
       </div>
-      {isRedirecting && (
-        <div className='mt-4 text-center text-gray-600'>
-          Redirecting to bookings page...
-        </div>
-      )}
+      <UploadProofModal
+        isOpen={isUploadModalOpen}
+        onClose={() => {
+          if (!isUploading && !isUploadSuccess) {
+            setIsUploadModalOpen(false);
+          }
+        }}
+        isUploading={isUploading}
+        isSuccess={isUploadSuccess}
+        error={isUploadError ? getErrorMessage(uploadError) : null}
+      />
+      <div className="text-sm text-gray-600">
+        <p>Note if you want to create a new booking for this room:</p>
+        <ul className="list-disc ml-5 text-justify">
+          <li>
+            Finish the current payment process by uploading the proof of payment
+          </li>
+          <li>Cancel the booking and abort the payment process</li>
+        </ul>
+      </div>
       <div>
         <CancelBookingButton bookingId={bookingDetails.bookingId} />
       </div>
