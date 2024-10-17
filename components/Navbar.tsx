@@ -71,7 +71,7 @@ const Navbar = () => {
     <div className='p-4 lg:px-11 lg:py-5'>
       <div className='flex items-center justify-between'>
         <h1
-          className='text-2xl font-bold text-primary'
+          className='text-2xl font-bold text-primary cursor-pointer'
           onClick={() => {
             router.push('/')
           }}
@@ -108,11 +108,11 @@ const Navbar = () => {
                 <>
                   <DropdownMenuItem
                     onSelect={() => setIsLogin(!isLogin)}
-                    className='font-semibold'
+                    className='font-semibold cursor-pointer hover:bg-pink-200'
                   >
                     Log in
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => setIsSignup(!isSignup)}>
+                  <DropdownMenuItem onSelect={() => setIsSignup(!isSignup)} className='cursor-pointer hover:bg-pink-200'>
                     Sign up
                   </DropdownMenuItem>
                 </>
@@ -124,6 +124,7 @@ const Navbar = () => {
                     onClick={() => {
                       router.push('/profile')
                     }}
+                    className='cursor-pointer hover:bg-pink-200'
                   >
                     Profile
                   </DropdownMenuItem>
@@ -133,6 +134,7 @@ const Navbar = () => {
                         onClick={() => {
                           router.push('/user/bookings')
                         }}
+                        className='cursor-pointer hover:bg-pink-200'
                       >
                         Reservations
                       </DropdownMenuItem>
@@ -140,12 +142,25 @@ const Navbar = () => {
                         onClick={() => {
                           router.push('/user/reviews')
                         }}
+                        className='cursor-pointer hover:bg-pink-200'
                       >
                         Reviews
                       </DropdownMenuItem>
                     </>
                   )}
-                  <DropdownMenuItem onSelect={logOut}>Log out</DropdownMenuItem>
+                  {session?.user.role === 'tenant' && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          router.push('/dashboard')
+                        }}
+                        className='cursor-pointer hover:bg-pink-200'
+                      >
+                        Dashboard
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuItem onSelect={logOut} className='cursor-pointer hover:bg-pink-200'>Log out</DropdownMenuItem>
                 </>
               )}
             </DropdownMenuContent>
