@@ -44,7 +44,7 @@ const BookingCard: React.FC<UserBookings> = ({
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row bg-white rounded-lg shadow-xl border">
+      <div className="flex flex-col sm:flex-row bg-white rounded-lg shadow-xl border border-gray-300 overflow-hidden">
         <div className="w-full sm:w-1/2 p-4">
           <h3 className="text-xl font-semibold mb-1">
             {propertyName} in {propertyProvince}
