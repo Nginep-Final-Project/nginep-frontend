@@ -241,6 +241,10 @@ const RoomDialog: React.FC<RoomDialogProps> = ({
                         if (file) {
                           let uploadImage
                           if (isEditingMode === true && initialRoom) {
+                            console.log(
+                              'room picture id',
+                              form.watch('roomPictureId')!
+                            )
                             uploadImage = await handleUpdateImage(
                               file,
                               form.watch('roomPictureId')!

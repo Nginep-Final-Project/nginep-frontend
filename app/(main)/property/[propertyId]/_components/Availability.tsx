@@ -181,10 +181,10 @@ const Availability: React.FC<{
                         <Image
                           src={room.roomPicture}
                           alt={room.name}
-                          height={100}
+                          height={200}
                           width={100}
-                          style={{ height: 'auto', width: 'auto' }}
-                          className='h-[100px] w-[100px] object-cover rounded-md mb-2'
+                          style={{ height: '200px', width: 'auto' }}
+                          className='h-[200px] w-[100px] object-cover rounded-md mb-2'
                         />
                       )}
 
