@@ -71,7 +71,7 @@ const Navbar = () => {
     <div className='p-4 lg:px-11 lg:py-5'>
       <div className='flex items-center justify-between'>
         <h1
-          className='text-2xl font-bold text-primary'
+          className='text-2xl font-bold text-primary cursor-pointer'
           onClick={() => {
             router.push('/')
           }}

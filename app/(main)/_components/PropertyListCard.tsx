@@ -29,7 +29,7 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
           {properties.map((property, index) => (
             <Link key={index} href={`/property/${property.id}`}>
               <div className='max-w-sm rounded-lg overflow-hidden shadow-lg border border-secondary'>
-                <div className='w-full h-80 flex items-center justify-center'>
+                <div className='w-full h-64 flex items-center justify-center'>
                   <ImageCarousel
                     imageSrc={property.propertyImage.map((e) => e.path)}
                   />
