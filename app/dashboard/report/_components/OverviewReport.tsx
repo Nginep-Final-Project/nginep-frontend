@@ -42,8 +42,8 @@ const OverviewReport: React.FC = () => {
           <CardContent>
             <div className="text-lg sm:text-xl font-bold bg-white rounded-2xl py-2 px-4 text-center">
               IDR {report.totalEarnings.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
               })}
             </div>
           </CardContent>
@@ -105,8 +105,8 @@ const OverviewReport: React.FC = () => {
           <CardContent>
             <div className="text-lg sm:text-xl font-bold bg-white rounded-2xl py-2 px-4 text-center ">
               IDR {report.peakSeasonRevenueDifference.toLocaleString('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
               })}
             </div>
             <br />

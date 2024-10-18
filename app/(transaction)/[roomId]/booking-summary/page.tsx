@@ -14,6 +14,11 @@ import useWarningModal from "@/hooks/common/useWarningModal";
 import { useCheckExistingPendingBooking } from "@/hooks/booking/useCheckExistingPendingBooking";
 import { useCreateBooking } from "@/hooks/booking/useCreateBooking";
 import Link from "next/link";
+import { decodeRoomId } from "@/utils/idEncoder";
+import BookingCreationModal from "./_components/Modal/BookingCreationModal";
+import BookingSummaryLoadingScreen from "./_components/Loading/BookingSummaryLoadingScreen";
+import { AxiosError } from "axios";
+import { response } from "@/types/response";
 
 interface ExtendedSelectedRoom extends SelectedRoom {
   paymentMethod: PaymentType;
@@ -24,7 +29,8 @@ interface ExtendedSelectedRoom extends SelectedRoom {
 
 const BookingSummary: React.FC = () => {
   const params = useParams();
-  const roomId = params.roomId as string;
+  const encodedRoomId = params.roomId as string;
+  const roomId = decodeRoomId(encodedRoomId);
   const router = useRouter();
   const [reserveBooking, setReserveBooking] = useState<
     ExtendedSelectedRoom | undefined
@@ -33,31 +39,48 @@ const BookingSummary: React.FC = () => {
     PaymentType.MANUAL_PAYMENT
   );
   const [specificPaymentMethod, setSpecificPaymentMethod] = useState("");
-  const [isCreatingBooking, setIsCreatingBooking] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const { showWarning, closeWarning, openWarning } = useWarningModal();
 
-  const { data: existingBookingId, isLoading } = useCheckExistingPendingBooking(
-    parseInt(roomId)
-  );
+  const { data: existingBookingId, isLoading: isCheckingBooking } =
+    useCheckExistingPendingBooking(roomId);
 
-  const createBookingMutation = useCreateBooking();
+  const {
+    mutate: createBookingMutation,
+    isPending: isCreatingBooking,
+    isSuccess: isBookingSuccess,
+    isError: isBookingError,
+    error: bookingError,
+  } = useCreateBooking();
 
   useEffect(() => {
-    if (existingBookingId) {
-      router.push(`/${roomId}/payment-process`);
-    }
     const storedReserveBooking = localStorage.getItem(RESERVE_BOOKING_DATA);
     if (storedReserveBooking) {
       const parsedStoredData = JSON.parse(
         storedReserveBooking
       ) as ExtendedSelectedRoom;
-      setReserveBooking(parsedStoredData);
-      setPaymentMethod(
-        parsedStoredData.paymentMethod || PaymentType.MANUAL_PAYMENT
-      );
+      setReserveBooking({
+        ...parsedStoredData,
+        paymentMethod: PaymentType.MANUAL_PAYMENT,
+      });
+      setPaymentMethod(PaymentType.MANUAL_PAYMENT);
       setSpecificPaymentMethod(parsedStoredData.bank || "");
     }
-  }, [existingBookingId, roomId, router]);
+
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (existingBookingId) {
+      router.push(`/${encodedRoomId}/payment-process`);
+    }
+  }, [existingBookingId, encodedRoomId, router]);
 
   const updateLocalStorage = (updatedData: Partial<ExtendedSelectedRoom>) => {
     if (reserveBooking) {
@@ -110,46 +133,62 @@ const BookingSummary: React.FC = () => {
       return;
     }
 
-    setIsCreatingBooking(true);
-    try {
-      const bookingData = {
-        roomId: parseInt(roomId),
-        checkInDate: reserveBooking.checkInDate,
-        checkOutDate: reserveBooking.checkOutDate,
-        numGuests: reserveBooking.guests,
-        paymentMethod: reserveBooking.paymentMethod,
-        userMessage: reserveBooking.userMessage,
-        bank:
-          paymentMethod === PaymentType.AUTOMATIC_PAYMENT
-            ? specificPaymentMethod
-            : undefined,
-      };
+    setIsBookingModalOpen(true);
 
-      await createBookingMutation.mutateAsync(bookingData);
-      localStorage.removeItem(RESERVE_BOOKING_DATA);
-      router.push(`/${roomId}/payment-process`);
-    } catch (error) {
-      console.error("Error creating booking:", error);
-    } finally {
-      setIsCreatingBooking(false);
+    const bookingData = {
+      roomId: roomId,
+      checkInDate: reserveBooking.checkInDate,
+      checkOutDate: reserveBooking.checkOutDate,
+      numGuests: reserveBooking.guests,
+      paymentMethod: reserveBooking.paymentMethod,
+      userMessage: reserveBooking.userMessage,
+      bank:
+        paymentMethod === PaymentType.AUTOMATIC_PAYMENT
+          ? specificPaymentMethod
+          : undefined,
+    };
+
+    createBookingMutation(bookingData);
+  };
+
+  const handleBookingComplete = () => {
+    localStorage.removeItem(RESERVE_BOOKING_DATA);
+    router.push(`/${encodedRoomId}/payment-process`);
+  };
+
+  const getErrorMessage = (error: unknown): string | null => {
+    if (error instanceof AxiosError && error.response) {
+      const apiError = error.response.data as response;
+      return apiError.data || apiError.message;
     }
+    return "An unexpected error occurred while creating the booking";
   };
 
   if (!reserveBooking) {
-    return (
-      <TransactionLayout title="You currently have no reservation">
-        <div>
-          You currently don&apos;t have a data reservation. Please return to the
-          property details and its room page to find the suitable date.{" "}
-          <Link
-            href="/"
-            className="text-blue-500 hover:text-blue-700 underline"
-          >
-            <p>Go to the home page</p>
-          </Link>
-        </div>
-      </TransactionLayout>
-    );
+    if (isLoading) {
+      return (
+        <TransactionLayout title="Preparing Booking Summary">
+          <BookingSummaryLoadingScreen />
+        </TransactionLayout>
+      );
+    }
+
+    if (!isCheckingBooking) {
+      return (
+        <TransactionLayout title="You currently have no reservation">
+          <div>
+            You currently don&apos;t have a data reservation. Please return to
+            the property details and its room page to find the suitable date.{" "}
+            <Link
+              href="/"
+              className="text-blue-500 hover:text-blue-700 underline"
+            >
+              <p>Go to the home page</p>
+            </Link>
+          </div>
+        </TransactionLayout>
+      );
+    }
   }
 
   return (
@@ -164,23 +203,37 @@ const BookingSummary: React.FC = () => {
           isCreatingBooking={isCreatingBooking}
         />
       </div>
-      <PriceSummary
-        propertyName={reserveBooking.property.propertyName}
-        roomName={reserveBooking.roomType}
-        city={reserveBooking.property.propertyCity}
-        province={reserveBooking.property.propertyProvince}
-        pricePerNight={reserveBooking.pricePerNight}
-        totalNights={reserveBooking.totalNights}
-        coverImage={reserveBooking.property.propertyImage[0]?.path || ""}
-        numberOfGuest={reserveBooking.guests}
-        checkInDate={reserveBooking.checkInDate}
-        checkOutDate={reserveBooking.checkOutDate}
-      />
+      {reserveBooking && (
+        <PriceSummary
+          propertyName={reserveBooking.property.propertyName}
+          roomName={reserveBooking.roomType}
+          city={reserveBooking.property.propertyCity}
+          province={reserveBooking.property.propertyProvince}
+          pricePerNight={reserveBooking.pricePerNight}
+          totalNights={reserveBooking.totalNights}
+          coverImage={reserveBooking.property.propertyImage[0]?.path || ""}
+          numberOfGuest={reserveBooking.guests}
+          checkInDate={reserveBooking.checkInDate}
+          checkOutDate={reserveBooking.checkOutDate}
+        />
+      )}
       <WarningModal
         isOpen={showWarning}
         onClose={closeWarning}
         title="Check Inputs"
         message="Please ensure to fill out all required fields before proceeding."
+      />
+      <BookingCreationModal
+        isOpen={isBookingModalOpen}
+        onClose={() => {
+          if (!isCreatingBooking && !isBookingSuccess) {
+            setIsBookingModalOpen(false);
+          }
+        }}
+        onComplete={handleBookingComplete}
+        isCreating={isCreatingBooking}
+        isSuccess={isBookingSuccess}
+        error={isBookingError ? getErrorMessage(bookingError) : null}
       />
     </TransactionLayout>
   );
