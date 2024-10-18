@@ -46,8 +46,8 @@ const ImageCarousel: React.FC<{
                 width={320}
                 height={320}
                 priority={true}
-                style={{ width: 'auto', height: 'auto' }}
-                className='h-[320px] w-[320px] object-cover'
+                style={{ width: '250px', height: '250px' }}
+                className='h-[320px] w-[320px] object-cover rounded-md'
               />
             </CarouselItem>
           ))}

@@ -74,8 +74,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             alt={name}
             width={200}
             height={200}
-            style={{ height: '100%', width: '100%' }}
-            className='h-[200px] w-[200px] rounded-md object-contain'
+            style={{ height: '190px', width: '200px' }}
+            className='h-[200px] w-[200px] rounded-md object-cover'
             onError={() => {
               setImgSrc(
                 'https://res.cloudinary.com/dhbg53ncx/image/upload/v1727888100/awip3lporwjjt3cewu4o.jpg'
