@@ -7,6 +7,7 @@ import Link from 'next/link'
 import React from 'react'
 import PropertyCardSkeleton from './PropertyCardSkeleton'
 import { formatRupiah } from '@/utils/RupiahFormatterCurrency'
+import { BASE_PRICE } from '@/utils/constanta'
 
 interface PropertyListCardProps {
   properties: Property[]
@@ -27,7 +28,19 @@ const PropertyListCard: React.FC<PropertyListCardProps> = ({
       ) : (
         <div className='grid gap-7 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4 md:p-11'>
           {properties.map((property, index) => (
-            <Link key={index} href={`/property/${property.id}`}>
+            <Link
+              key={index}
+              href={`/property/${property.id}`}
+              onClick={() => {
+                const basePrice =
+                  property.rooms?.length > 0
+                    ? property.rooms.sort(
+                        (a, b) => a.basePrice - b.basePrice
+                      )[0].basePrice
+                    : 0
+                sessionStorage.setItem(BASE_PRICE, JSON.stringify(basePrice))
+              }}
+            >
               <div className='max-w-sm rounded-lg overflow-hidden shadow-lg border border-secondary'>
                 <div className='w-full h-64 flex items-center justify-center'>
                   <ImageCarousel
