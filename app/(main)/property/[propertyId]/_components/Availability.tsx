@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Users } from 'lucide-react'
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import RoomDatePicker from './RoomDatePicker'
 import { PeakSeasonRate, PropertyDetail, Room } from '@/types/property'
@@ -14,6 +14,7 @@ import { SelectedRoom } from './DetailProperty'
 import NoResult from '@/components/NoResult'
 import Searching from '@/components/Searching'
 import { formatRupiah } from '@/utils/RupiahFormatterCurrency'
+import { BASE_PRICE } from '@/utils/constanta'
 
 const Availability: React.FC<{
   property: PropertyDetail
@@ -30,6 +31,7 @@ const Availability: React.FC<{
   const [guest, setGuest] = useState<number>(1)
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const [searchResult, setSearchResult] = useState<Room[] | null>(null)
+  const [basePrice, setBasePrice] = useState<number>(0)
   const { handleRoomAvailable, loading, error } = useRoom()
 
   const handleGuestChange = (value: number) => {
@@ -109,6 +111,14 @@ const Availability: React.FC<{
     return data
   }, [rooms, searchResult, peakSeasonRates])
 
+  useEffect(() => {
+    const basePriceStorage = sessionStorage.getItem(BASE_PRICE)
+    if (basePriceStorage !== null) {
+      const parseBasePrice = JSON.parse(basePriceStorage)
+      setBasePrice(Number(parseBasePrice))
+    }
+  }, [])
+
   return (
     <div className='mb-6 lg:pl-32'>
       <h2 className='text-2xl font-bold pl-4 lg:pl-0 pb-4'>Availability</h2>
@@ -119,7 +129,7 @@ const Availability: React.FC<{
             onChange={(value) => {
               setdateRange(value)
             }}
-            basePrice={rooms.length > 0 ? rooms[0].basePrice : 0}
+            basePrice={basePrice}
             peakSeasonRate={peakSeasonRates}
           />
           <Button

@@ -64,10 +64,6 @@ const FilterSort: React.FC<FilterSortProps> = ({
     }
   }
 
-  useEffect(() => {
-    console.log(sortBy, sortDirection)
-  }, [sortBy, sortDirection])
-
   const handleSubmit = () => {
     const data = {
       name: search,
