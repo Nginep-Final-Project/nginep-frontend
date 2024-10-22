@@ -16,6 +16,7 @@ export const useCreateReview = () => {
     mutationFn: createReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviewDto"] });
+      queryClient.invalidateQueries({ queryKey: ["unreviewedBookings"] });
       toast({
         title: "Review Created",
         description: "The review has been created and submitted.",
