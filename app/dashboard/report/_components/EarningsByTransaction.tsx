@@ -103,7 +103,7 @@ const EarningsByTransaction: React.FC = () => {
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
-                  {[2022, 2023, 2024].map((y) => (
+                  {[2022, 2023, 2024, 2025].map((y) => (
                     <SelectItem key={y} value={y.toString()}>
                       {y}
                     </SelectItem>
