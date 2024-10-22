@@ -64,7 +64,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
       },
       confirmPayment: {
         title: "Verify Payment",
-        question: "Are you sure you want to verify this payment?",
+        question: "Are you sure you want to verify this payment and confirm the reservation for this booking?",
       },
       rejectPayment: {
         title: "Reject Payment",
@@ -134,9 +134,9 @@ const BookingCard: React.FC<BookingCardProps> = ({
               <div className="flex flex-col items-start space-y-2 mb-4">
                 <Button
                   onClick={() => openConfirmationModal("confirmPayment")}
-                  className="w-60 bg-green-700 hover:bg-green-500"
+                  className="w-60 text-wrap bg-green-700 hover:bg-green-500"
                 >
-                  Verify Payment
+                  Verify Payment and Confirm Reservation
                 </Button>
                 <Button
                   onClick={() => openConfirmationModal("rejectPayment")}
