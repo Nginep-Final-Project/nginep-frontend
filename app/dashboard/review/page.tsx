@@ -20,9 +20,51 @@ const Review: React.FC = () => {
 
   const { data: properties, isLoading, error } = useUserProperties();
 
-  const noPropertiesFound = !properties || properties.length === 0;
-
   if (error) return <div>Error loading properties</div>;
+
+  const renderContent = () => {
+    if (isLoading) {
+      return <ReviewsSkeleton />;
+    }
+
+    if (!properties || properties.length === 0) {
+      return (
+        <div
+          className="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50"
+          role="alert"
+        >
+          <div>
+            <div className="font-medium mb-2">No properties found!</div>
+            <div className="text-justify">
+              You currently have no registered properties. Please add a property
+              to view its reviews.
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (!selectedPropertyId) {
+      return (
+        <div
+          className="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50"
+          role="alert"
+        >
+          <div>
+            <div className="font-medium mb-2">
+              Please select a property to see the reviews
+            </div>
+            <div className="text-justify">
+              You currently have no property chosen. Please select one to see
+              the reviews for that property.
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return <PropertyReviews propertyId={selectedPropertyId} />;
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -49,24 +91,7 @@ const Review: React.FC = () => {
           </Select>
         )}
       </div>
-      {selectedPropertyId ? (
-        <PropertyReviews propertyId={selectedPropertyId} />
-      ) : noPropertiesFound ? (
-        <div
-          className="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50"
-          role="alert"
-        >
-          <div>
-            <div className="font-medium mb-2">No properties found!</div>
-            <div className="text-justify">
-              You currently have no registered properties. Please add a property
-              to view its reviews.
-            </div>
-          </div>
-        </div>
-      ) : (
-        <ReviewsSkeleton />
-      )}
+      {renderContent()}
     </div>
   );
 };
