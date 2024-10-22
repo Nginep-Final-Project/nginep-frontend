@@ -66,11 +66,7 @@ const UserReviews: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {reviews && reviews.length > 0 ? (
-        <ReviewList reviews={reviews} />
-      ) : (
-        <p>You haven&apos;t written any reviews yet.</p>
-      )}
+      {reviews && <ReviewList reviews={reviews} />}
     </div>
   );
 };

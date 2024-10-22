@@ -12,6 +12,8 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
       <div className="space-y-6">
         <h2 className="text-2xl font-semibold">Your Past Reviews</h2>
 
+        {reviews.length < 1 && <p>You haven&apos;t written any reviews yet.</p>}
+
         {reviews.map((review) => (
           <ReviewCard key={review.id} review={review} />
         ))}
