@@ -160,7 +160,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
             </>
           )}
 
-          {type !== "cancelled" && type !== "confirmed" && (
+          {type !== "cancelled" && type !== "confirmed" && type !== "payment" && (
             <Button
               onClick={() => openConfirmationModal("cancelBooking")}
               className="w-60"
